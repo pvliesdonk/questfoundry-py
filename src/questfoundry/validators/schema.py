@@ -18,7 +18,9 @@ def validate_instance(instance: dict[str, Any], schema_name: str) -> bool:
     except jsonschema.ValidationError:
         return False
 
-def validate_instance_detailed(instance: dict[str, Any], schema_name: str) -> dict[str, Any]:
+def validate_instance_detailed(
+    instance: dict[str, Any], schema_name: str
+) -> dict[str, Any]:
     """Validate instance and return detailed error information"""
     schema = get_schema(schema_name)
     try:

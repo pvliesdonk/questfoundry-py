@@ -11,7 +11,8 @@ def get_version() -> str:
 def get_version_tuple() -> tuple[int, ...]:
     """Return version as tuple"""
     ver = get_version()
-    # Handle versions like "0.1.0.dev1" by splitting on "." and taking only numeric parts
+    # Handle versions like "0.1.0.dev1" by splitting on "."
+    # and taking only numeric parts
     parts = []
     for part in ver.split("."):
         try:
