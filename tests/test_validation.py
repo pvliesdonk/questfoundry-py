@@ -1,6 +1,5 @@
 """Tests for enhanced schema validation"""
 
-import pytest
 
 from questfoundry.validators import (
     ValidationResult,
