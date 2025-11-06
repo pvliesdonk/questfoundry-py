@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from .types import HotCold, RoleName, SpoilerPolicy
 
@@ -114,15 +114,6 @@ class Envelope(BaseModel):
     refs: list[str] = Field(
         default_factory=list, description="Referenced artifact IDs"
     )
-
-    @field_validator("context")
-    @classmethod
-    def validate_pn_safety(cls, v: Context, info: Any) -> Context:
-        """Validate PN safety requirements"""
-        # If receiver is PN, must be cold and player_safe
-        # Note: We need access to other fields, but Pydantic v2 makes this challenging
-        # This validation will be done in conformance checker instead
-        return v
 
 
 class EnvelopeBuilder:

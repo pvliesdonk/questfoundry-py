@@ -122,7 +122,14 @@ def validate_artifact(
 def _check_warnings(
     instance: dict[str, Any], schema: dict[str, Any]
 ) -> list[ValidationWarning]:
-    """Check for potential issues that are warnings, not errors"""
+    """
+    Check for potential issues that are warnings, not errors.
+
+    Note: This performs basic property checking on top-level properties only.
+    It does not handle complex schema keywords like allOf, anyOf, oneOf, or
+    patternProperties. For comprehensive validation, rely on the error-level
+    checks which use Draft202012Validator.
+    """
     warnings: list[ValidationWarning] = []
 
     # Check for unknown properties if additionalProperties is false
@@ -148,10 +155,11 @@ def validate_artifact_type(artifact: dict[str, Any]) -> ValidationResult:
         artifact: Artifact with a "type" field
 
     Returns:
-        ValidationResult after validating against the appropriate schema
+        ValidationResult after validating against the appropriate schema.
+        If the artifact is missing a "type" field, returns an invalid result
+        with an appropriate error.
 
     Raises:
-        ValueError: If artifact is missing "type" field
         FileNotFoundError: If schema for artifact type doesn't exist
     """
     if "type" not in artifact:

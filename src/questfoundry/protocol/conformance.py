@@ -79,8 +79,8 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
         violations.extend(pn_violations)
 
     # Check context requirements
-    context_violations = _check_context_requirements(envelope)
-    violations.extend(context_violations)
+    context_warnings = _check_context_requirements(envelope)
+    warnings.extend(context_warnings)
 
     # Check payload schema validation
     payload_result = validate_artifact(envelope.payload.data, envelope.payload.type)
@@ -161,12 +161,17 @@ def _check_pn_safety_invariant(envelope: Envelope) -> list[ConformanceViolation]
 
 
 def _check_context_requirements(envelope: Envelope) -> list[ConformanceViolation]:
-    """Check context field requirements"""
-    violations: list[ConformanceViolation] = []
+    """Check context field requirements (warnings only)"""
+    warnings: list[ConformanceViolation] = []
 
-    # Cold context should have snapshot
-    if envelope.context.hot_cold == HotCold.COLD and not envelope.context.snapshot:
-        violations.append(
+    # Cold context should have snapshot (warning for non-PN roles only)
+    # PN roles already have this as an error-level check in the safety invariant
+    if (
+        envelope.receiver.role != RoleName.PLAYER_NARRATOR
+        and envelope.context.hot_cold == HotCold.COLD
+        and not envelope.context.snapshot
+    ):
+        warnings.append(
             ConformanceViolation(
                 rule="CONTEXT_SNAPSHOT_REQUIRED",
                 message="Cold context should include snapshot reference",
@@ -174,44 +179,31 @@ def _check_context_requirements(envelope: Envelope) -> list[ConformanceViolation
             )
         )
 
-    return violations
+    return warnings
 
 
 def _check_protocol_version(envelope: Envelope) -> list[ConformanceViolation]:
-    """Check protocol version compatibility"""
+    """
+    Check protocol version compatibility.
+
+    Note: Version format is already validated by Pydantic semver pattern,
+    so we only need to check major version compatibility.
+    """
     warnings: list[ConformanceViolation] = []
 
-    # Parse version
+    # Parse version - format is guaranteed valid by Pydantic
     version_parts = envelope.protocol.version.split(".")
-    if len(version_parts) < 2:
-        warnings.append(
-            ConformanceViolation(
-                rule="PROTOCOL_VERSION",
-                message=f"Invalid protocol version format: {envelope.protocol.version}",
-                severity="warning",
-            )
-        )
-        return warnings
+    major = int(version_parts[0])
 
-    try:
-        major = int(version_parts[0])
-        # For now, we only support version 1.x.x
-        if major != 1:
-            warnings.append(
-                ConformanceViolation(
-                    rule="PROTOCOL_VERSION",
-                    message=(
-                        f"Protocol major version {major} may not be compatible "
-                        "(expecting 1.x.x)"
-                    ),
-                    severity="warning",
-                )
-            )
-    except ValueError:
+    # For now, we only support version 1.x.x
+    if major != 1:
         warnings.append(
             ConformanceViolation(
                 rule="PROTOCOL_VERSION",
-                message=f"Invalid protocol version: {envelope.protocol.version}",
+                message=(
+                    f"Protocol major version {major} may not be compatible "
+                    "(expecting 1.x.x)"
+                ),
                 severity="warning",
             )
         )

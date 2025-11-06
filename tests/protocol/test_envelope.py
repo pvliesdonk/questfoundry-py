@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from questfoundry.protocol import (
     Context,
@@ -31,7 +32,7 @@ def test_protocol_model():
 
 def test_protocol_invalid_name():
     """Test Protocol rejects invalid names"""
-    with pytest.raises(Exception):  # Pydantic validation error
+    with pytest.raises(ValidationError):
         Protocol(name="invalid-protocol", version="1.0.0")
 
 
@@ -207,7 +208,7 @@ def test_parse_real_example_hook_create():
 
 def test_envelope_validation_invalid_intent():
     """Test envelope validation rejects invalid intent format"""
-    with pytest.raises(Exception):  # Pydantic validation error
+    with pytest.raises(ValidationError):
         Envelope(
             protocol=Protocol(name="qf-protocol", version="1.0.0"),
             id="test-001",
