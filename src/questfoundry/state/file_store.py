@@ -83,6 +83,53 @@ class FileStore(StateStore):
         subdir = self.ARTIFACT_TYPE_DIRS.get(artifact_type, "other")
         return self.hot_dir / subdir
 
+    def _infer_artifact_dirs(self, artifact_id: str) -> list[Path]:
+        """
+        Infer possible directories for an artifact based on its ID.
+
+        Tries to determine the artifact type from ID prefix and returns
+        a prioritized list of directories to search, with most likely first.
+
+        Args:
+            artifact_id: Artifact ID (e.g., "HOOK-001", "CANON-042")
+
+        Returns:
+            List of directories to search, ordered by likelihood
+        """
+        # Map ID prefixes to directory names
+        prefix_map = {
+            "HOOK": "hooks",
+            "CANON": "canon",
+            "TU": "tu_briefs",
+            "CODEX": "codex",
+            "SCENE": "scenes",
+            "QUEST": "quests",
+        }
+
+        # Try to extract prefix from ID (e.g., "HOOK-001" -> "HOOK")
+        prefix = artifact_id.split("-")[0].upper() if "-" in artifact_id else None
+
+        # Build prioritized list of directories
+        dirs_to_search = []
+
+        # If we can infer a directory, check it first
+        if prefix and prefix in prefix_map:
+            inferred_dir = self.hot_dir / prefix_map[prefix]
+            dirs_to_search.append(inferred_dir)
+
+        # Then check all artifact directories as fallback
+        for subdir in self.ARTIFACT_TYPE_DIRS.values():
+            full_dir = self.hot_dir / subdir
+            if full_dir not in dirs_to_search:
+                dirs_to_search.append(full_dir)
+
+        # Finally check "other" directory
+        other_dir = self.hot_dir / "other"
+        if other_dir not in dirs_to_search:
+            dirs_to_search.append(other_dir)
+
+        return dirs_to_search
+
     def _atomic_write_json(self, file_path: Path, data: dict[str, Any]) -> None:
         """
         Write JSON data atomically.
@@ -173,12 +220,23 @@ class FileStore(StateStore):
         self._atomic_write_json(file_path, data)
 
     def get_artifact(self, artifact_id: str) -> Artifact | None:
-        """Retrieve an artifact by ID"""
-        # Search across all artifact type directories
-        for artifact_dir in self.hot_dir.iterdir():
-            if not artifact_dir.is_dir():
-                continue
+        """
+        Retrieve an artifact by ID.
 
+        Uses artifact ID prefix to infer likely location for efficient lookup,
+        with fallback to full directory search if not found.
+
+        Args:
+            artifact_id: Artifact ID
+
+        Returns:
+            Artifact if found, None otherwise
+        """
+        # Get prioritized list of directories to search
+        dirs_to_search = self._infer_artifact_dirs(artifact_id)
+
+        # Search directories in order of likelihood
+        for artifact_dir in dirs_to_search:
             file_path = artifact_dir / f"{artifact_id}.json"
             data = self._read_json(file_path)
 
@@ -208,6 +266,10 @@ class FileStore(StateStore):
 
         # Search directories
         for artifact_dir in dirs_to_search:
+            # Skip if directory doesn't exist
+            if not artifact_dir.exists():
+                continue
+
             for file_path in artifact_dir.glob("*.json"):
                 data = self._read_json(file_path)
                 if not data:
@@ -240,12 +302,23 @@ class FileStore(StateStore):
         return artifacts
 
     def delete_artifact(self, artifact_id: str) -> bool:
-        """Delete an artifact"""
-        # Search across all artifact type directories
-        for artifact_dir in self.hot_dir.iterdir():
-            if not artifact_dir.is_dir():
-                continue
+        """
+        Delete an artifact.
 
+        Uses artifact ID prefix to infer likely location for efficient lookup,
+        with fallback to full directory search if not found.
+
+        Args:
+            artifact_id: Artifact ID
+
+        Returns:
+            True if artifact was deleted, False if not found
+        """
+        # Get prioritized list of directories to search
+        dirs_to_search = self._infer_artifact_dirs(artifact_id)
+
+        # Search directories in order of likelihood
+        for artifact_dir in dirs_to_search:
             file_path = artifact_dir / f"{artifact_id}.json"
             if file_path.exists():
                 file_path.unlink()

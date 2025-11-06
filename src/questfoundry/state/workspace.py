@@ -117,14 +117,16 @@ class WorkspaceManager:
         Raises:
             ValueError: If target is invalid
         """
-        if target in ("hot", "both"):
-            self.hot_store.save_project_info(info)
-        if target in ("cold", "both"):
-            self.cold_store.save_project_info(info)
+        # Validate target first
         if target not in ("hot", "cold", "both"):
             raise ValueError(
                 f"Invalid target: {target}. Must be 'hot', 'cold', or 'both'"
             )
+
+        if target in ("hot", "both"):
+            self.hot_store.save_project_info(info)
+        if target in ("cold", "both"):
+            self.cold_store.save_project_info(info)
 
     # Hot workspace artifact operations
 
@@ -182,9 +184,6 @@ class WorkspaceManager:
 
         Returns:
             True if promotion succeeded, False if artifact not found
-
-        Raises:
-            ValueError: If artifact has no ID
         """
         # Get from hot
         artifact = self.hot_store.get_artifact(artifact_id)
@@ -210,9 +209,6 @@ class WorkspaceManager:
 
         Returns:
             True if demotion succeeded, False if artifact not found
-
-        Raises:
-            ValueError: If artifact has no ID
         """
         # Get from cold
         artifact = self.cold_store.get_artifact(artifact_id)
@@ -255,14 +251,16 @@ class WorkspaceManager:
         Raises:
             ValueError: If target is invalid or snapshot already exists
         """
-        if target in ("hot", "both"):
-            self.hot_store.save_snapshot(snapshot)
-        if target in ("cold", "both"):
-            self.cold_store.save_snapshot(snapshot)
+        # Validate target first
         if target not in ("hot", "cold", "both"):
             raise ValueError(
                 f"Invalid target: {target}. Must be 'hot', 'cold', or 'both'"
             )
+
+        if target in ("hot", "both"):
+            self.hot_store.save_snapshot(snapshot)
+        if target in ("cold", "both"):
+            self.cold_store.save_snapshot(snapshot)
 
     def get_snapshot(self, snapshot_id: str, source: str = "hot") -> (
         SnapshotInfo | None
