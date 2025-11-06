@@ -29,9 +29,19 @@ dependencies = [
     "jsonschema>=4.0",
     "httpx>=0.25",
     "python-dotenv>=1.0",
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
+openai = ["openai>=1.0"]
+ollama = ["ollama>=0.1"]
+google = ["google-generativeai>=0.3"]
+all-providers = [
+    "openai>=1.0",
+    "ollama>=0.1",
+    "google-generativeai>=0.3",
+]
+
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
@@ -39,6 +49,7 @@ dev = [
     "mypy>=1.0",
     "pre-commit>=3.0",
     "types-jsonschema>=4.0",
+    "types-pyyaml>=6.0",
 ]
 
 [project.urls]
@@ -77,7 +88,7 @@ warn_unused_configs = true
 disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
-module = ["pydantic.*", "jsonschema.*"]
+module = ["pydantic.*", "jsonschema.*", "yaml.*", "openai.*", "ollama.*", "httpx.*"]
 ignore_missing_imports = true
 
 [tool.ruff]
