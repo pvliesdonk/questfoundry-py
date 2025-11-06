@@ -188,4 +188,17 @@ class ProviderRegistry:
         except ImportError:
             pass  # Ollama provider not available
 
-        # Image providers will be added in future iterations
+        # Register image providers
+        try:
+            from .image.dalle import DalleProvider
+
+            self.register_image_provider("dalle", DalleProvider)
+        except ImportError:
+            pass  # DALL-E provider not available
+
+        try:
+            from .image.a1111 import Automatic1111Provider
+
+            self.register_image_provider("a1111", Automatic1111Provider)
+        except ImportError:
+            pass  # A1111 provider not available
