@@ -123,7 +123,7 @@ class OllamaProvider(TextProvider):
                 prompt=prompt,
                 options=options if options else None,
             )
-            return response["response"]
+            return str(response["response"])
         except Exception as e:
             raise RuntimeError(f"Ollama generation failed: {e}") from e
 

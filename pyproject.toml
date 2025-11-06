@@ -84,7 +84,7 @@ warn_unused_configs = true
 disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
-module = ["pydantic.*", "jsonschema.*", "yaml.*", "openai.*", "ollama.*"]
+module = ["pydantic.*", "jsonschema.*", "yaml.*", "openai.*", "ollama.*", "httpx.*"]
 ignore_missing_imports = true
 
 [tool.ruff]

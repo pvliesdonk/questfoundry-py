@@ -121,7 +121,8 @@ class ProviderConfig:
         """
         providers = self._config.get("providers", {})
         provider_configs = providers.get(provider_type, {})
-        return provider_configs.get("default")
+        default = provider_configs.get("default")
+        return str(default) if default is not None else None
 
     def set_default_provider(self, provider_type: str, provider_name: str) -> None:
         """

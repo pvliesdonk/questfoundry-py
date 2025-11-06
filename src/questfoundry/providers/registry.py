@@ -161,10 +161,10 @@ class ProviderRegistry:
 
     def close_all(self) -> None:
         """Close all provider instances and release resources."""
-        for provider in self._text_instances.values():
-            provider.close()
-        for provider in self._image_instances.values():
-            provider.close()
+        for text_provider in self._text_instances.values():
+            text_provider.close()
+        for image_provider in self._image_instances.values():
+            image_provider.close()
 
         self._text_instances.clear()
         self._image_instances.clear()

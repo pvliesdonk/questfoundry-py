@@ -152,7 +152,7 @@ class DalleProvider(ImageProvider):
                     raise RuntimeError("No image URL in response")
                 img_response = httpx.get(image_url)
                 img_response.raise_for_status()
-                return img_response.content
+                return bytes(img_response.content)
 
         except Exception as e:
             raise RuntimeError(f"DALL-E image generation failed: {e}") from e
