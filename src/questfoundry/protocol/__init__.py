@@ -1,5 +1,6 @@
 """Protocol envelope models for Layer 4"""
 
+from .client import ProtocolClient
 from .conformance import (
     ConformanceResult,
     ConformanceViolation,
@@ -15,6 +16,8 @@ from .envelope import (
     Safety,
     Sender,
 )
+from .file_transport import FileTransport
+from .transport import Transport
 from .types import HotCold, RoleName, SpoilerPolicy
 
 __all__ = [
@@ -32,4 +35,7 @@ __all__ = [
     "validate_envelope_conformance",
     "ConformanceResult",
     "ConformanceViolation",
+    "Transport",
+    "FileTransport",
+    "ProtocolClient",
 ]
