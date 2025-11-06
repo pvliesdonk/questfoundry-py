@@ -114,7 +114,8 @@ class FileStore(StateStore):
         if not file_path.exists():
             return None
         with open(file_path) as f:
-            return json.load(f)
+            result: dict[str, Any] = json.load(f)
+            return result
 
     def get_project_info(self) -> ProjectInfo:
         """Get project metadata"""
