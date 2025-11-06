@@ -1,10 +1,12 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "versioningit"]
 build-backend = "hatchling.build"
 
 [project]
 name = "questfoundry-py"
-version = "0.1.0"
+
+dynamic = ["version"]
+
 description = "Python library for QuestFoundry protocol and artifact management"
 readme = "README.md"
 license = {text = "MIT"}
@@ -33,6 +35,12 @@ Documentation = "https://github.com/pvliesdonk/questfoundry-spec"
 Specification = "https://github.com/pvliesdonk/questfoundry-spec"
 Schemas = "https://questfoundry.liesdonk.nl/schemas/"
 
+[tool.hatch.version]
+source = "versioningit"
+
+[tool.versioningit]
+default-version = "0.0.0"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/questfoundry"]
 
@@ -51,6 +59,7 @@ disallow_untyped_defs = true
 [tool.ruff]
 line-length = 88
 target-version = "py311"
+exclude = ["spec"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
