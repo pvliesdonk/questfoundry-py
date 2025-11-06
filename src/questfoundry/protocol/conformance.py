@@ -1,7 +1,6 @@
 """Protocol conformance validation"""
 
 from dataclasses import dataclass, field
-from typing import Any
 
 from ..validators import validate_artifact
 from .envelope import Envelope
@@ -89,8 +88,10 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
         violations.append(
             ConformanceViolation(
                 rule="PAYLOAD_SCHEMA_VALIDATION",
-                message=f"Payload data does not conform to {envelope.payload.type} schema: "
-                f"{len(payload_result.errors)} errors",
+                message=(
+                    f"Payload data does not conform to {envelope.payload.type} schema: "
+                    f"{len(payload_result.errors)} errors"
+                ),
                 severity="error",
             )
         )
@@ -199,7 +200,10 @@ def _check_protocol_version(envelope: Envelope) -> list[ConformanceViolation]:
             warnings.append(
                 ConformanceViolation(
                     rule="PROTOCOL_VERSION",
-                    message=f"Protocol major version {major} may not be compatible (expecting 1.x.x)",
+                    message=(
+                        f"Protocol major version {major} may not be compatible "
+                        "(expecting 1.x.x)"
+                    ),
                     severity="warning",
                 )
             )

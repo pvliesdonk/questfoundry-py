@@ -236,15 +236,15 @@ class EnvelopeBuilder:
 
         return Envelope(
             protocol=self._protocol,
-            id=self._id,  # type: ignore
-            time=self._time,  # type: ignore
-            sender=self._sender,  # type: ignore
-            receiver=self._receiver,  # type: ignore
-            intent=self._intent,  # type: ignore
+            id=self._id,
+            time=self._time,
+            sender=self._sender,
+            receiver=self._receiver,
+            intent=self._intent,
             correlation_id=self._correlation_id,
             reply_to=self._reply_to,
-            context=self._context,  # type: ignore
-            safety=self._safety,  # type: ignore
-            payload=self._payload,  # type: ignore
+            context=self._context,
+            safety=self._safety,
+            payload=self._payload,
             refs=self._refs,
         )

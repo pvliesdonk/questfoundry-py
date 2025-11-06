@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 
 from questfoundry.protocol import (
     ConformanceResult,
-    Envelope,
     EnvelopeBuilder,
     HotCold,
     RoleName,
@@ -25,13 +24,23 @@ def test_conformant_hot_envelope():
         .with_intent("scene.write")
         .with_context(HotCold.HOT, tu="TU-2024-01-15-SR01")
         .with_safety(False, SpoilerPolicy.ALLOWED)
-        .with_payload("tu_brief", {"header": {"short_name": "Test", "id": "TU-2024-01-15-SR01", "status": "open"}})
+        .with_payload(
+            "tu_brief",
+            {
+                "header": {
+                    "short_name": "Test",
+                    "id": "TU-2024-01-15-SR01",
+                    "status": "open",
+                }
+            },
+        )
         .build()
     )
 
     result = validate_envelope_conformance(envelope)
 
-    # May have payload validation errors due to incomplete data, but no protocol violations
+    # May have payload validation errors due to incomplete data,
+    # but no protocol violations
     assert isinstance(result, ConformanceResult)
 
 
@@ -243,10 +252,6 @@ def test_cold_context_without_snapshot_warning():
     result = validate_envelope_conformance(envelope)
 
     # For non-PN, this is just a warning
-    snapshot_violations = [
-        v
-        for v in result.violations
-        if v.rule == "CONTEXT_SNAPSHOT_REQUIRED" and v.severity == "warning"
-    ]
     # Check warnings, not violations for non-PN
-    assert any("snapshot" in str(v).lower() for v in result.violations + result.warnings)
+    all_issues = result.violations + result.warnings
+    assert any("snapshot" in str(v).lower() for v in all_issues)
