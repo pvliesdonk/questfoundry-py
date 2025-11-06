@@ -54,12 +54,16 @@ def main() -> None:
 
         dest_dir = prompts_dest / role_dir.name
 
-        # Remove existing directory if it exists
+        # Copy to a temporary directory first
+        temp_dir = prompts_dest.with_suffix('.tmp')
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir)
+        shutil.copytree(role_dir, temp_dir)
+
+        # Atomically replace the old directory with the new one
         if dest_dir.exists():
             shutil.rmtree(dest_dir)
-
-        # Copy entire directory
-        shutil.copytree(role_dir, dest_dir)
+        shutil.move(str(temp_dir), str(dest_dir))
         prompt_count += 1
         print(f"  ✓ {role_dir.name}/")
 
