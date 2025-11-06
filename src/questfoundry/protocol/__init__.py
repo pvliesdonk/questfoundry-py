@@ -1,5 +1,6 @@
 """Protocol envelope models for Layer 4"""
 
+from .client import ProtocolClient
 from .conformance import (
     ConformanceResult,
     ConformanceViolation,
@@ -36,4 +37,5 @@ __all__ = [
     "ConformanceViolation",
     "Transport",
     "FileTransport",
+    "ProtocolClient",
 ]

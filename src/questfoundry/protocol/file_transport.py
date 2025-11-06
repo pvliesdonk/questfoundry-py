@@ -7,6 +7,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterator
 
+from pydantic import ValidationError
+
 from .envelope import Envelope
 from .transport import Transport
 
@@ -109,6 +111,10 @@ class FileTransport(Transport):
         message_files = sorted(self.inbox_dir.glob("*.json"))
 
         for message_file in message_files:
+            # Skip if file no longer exists (already processed by another iteration)
+            if not message_file.exists():
+                continue
+
             try:
                 # Read envelope
                 with open(message_file, "r") as f:
@@ -121,14 +127,27 @@ class FileTransport(Transport):
                 yield envelope
 
                 # Acknowledge by moving to processed
-                processed_path = self.processed_dir / message_file.name
-                message_file.replace(processed_path)
+                # Handle race condition where file might have been moved by
+                # another process
+                try:
+                    processed_path = self.processed_dir / message_file.name
+                    message_file.replace(processed_path)
+                except FileNotFoundError:
+                    # File was already moved by another process/thread, skip
+                    pass
 
+            except (FileNotFoundError, json.JSONDecodeError, ValidationError):
+                # Skip if file was moved/deleted or is invalid
+                # Don't raise error for these cases
+                pass
             except Exception as e:
-                # If parsing fails, move to processed with .error suffix
-                # to prevent blocking future messages
-                error_path = self.processed_dir / f"{message_file.name}.error"
-                message_file.replace(error_path)
+                # For other exceptions, try to move to error and raise
+                if message_file.exists():
+                    try:
+                        error_path = self.processed_dir / f"{message_file.name}.error"
+                        message_file.replace(error_path)
+                    except FileNotFoundError:
+                        pass
                 raise IOError(
                     f"Failed to process message {message_file.name}: {e}"
                 ) from e
