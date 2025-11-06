@@ -131,8 +131,25 @@ class SQLiteStore(StateStore):
         if not artifact_id:
             raise ValueError("Artifact must have an 'id' in metadata")
 
+        # Check if artifact already exists to determine create vs update
+        existing = self.get_artifact(artifact_id)
+        is_create = existing is None
+
         now = datetime.now().isoformat()
-        created = artifact.metadata.get("created", now)
+
+        # Handle created timestamp: preserve if exists, set if new
+        if is_create:
+            created = now
+            # Update metadata with created timestamp
+            artifact.metadata["created"] = created
+        else:
+            # Preserve existing created timestamp
+            cursor = conn.execute(
+                "SELECT created FROM artifacts WHERE artifact_id = ?",
+                (artifact_id,)
+            )
+            row = cursor.fetchone()
+            created = row["created"] if row else now
 
         conn.execute(
             """
@@ -149,10 +166,17 @@ class SQLiteStore(StateStore):
                 json.dumps(artifact.metadata),
             ),
         )
-        conn.commit()
 
-        # Log to history
-        self._log_history("artifact", artifact_id, "update", {})
+        # Log to history with actual changes
+        action = "create" if is_create else "update"
+        changes = {
+            "type": artifact.type,
+            "data": artifact.data,
+            "metadata": artifact.metadata,
+        }
+        self._log_history("artifact", artifact_id, action, changes)
+
+        conn.commit()
 
     def get_artifact(self, artifact_id: str) -> Artifact | None:
         """Retrieve an artifact by ID"""
@@ -182,6 +206,9 @@ class SQLiteStore(StateStore):
         """List artifacts with optional filtering"""
         conn = self._get_connection()
 
+        # Whitelist of allowed filter keys to prevent SQL injection
+        ALLOWED_FILTER_KEYS = {"status", "author", "name", "trigger"}
+
         # Build query
         query = "SELECT artifact_type, data, metadata FROM artifacts"
         conditions = []
@@ -193,6 +220,12 @@ class SQLiteStore(StateStore):
 
         if filters:
             for key, value in filters.items():
+                # Validate key against whitelist
+                if key not in ALLOWED_FILTER_KEYS:
+                    raise ValueError(
+                        f"Invalid filter key '{key}'. "
+                        f"Allowed keys: {', '.join(sorted(ALLOWED_FILTER_KEYS))}"
+                    )
                 # Use JSON extraction for filtering
                 conditions.append(f"json_extract(data, '$.{key}') = ?")
                 params.append(value)
@@ -223,12 +256,12 @@ class SQLiteStore(StateStore):
         cursor = conn.execute(
             "DELETE FROM artifacts WHERE artifact_id = ?", (artifact_id,)
         )
-        conn.commit()
 
         deleted = cursor.rowcount > 0
         if deleted:
             self._log_history("artifact", artifact_id, "delete", {})
 
+        conn.commit()
         return deleted
 
     def save_tu(self, tu: TUState) -> None:
@@ -325,12 +358,28 @@ class SQLiteStore(StateStore):
         return tus
 
     def save_snapshot(self, snapshot: SnapshotInfo) -> None:
-        """Save snapshot metadata"""
+        """
+        Save snapshot metadata.
+
+        Snapshots are immutable - attempting to save a snapshot with an
+        existing ID will raise an error.
+
+        Raises:
+            ValueError: If snapshot with same ID already exists
+        """
         conn = self._get_connection()
+
+        # Check if snapshot already exists
+        existing = self.get_snapshot(snapshot.snapshot_id)
+        if existing is not None:
+            raise ValueError(
+                f"Snapshot '{snapshot.snapshot_id}' already exists. "
+                "Snapshots are immutable and cannot be updated."
+            )
 
         conn.execute(
             """
-            INSERT OR REPLACE INTO snapshots
+            INSERT INTO snapshots
             (snapshot_id, tu_id, created, description, metadata)
             VALUES (?, ?, ?, ?, ?)
             """,
@@ -342,9 +391,16 @@ class SQLiteStore(StateStore):
                 json.dumps(snapshot.metadata),
             ),
         )
-        conn.commit()
 
-        self._log_history("snapshot", snapshot.snapshot_id, "create", {})
+        # Log to history
+        changes = {
+            "tu_id": snapshot.tu_id,
+            "description": snapshot.description,
+            "metadata": snapshot.metadata,
+        }
+        self._log_history("snapshot", snapshot.snapshot_id, "create", changes)
+
+        conn.commit()
 
     def get_snapshot(self, snapshot_id: str) -> SnapshotInfo | None:
         """Retrieve snapshot by ID"""

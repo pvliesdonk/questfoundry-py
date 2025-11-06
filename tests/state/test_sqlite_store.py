@@ -354,3 +354,64 @@ def test_modified_timestamp_updates(store):
     # Modified should be newer
     updated_modified = store.get_tu("TU-001").modified
     assert updated_modified > original_modified
+
+
+def test_list_artifacts_invalid_filter_key(store):
+    """Test that invalid filter keys raise ValueError"""
+    # Save an artifact
+    artifact = Artifact(type="hook_card", data={}, metadata={"id": "HOOK-001"})
+    store.save_artifact(artifact)
+
+    # Try to filter with invalid key (SQL injection attempt)
+    with pytest.raises(ValueError, match="Invalid filter key"):
+        store.list_artifacts(
+            "hook_card", {"malicious'; DROP TABLE artifacts--": "value"}
+        )
+
+
+def test_snapshot_immutability(store):
+    """Test that snapshots cannot be overwritten"""
+    # Save initial snapshot
+    snapshot = SnapshotInfo(
+        snapshot_id="SNAP-001", tu_id="TU-001", description="Initial"
+    )
+    store.save_snapshot(snapshot)
+
+    # Try to save again with same ID
+    snapshot2 = SnapshotInfo(
+        snapshot_id="SNAP-001", tu_id="TU-001", description="Modified"
+    )
+
+    with pytest.raises(ValueError, match="already exists.*immutable"):
+        store.save_snapshot(snapshot2)
+
+    # Verify original is unchanged
+    retrieved = store.get_snapshot("SNAP-001")
+    assert retrieved.description == "Initial"
+
+
+def test_artifact_created_timestamp_preserved(store):
+    """Test that created timestamp is preserved on update"""
+    import time
+
+    # Create artifact
+    artifact = Artifact(
+        type="hook_card",
+        data={"version": 1},
+        metadata={"id": "HOOK-001"},
+    )
+    store.save_artifact(artifact)
+
+    # Get the created timestamp from metadata
+    retrieved1 = store.get_artifact("HOOK-001")
+    original_created = retrieved1.metadata.get("created")
+    assert original_created is not None
+
+    # Wait and update
+    time.sleep(0.01)
+    artifact.data["version"] = 2
+    store.save_artifact(artifact)
+
+    # Created timestamp should be preserved in metadata
+    retrieved2 = store.get_artifact("HOOK-001")
+    assert retrieved2.metadata.get("created") == original_created

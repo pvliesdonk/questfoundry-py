@@ -107,3 +107,22 @@ def test_tu_state_serialization():
     assert tu2.tu_id == tu.tu_id
     assert tu2.status == tu.status
     assert tu2.data == tu.data
+
+
+def test_tu_state_with_metadata():
+    """Test TUState metadata field"""
+    tu = TUState(
+        tu_id="TU-001",
+        status="open",
+        data={"test": "value"},
+        metadata={"author": "alice", "tags": ["action", "drama"]},
+    )
+
+    assert tu.metadata == {"author": "alice", "tags": ["action", "drama"]}
+
+    # Should serialize and deserialize metadata
+    data = tu.model_dump()
+    assert data["metadata"] == {"author": "alice", "tags": ["action", "drama"]}
+
+    tu2 = TUState.model_validate(data)
+    assert tu2.metadata == tu.metadata
