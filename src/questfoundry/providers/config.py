@@ -132,12 +132,9 @@ class ProviderConfig:
             provider_type: Type of provider ('text' or 'image')
             provider_name: Name of provider
         """
-        if "providers" not in self._config:
-            self._config["providers"] = {}
-        if provider_type not in self._config["providers"]:
-            self._config["providers"][provider_type] = {}
-
-        self._config["providers"][provider_type]["default"] = provider_name
+        providers = self._config.setdefault("providers", {})
+        provider_config = providers.setdefault(provider_type, {})
+        provider_config["default"] = provider_name
 
     def list_providers(self, provider_type: str) -> list[str]:
         """

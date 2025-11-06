@@ -1,7 +1,8 @@
 """Abstract base classes for QuestFoundry providers"""
 
+import types
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Iterator
 
 
 class Provider(ABC):
@@ -48,7 +49,7 @@ class Provider(ABC):
         self,
         exc_type: type[BaseException] | None,
         exc_val: BaseException | None,
-        exc_tb: object,
+        exc_tb: types.TracebackType | None,
     ) -> None:
         """Context manager exit"""
         self.close()
@@ -97,7 +98,7 @@ class TextProvider(Provider):
         max_tokens: int | None = None,
         temperature: float | None = None,
         **kwargs: Any,
-    ) -> Any:
+    ) -> Iterator[str]:
         """
         Generate text from a prompt with streaming.
 

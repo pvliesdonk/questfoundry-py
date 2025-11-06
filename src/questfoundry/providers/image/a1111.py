@@ -1,11 +1,14 @@
 """Automatic1111 Stable Diffusion image generation provider"""
 
 import base64
+import logging
 from typing import Any
 
 import httpx
 
 from ..base import ImageProvider
+
+logger = logging.getLogger(__name__)
 
 
 class Automatic1111Provider(ImageProvider):
@@ -172,10 +175,15 @@ class Automatic1111Provider(ImageProvider):
                 json={"sd_model_checkpoint": model},
             )
             response.raise_for_status()
-        except Exception:
+        except Exception as e:
             # Don't fail if model switch fails, just log
             # The generation will use whatever model is currently loaded
-            pass
+            logger.warning(
+                "Failed to switch to model '%s': %s. "
+                "Using currently loaded model.",
+                model,
+                e,
+            )
 
     def close(self) -> None:
         """Close the A1111 client."""

@@ -36,7 +36,11 @@ dependencies = [
 openai = ["openai>=1.0"]
 ollama = ["ollama>=0.1"]
 google = ["google-generativeai>=0.3"]
-all-providers = ["questfoundry-py[openai,ollama,google]"]
+all-providers = [
+    "openai>=1.0",
+    "ollama>=0.1",
+    "google-generativeai>=0.3",
+]
 
 dev = [
     "pytest>=7.0",

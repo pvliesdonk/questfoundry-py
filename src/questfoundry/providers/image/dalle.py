@@ -112,14 +112,23 @@ class DalleProvider(ImageProvider):
 
         model = model or self.default_model
 
-        # Build size parameter from width/height
-        size = "1024x1024"  # Default
+        # DALL-E 3 only supports specific sizes
+        valid_sizes = {"1024x1024", "1792x1024", "1024x1792"}
+
+        # Determine size from width/height
         if width and height:
             size = f"{width}x{height}"
-        elif width:
-            size = f"{width}x{width}"
-        elif height:
-            size = f"{height}x{height}"
+            if size not in valid_sizes:
+                raise ValueError(
+                    f"Invalid size {size}. DALL-E 3 supports: "
+                    f"{', '.join(sorted(valid_sizes))}"
+                )
+        elif width or height:
+            # If only one dimension specified, use square size
+            size = "1024x1024"
+        else:
+            # Default to square
+            size = "1024x1024"
 
         # Build API parameters
         api_params: dict[str, Any] = {
