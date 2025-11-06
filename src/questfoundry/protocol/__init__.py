@@ -1,5 +1,10 @@
 """Protocol envelope models for Layer 4"""
 
+from .conformance import (
+    ConformanceResult,
+    ConformanceViolation,
+    validate_envelope_conformance,
+)
 from .envelope import (
     Context,
     Envelope,
@@ -24,4 +29,7 @@ __all__ = [
     "HotCold",
     "RoleName",
     "SpoilerPolicy",
+    "validate_envelope_conformance",
+    "ConformanceResult",
+    "ConformanceViolation",
 ]
