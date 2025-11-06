@@ -79,7 +79,6 @@ class FileTransport(Transport):
         envelope_json = envelope.model_dump_json(indent=2)
 
         # Atomic write: write to temp file, then rename
-        self.outbox_dir.mkdir(parents=True, exist_ok=True)
         with tempfile.NamedTemporaryFile(
             mode="w",
             dir=self.outbox_dir,
@@ -98,20 +97,22 @@ class FileTransport(Transport):
 
         Yields envelopes in order (sorted by filename timestamp).
         After yielding, messages are moved to processed/ directory
-        for acknowledgment.
+        for acknowledgment. Invalid messages are silently skipped.
 
         Yields:
             Envelope: Received envelopes
 
         Raises:
-            IOError: If reading or moving files fails
-            ValidationError: If envelope JSON is invalid
+            IOError: If a critical error occurs during processing
         """
         # Get all message files sorted by name (which includes timestamp)
         message_files = sorted(self.inbox_dir.glob("*.json"))
 
         for message_file in message_files:
-            # Skip if file no longer exists (already processed by another iteration)
+            # Check existence before processing to avoid TOCTOU race condition.
+            # While there's still a gap before open(), this early check avoids
+            # unnecessary work and provides better performance when files are
+            # being processed concurrently.
             if not message_file.exists():
                 continue
 

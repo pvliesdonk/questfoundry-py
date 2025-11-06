@@ -2,6 +2,7 @@
 
 import re
 import time
+import uuid
 from collections.abc import Callable, Iterator
 from datetime import datetime
 from pathlib import Path
@@ -100,8 +101,6 @@ class ProtocolClient:
         Returns:
             Constructed envelope
         """
-        import uuid
-
         builder = (
             EnvelopeBuilder()
             .with_protocol("1.0.0")
@@ -197,31 +196,22 @@ class ProtocolClient:
         """
         # Ensure envelope has correlation_id
         if not envelope.correlation_id:
-            # Need to create a new envelope with correlation_id
-            import uuid
-
+            # Create a copy with correlation_id using model_copy
             correlation_id = str(uuid.uuid4())
-            envelope = Envelope(
-                protocol=envelope.protocol,
-                id=envelope.id,
-                time=envelope.time,
-                sender=envelope.sender,
-                receiver=envelope.receiver,
-                intent=envelope.intent,
-                correlation_id=correlation_id,
-                reply_to=envelope.reply_to,
-                context=envelope.context,
-                safety=envelope.safety,
-                payload=envelope.payload,
-                refs=envelope.refs,
-            )
+            envelope = envelope.model_copy(update={"correlation_id": correlation_id})
 
         # Send the request
         self.send(envelope, validate=validate)
 
         # Wait for response with matching correlation_id
         start_time = time.time()
+        first_iteration = True
         while time.time() - start_time < timeout:
+            # Sleep between checks to avoid busy-waiting (except first iteration)
+            if not first_iteration:
+                time.sleep(0.1)
+            first_iteration = False
+
             for response in self.receive(validate=validate):
                 # Match correlation_id but skip the original request
                 if (
@@ -229,9 +219,6 @@ class ProtocolClient:
                     and response.id != envelope.id
                 ):
                     return response
-
-            # Small sleep to avoid busy-waiting
-            time.sleep(0.1)
 
         return None
 
