@@ -82,8 +82,10 @@ class Lifecycle:
         validator = self.TRANSITIONS[transition]
         if validator and callable(validator):
             try:
-                return validator(data or {})
-            except Exception:
+                result: bool = bool(validator(data or {}))
+                return result
+            except (ValueError, KeyError, AttributeError):
+                # Validator raised expected exception - invalid transition
                 return False
 
         return True
@@ -127,10 +129,11 @@ class Lifecycle:
         Returns:
             List of state names that can be transitioned to
         """
-        valid = []
-        for from_state, to_state in self.TRANSITIONS.keys():
-            if from_state == self.current_state and to_state not in valid:
-                valid.append(to_state)
+        valid = {
+            to_state
+            for from_state, to_state in self.TRANSITIONS.keys()
+            if from_state == self.current_state
+        }
         return sorted(valid)
 
     def get_history(self) -> list[dict[str, Any]]:

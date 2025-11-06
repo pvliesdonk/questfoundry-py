@@ -26,7 +26,7 @@ class Artifact(BaseModel):
         ...     data={"header": {"short_name": "Test Hook", ...}},
         ...     metadata={"id": "HOOK-001"}
         ... )
-        >>> result = artifact.validate()
+        >>> result = artifact.validate_schema()
         >>> if result.is_valid:
         ...     print("Artifact is valid!")
     """
@@ -93,7 +93,7 @@ class Artifact(BaseModel):
 
     # Validation methods
 
-    def validate(self) -> ValidationResult:
+    def validate_schema(self) -> ValidationResult:
         """
         Validate artifact against its schema.
 
@@ -101,7 +101,7 @@ class Artifact(BaseModel):
             ValidationResult with validation status and any errors/warnings
         """
         instance = {"type": self.type, "data": self.data, "metadata": self.metadata}
-        return validate_artifact(instance)
+        return validate_artifact(instance, self.type)
 
     # Serialization methods
 
@@ -128,12 +128,11 @@ class Artifact(BaseModel):
 
         Returns:
             New Artifact instance
+
+        Raises:
+            ValidationError: If required fields are missing or invalid
         """
-        return cls(
-            type=data.get("type", ""),
-            data=data.get("data", {}),
-            metadata=data.get("metadata", {}),
-        )
+        return cls.model_validate(data)
 
 
 class HookCard(Artifact):

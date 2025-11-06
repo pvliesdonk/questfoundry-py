@@ -164,4 +164,4 @@ def test_tu_rework_cycle():
     lifecycle.merge_to_cold(data={"gatecheck_passed": True})  # 7
 
     assert lifecycle.current_state == "cold-merged"
-    assert len(lifecycle.history) == 7  # 7 transitions
+    assert len(lifecycle.history) == 7
