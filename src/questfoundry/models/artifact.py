@@ -5,7 +5,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class Artifact(BaseModel):  # type: ignore[misc]
+class Artifact(BaseModel):
     """Base artifact model"""
 
     model_config = ConfigDict(
