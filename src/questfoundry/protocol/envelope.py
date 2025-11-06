@@ -225,6 +225,16 @@ class EnvelopeBuilder:
                 "Missing required fields. Set all required fields before building."
             )
 
+        # Type narrowing assertions for mypy
+        assert self._id is not None
+        assert self._time is not None
+        assert self._sender is not None
+        assert self._receiver is not None
+        assert self._intent is not None
+        assert self._context is not None
+        assert self._safety is not None
+        assert self._payload is not None
+
         return Envelope(
             protocol=self._protocol,
             id=self._id,
