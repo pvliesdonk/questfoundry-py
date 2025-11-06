@@ -14,7 +14,8 @@ def get_schema(schema_name: str) -> dict[str, Any]:
         raise FileNotFoundError(f"Schema not found: {schema_name}")
 
     with open(schema_file) as f:
-        return json.load(f)
+        schema: dict[str, Any] = json.load(f)
+        return schema
 
 def get_prompt(role_name: str) -> str:
     """Load a prompt from bundled resources"""
