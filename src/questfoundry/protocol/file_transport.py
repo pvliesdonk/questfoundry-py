@@ -95,6 +95,22 @@ class FileTransport(Transport):
         # Atomic rename
         tmp_path.replace(file_path)
 
+    def _move_to_error_dir(self, message_file: Path, error_suffix: str) -> None:
+        """
+        Move a message file to the error directory for inspection.
+
+        Args:
+            message_file: Path to the message file
+            error_suffix: Suffix to append to filename (e.g., 'json-error')
+        """
+        try:
+            error_path = self.processed_dir / f"{message_file.name}.{error_suffix}"
+            if message_file.exists():
+                message_file.replace(error_path)
+        except (FileNotFoundError, OSError):
+            # If file doesn't exist or can't be moved, silently continue
+            pass
+
     def receive(self) -> Iterator[Envelope]:
         """
         Receive envelopes from the inbox directory.
@@ -157,13 +173,7 @@ class FileTransport(Transport):
                     message_file.name,
                     str(e),
                 )
-                # Move to error directory for inspection
-                try:
-                    error_path = self.processed_dir / f"{message_file.name}.json-error"
-                    if message_file.exists():
-                        message_file.replace(error_path)
-                except (FileNotFoundError, OSError):
-                    pass
+                self._move_to_error_dir(message_file, "json-error")
             except ValidationError as e:
                 # Invalid envelope structure - log and skip
                 logger.warning(
@@ -171,15 +181,7 @@ class FileTransport(Transport):
                     message_file.name,
                     str(e),
                 )
-                # Move to error directory for inspection
-                try:
-                    error_path = (
-                        self.processed_dir / f"{message_file.name}.validation-error"
-                    )
-                    if message_file.exists():
-                        message_file.replace(error_path)
-                except (FileNotFoundError, OSError):
-                    pass
+                self._move_to_error_dir(message_file, "validation-error")
             except Exception as e:
                 # Unexpected error - log and raise
                 logger.error(
@@ -188,13 +190,7 @@ class FileTransport(Transport):
                     str(e),
                     exc_info=True,
                 )
-                # Try to move to error directory
-                if message_file.exists():
-                    try:
-                        error_path = self.processed_dir / f"{message_file.name}.error"
-                        message_file.replace(error_path)
-                    except (FileNotFoundError, OSError):
-                        pass
+                self._move_to_error_dir(message_file, "error")
                 raise IOError(
                     f"Failed to process message {message_file.name}: {e}"
                 ) from e
