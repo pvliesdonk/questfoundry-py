@@ -18,6 +18,17 @@ class SQLiteStore(StateStore):
     Provides cold storage with ACID transactions, JSON querying,
     and audit history. Suitable for archived/finalized project state.
 
+    Thread Safety:
+        This class is NOT thread-safe by default. Each thread should create
+        its own SQLiteStore instance. While check_same_thread=False is enabled
+        for the connection, SQLite itself has limitations with concurrent writes.
+        The WAL mode improves concurrent read performance, but writes are still
+        serialized by SQLite's locking mechanism.
+
+        For multi-threaded applications:
+        - Use separate store instances per thread, OR
+        - Implement external synchronization (locks/queues) around write operations
+
     Example:
         >>> store = SQLiteStore("my_game.qfproj")
         >>> store.init_database()
@@ -40,14 +51,17 @@ class SQLiteStore(StateStore):
         Get or create database connection.
 
         Configures connection for optimal concurrent access with WAL mode
-        and appropriate timeouts.
+        and appropriate timeouts. Note that while the connection is configured
+        with check_same_thread=False, proper thread safety requires either:
+        1. One store instance per thread, OR
+        2. External synchronization around database operations
 
         Returns:
             SQLite database connection
         """
         if self._conn is None:
-            # Use check_same_thread=False for better concurrency support
-            # Note: Callers are responsible for thread safety
+            # Use check_same_thread=False to allow connection sharing
+            # WARNING: This does not make the store thread-safe. See class docstring.
             self._conn = sqlite3.connect(
                 self.db_path,
                 timeout=30.0,  # Wait up to 30 seconds for locks
@@ -55,7 +69,7 @@ class SQLiteStore(StateStore):
             )
             self._conn.row_factory = sqlite3.Row
 
-            # Enable Write-Ahead Logging for better concurrent access
+            # Enable Write-Ahead Logging for better concurrent read access
             self._conn.execute("PRAGMA journal_mode=WAL")
 
             # Enable foreign keys
