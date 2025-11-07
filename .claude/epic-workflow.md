@@ -176,11 +176,140 @@ Before pushing an epic:
 
 - [ ] All features implemented
 - [ ] All tests passing
-- [ ] Type checking passing
-- [ ] Linting passing
+- [ ] Type checking passing (mypy)
+- [ ] Linting passing (ruff)
 - [ ] Documentation updated
+- [ ] PR description created (see below)
 - [ ] CHANGELOG updated (if applicable)
 - [ ] Conventional commit format on all commits
+
+## Quality Gates (REQUIRED)
+
+Every epic MUST pass these quality gates before being pushed:
+
+### 1. Tests Must Pass
+```bash
+uv run pytest tests/
+# Expected: All tests pass, skips are acceptable
+```
+
+### 2. Type Checking Must Pass (mypy)
+```bash
+uv run mypy src/questfoundry/<your-module>/
+# Expected: No errors in new code
+# Note: Pre-existing errors in other modules are acceptable
+```
+
+### 3. Linting Must Pass (ruff)
+```bash
+uv run ruff check src/questfoundry/<your-module>/ tests/<your-module>/
+# Expected: No errors
+# Use: uv run ruff check --fix . to auto-fix issues
+```
+
+### 4. Code Formatting (ruff format)
+```bash
+uv run ruff format src/questfoundry/<your-module>/ tests/<your-module>/
+# All code should be formatted before commit
+```
+
+**IMPORTANT**: If any quality gate fails, fix the issues before pushing. Do not push failing code.
+
+## Creating Epic Documentation
+
+Every epic should have comprehensive documentation for the pull request.
+
+### PR Description Template
+
+Create a file in `.claude/pr-description-epic-<number>.md` with this structure:
+
+````markdown
+# Epic X: [Epic Name]
+
+## Overview
+Brief description of the epic and its goals.
+
+## Features Implemented
+
+### X.1: [Feature Name]
+- Description of feature
+- Key components
+- Important methods/classes
+
+**Key Methods:**
+- `method_name()` - Description
+
+### X.2: [Feature Name]
+...
+
+## Infrastructure Improvements
+Any improvements to shared infrastructure (e.g., database API)
+
+## Code Quality
+
+### Validation Results
+- ✅ **XXX tests passing, X skipped**
+- ✅ **Ruff linting clean**
+- ✅ **Mypy type checking clean**
+
+### Standards Met
+- ✅ Encapsulation (list specifics)
+- ✅ Performance (list improvements)
+- ✅ Security (list measures)
+- ✅ Code Standards (list what was followed)
+
+## Testing
+
+### Test Coverage: XX new tests
+- **test_module.py** - X tests for feature
+- Summary of test categories
+
+## API Examples
+
+```python
+# Example usage of new features
+```
+
+## File Changes
+
+### New Files (X)
+- List new files
+
+### Modified Files (X)
+- List modified files with reason
+
+## Dependencies
+
+- **Required**: Previous epics
+- **Python**: Version requirements
+- **External**: Any new dependencies
+
+## Breaking Changes
+
+List any breaking changes or "None"
+
+## Future Enhancements
+
+- List planned future work that builds on this
+
+---
+
+**Ready for merge** - All quality gates passing.
+````
+
+### Example
+
+See `.claude/pr-description-epic-10.md` for a complete example.
+
+### Using the Template
+
+1. Copy the template above
+2. Fill in all sections with epic-specific details
+3. Save as `.claude/pr-description-epic-<number>.md`
+4. Copy content to GitHub PR description when creating PR
+5. Keep the file for documentation reference
+
+**Tip**: Use four backticks (````) to fence code blocks within the markdown to preserve formatting.
 
 ## Branch Cleanup
 

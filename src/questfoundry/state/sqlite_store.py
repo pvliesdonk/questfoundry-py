@@ -500,6 +500,115 @@ class SQLiteStore(StateStore):
 
         return snapshots
 
+    def save_or_replace_snapshot(self, snapshot: SnapshotInfo) -> None:
+        """
+        Save or replace snapshot metadata.
+
+        Unlike save_snapshot(), this allows replacing existing snapshots.
+        Useful for import operations.
+
+        Args:
+            snapshot: Snapshot to save
+        """
+        conn = self._get_connection()
+
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO snapshots
+            (snapshot_id, tu_id, created, description, metadata)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                snapshot.snapshot_id,
+                snapshot.tu_id,
+                snapshot.created.isoformat(),
+                snapshot.description,
+                json.dumps(snapshot.metadata),
+            ),
+        )
+
+        # Log to history
+        changes = {
+            "tu_id": snapshot.tu_id,
+            "description": snapshot.description,
+            "metadata": snapshot.metadata,
+        }
+        self._log_history("snapshot", snapshot.snapshot_id, "upsert", changes)
+        conn.commit()
+
+    def get_artifacts_by_snapshot_id(self, snapshot_id: str) -> list[Artifact]:
+        """
+        Get all artifacts associated with a snapshot.
+
+        Retrieves artifacts that explicitly reference the snapshot ID
+        in their metadata.
+
+        Args:
+            snapshot_id: Snapshot ID
+
+        Returns:
+            List of artifacts
+        """
+        conn = self._get_connection()
+        cursor = conn.execute(
+            """
+            SELECT artifact_id, artifact_type, data, metadata, created, modified
+            FROM artifacts
+            WHERE json_extract(metadata, '$.snapshot_id') = ?
+            ORDER BY modified DESC
+            """,
+            (snapshot_id,),
+        )
+
+        artifacts = []
+        for row in cursor.fetchall():
+            artifact = Artifact(
+                type=row["artifact_type"],
+                data=json.loads(row["data"]),
+                metadata=json.loads(row["metadata"]),
+            )
+            artifacts.append(artifact)
+
+        return artifacts
+
+    def get_artifacts_by_ids(self, artifact_ids: list[str]) -> list[Artifact]:
+        """
+        Get multiple artifacts by IDs in a single query.
+
+        This is more efficient than calling get_artifact() in a loop.
+
+        Args:
+            artifact_ids: List of artifact IDs to retrieve
+
+        Returns:
+            List of artifacts (may be fewer than requested if some don't exist)
+        """
+        if not artifact_ids:
+            return []
+
+        conn = self._get_connection()
+
+        # Build parameterized query with correct number of placeholders
+        placeholders = ",".join("?" * len(artifact_ids))
+        query = f"""
+            SELECT artifact_id, artifact_type, data, metadata
+            FROM artifacts
+            WHERE artifact_id IN ({placeholders})
+        """
+
+        cursor = conn.execute(query, artifact_ids)
+
+        artifacts = []
+        for row in cursor.fetchall():
+            artifact = Artifact(
+                type=row["artifact_type"],
+                data=json.loads(row["data"]),
+                metadata=json.loads(row["metadata"]),
+            )
+            artifacts.append(artifact)
+
+        return artifacts
+
     def _log_history(
         self, entity_type: str, entity_id: str, action: str, changes: dict[str, Any]
     ) -> None:
