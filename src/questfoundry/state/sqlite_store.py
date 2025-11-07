@@ -36,12 +36,34 @@ class SQLiteStore(StateStore):
         self._conn: sqlite3.Connection | None = None
 
     def _get_connection(self) -> sqlite3.Connection:
-        """Get or create database connection"""
+        """
+        Get or create database connection.
+
+        Configures connection for optimal concurrent access with WAL mode
+        and appropriate timeouts.
+
+        Returns:
+            SQLite database connection
+        """
         if self._conn is None:
-            self._conn = sqlite3.connect(self.db_path)
+            # Use check_same_thread=False for better concurrency support
+            # Note: Callers are responsible for thread safety
+            self._conn = sqlite3.connect(
+                self.db_path,
+                timeout=30.0,  # Wait up to 30 seconds for locks
+                check_same_thread=False,
+            )
             self._conn.row_factory = sqlite3.Row
+
+            # Enable Write-Ahead Logging for better concurrent access
+            self._conn.execute("PRAGMA journal_mode=WAL")
+
             # Enable foreign keys
             self._conn.execute("PRAGMA foreign_keys = ON")
+
+            # Commit pragma changes
+            self._conn.commit()
+
         return self._conn
 
     def close(self) -> None:
