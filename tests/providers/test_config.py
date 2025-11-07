@@ -72,7 +72,9 @@ def test_config_missing_env_var(sample_config_file, monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
 
     # Should raise ValueError when trying to load config with missing env var
-    with pytest.raises(ValueError, match="Environment variable 'OPENAI_API_KEY' is not set"):
+    with pytest.raises(
+        ValueError, match="Environment variable 'OPENAI_API_KEY' is not set"
+    ):
         ProviderConfig(sample_config_file)
 
 

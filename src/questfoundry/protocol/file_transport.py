@@ -108,7 +108,7 @@ class FileTransport(Transport):
             if message_file.exists():
                 message_file.replace(error_path)
         except FileNotFoundError:
-            # File was moved by another process - this is expected in concurrent scenarios
+            # File was moved by another process - expected in concurrent scenarios
             logger.debug(
                 "Could not move %s to error directory: already moved",
                 message_file.name,
@@ -171,7 +171,7 @@ class FileTransport(Transport):
                     )
 
             except FileNotFoundError:
-                # File was deleted/moved during processing - expected in concurrent scenarios
+                # File deleted/moved during processing - expected in concurrent mode
                 logger.debug(
                     "Message file %s not found during processing (concurrent access)",
                     message_file.name,
