@@ -232,8 +232,9 @@ class Role(ABC):
         if len(artifacts) > MAX_ARTIFACTS_IN_CONTEXT:
             truncated_count = len(artifacts) - MAX_ARTIFACTS_IN_CONTEXT
 
-        formatted = ["# Available Artifacts\n"]
-        total_size = len(formatted[0])
+        header_text = "# Available Artifacts\n"
+        formatted = [header_text]
+        total_size = len(header_text)
 
         for artifact in artifacts_to_format:
             # Get title from data.header.short_name or metadata
