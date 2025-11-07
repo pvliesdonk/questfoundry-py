@@ -181,11 +181,20 @@ class ProviderConfig:
 
         Returns:
             String with variables substituted
+
+        Raises:
+            ValueError: If a referenced environment variable is not set
         """
 
         def replace_match(match: re.Match[str]) -> str:
             env_var = match.group(1)
-            return os.environ.get(env_var, "")
+            env_value = os.environ.get(env_var)
+            if env_value is None:
+                raise ValueError(
+                    f"Environment variable '{env_var}' is not set. "
+                    f"Please set it before loading configuration."
+                )
+            return env_value
 
         return self.ENV_VAR_PATTERN.sub(replace_match, value)
 
