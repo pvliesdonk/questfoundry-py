@@ -152,7 +152,7 @@ class StyleBar(QualityBar):
             return issues
 
         # Check motif presence across sections
-        motif_usage: Counter = Counter()
+        motif_usage: Counter[str] = Counter()
 
         for section in sections:
             text = section.data.get("text", section.data.get("body", ""))
@@ -163,7 +163,7 @@ class StyleBar(QualityBar):
                 if isinstance(motif, str):
                     pattern = motif
                 elif isinstance(motif, dict):
-                    pattern = motif.get("pattern", motif.get("name", ""))
+                    pattern = str(motif.get("pattern") or motif.get("name") or "")
                 else:
                     continue
 
@@ -173,7 +173,7 @@ class StyleBar(QualityBar):
         # Warn if key motifs not used
         for motif in motifs:
             if isinstance(motif, dict):
-                name = motif.get("name", motif.get("pattern", ""))
+                name = str(motif.get("name") or motif.get("pattern") or "")
                 if motif.get("required") and motif_usage[name] == 0:
                     issues.append(
                         QualityIssue(
