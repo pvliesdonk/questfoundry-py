@@ -243,7 +243,7 @@ ws = WorkspaceManager("./project")
 ws.init_workspace("My Adventure")
 
 # 2. Create content
-hook = Artifact(type="hook_card", data={...})
+hook = Artifact(type="hook_card", data={"hook_id": "HOOK-001", ...})
 ws.save_hot_artifact(hook)
 
 # 3. Validate
@@ -252,6 +252,7 @@ report = gk.run_gatecheck(ws.list_hot_artifacts())
 
 # 4. Promote
 if report.passed:
+    hook_id = hook.data.get("hook_id")
     ws.promote_to_cold(hook_id)
 
 # 5. Create snapshot
@@ -323,7 +324,7 @@ Built with:
 - [Pydantic](https://pydantic.dev/) for data validation
 - [SQLite](https://www.sqlite.org/) for cold storage
 - [OpenAI](https://openai.com/), [Ollama](https://ollama.ai/) for LLM providers
-- [UV](https://github.com/astral-sh/uv) for package management
+- [UV](https://docs.astral.sh/uv/) for package management
 
 ---
 

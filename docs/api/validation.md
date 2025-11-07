@@ -491,7 +491,7 @@ if report.merge_safe:
     print("✓ Safe to promote to cold")
     # Promote artifacts
     for artifact in artifacts:
-        artifact_id = artifact.data.get("id")
+        artifact_id = artifact.metadata.get("id")
         if artifact_id:
             ws.promote_to_cold(artifact_id)
 else:

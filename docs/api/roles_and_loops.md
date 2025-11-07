@@ -65,12 +65,16 @@ loop_registry = LoopRegistry(role_registry)
 # Get loop
 story_spark = loop_registry.get_loop("story_spark")
 
+# Instantiate required roles
+showrunner = role_registry.get_role("showrunner")
+lore_weaver = role_registry.get_role("lore_weaver")
+
 # Create context
 loop_context = LoopContext(
     loop_id="story_spark",
     project_id="dragon-quest",
     workspace=ws,
-    role_instances={"showrunner": showrunner, "lore_weaver": lw},
+    role_instances={"showrunner": showrunner, "lore_weaver": lore_weaver},
     project_metadata={"name": "Dragon Quest"}
 )
 

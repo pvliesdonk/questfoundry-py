@@ -158,13 +158,14 @@ tu = TUState(
 ws.save_tu(tu)
 
 # Create snapshot
+snapshot_id = "SNAP-2025-11-07-001"
 snapshot = SnapshotInfo(
-    snapshot_id="SNAP-2025-11-07-001",
+    snapshot_id=snapshot_id,
     tu_id=tu.tu_id,
     description="First hook complete"
 )
 ws.save_snapshot(snapshot)
-print(f"Created snapshot: {snapshot.snapshot_id}")
+print(f"Created snapshot: {snapshot_id}")
 ```
 
 ### Step 5: Generate a View and Export
@@ -172,9 +173,10 @@ print(f"Created snapshot: {snapshot.snapshot_id}")
 ```python
 from questfoundry.export import ViewGenerator, BookBinder
 
-# Generate player-safe view
+# Generate player-safe view (using snapshot_id from previous step)
+snapshot_id = "SNAP-2025-11-07-001"
 view_gen = ViewGenerator(ws.cold_store)
-view = view_gen.generate_view(snapshot.snapshot_id)
+view = view_gen.generate_view(snapshot_id)
 print(f"View contains {len(view.artifacts)} player-safe artifacts")
 
 # Render to HTML
@@ -225,9 +227,9 @@ print(response)
 ### Learn More
 
 - [API Reference](../api/) - Detailed API documentation
-- [State Management Guide](state-management.md) - Working with hot/cold storage
-- [Provider Guide](providers.md) - Configuring LLM providers
-- [Export Guide](export-and-views.md) - Generating player-facing content
+- [State Management API](../api/state.md) - Working with hot/cold storage
+- [Provider API](../api/providers.md) - Configuring LLM providers
+- [Export API](../api/export.md) - Generating player-facing content
 
 ### Explore Advanced Features
 
@@ -346,10 +348,10 @@ ws.close()
 
 Now that you've completed the getting started guide, explore:
 
-1. **[State Management](state-management.md)** - Master hot/cold workflow
-2. **[Providers](providers.md)** - Configure LLM and image providers
-3. **[Validation](validation.md)** - Quality gates and gatekeeping
-4. **[Export](export-and-views.md)** - Generate player-facing content
-5. **[Architecture](../ARCHITECTURE.md)** - Understand the system design
+1. **[State Management](../api/state.md)** - Master hot/cold workflow
+2. **[Providers](../api/providers.md)** - Configure LLM and image providers
+3. **[Validation](../api/validation.md)** - Quality gates and gatekeeping
+4. **[Export](../api/export.md)** - Generate player-facing content
+5. **[Architecture](../../ARCHITECTURE.md)** - Understand the system design
 
 Happy quest building! 🎮✨

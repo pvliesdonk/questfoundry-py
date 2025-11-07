@@ -579,7 +579,7 @@ providers:
 
 **Installation:**
 ```bash
-pip install questfoundry[openai]
+pip install questfoundry-py[openai]
 ```
 
 **Example:**
@@ -633,7 +633,7 @@ providers:
 
 **Installation:**
 ```bash
-pip install questfoundry[ollama]
+pip install questfoundry-py[ollama]
 # Also requires Ollama running locally
 ```
 
@@ -675,7 +675,7 @@ providers:
 
 **Installation:**
 ```bash
-pip install questfoundry[openai]
+pip install questfoundry-py[openai]
 ```
 
 **Example:**
@@ -714,7 +714,7 @@ providers:
 
 **Installation:**
 ```bash
-pip install questfoundry[image]
+pip install questfoundry-py[image]
 # Also requires Automatic1111 Web UI running locally
 ```
 
