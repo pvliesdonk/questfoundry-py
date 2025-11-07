@@ -220,7 +220,10 @@ class Role(ABC):
             # Get title from data.header.short_name or metadata
             title = "Unknown"
             if isinstance(artifact.data, dict):
-                if "header" in artifact.data and isinstance(artifact.data["header"], dict):
+                has_header = "header" in artifact.data and isinstance(
+                    artifact.data["header"], dict
+                )
+                if has_header:
                     title = artifact.data["header"].get("short_name", "Unknown")
                 elif "title" in artifact.data:
                     title = artifact.data.get("title", "Unknown")

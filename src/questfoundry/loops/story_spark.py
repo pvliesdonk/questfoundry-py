@@ -3,7 +3,7 @@
 from typing import Any
 
 from ..models.artifact import Artifact
-from ..roles.base import Role, RoleContext, RoleResult
+from ..roles.base import Role, RoleContext
 from .base import Loop, LoopContext, LoopResult, LoopStep, StepStatus
 from .registry import LoopMetadata
 
@@ -164,7 +164,10 @@ class StorySparkLoop(Loop):
                                 artifacts_modified=artifacts_modified,
                                 steps_completed=steps_completed,
                                 steps_failed=steps_failed,
-                                error=f"Max iterations ({self.max_iterations}) reached, quality not achieved",
+                                error=(
+                                    f"Max iterations ({self.max_iterations}) "
+                                    "reached, quality not achieved"
+                                ),
                             )
                     else:
                         # Other step failed - abort
@@ -253,7 +256,11 @@ class StorySparkLoop(Loop):
                 artifacts.append(artifact)
                 self.context.artifacts.append(artifact)
 
-            return {"success": True, "artifacts": artifacts, "hooks": self.hooks_generated}
+            return {
+                "success": True,
+                "artifacts": artifacts,
+                "hooks": self.hooks_generated,
+            }
         else:
             raise RuntimeError(f"Hook generation failed: {result.error}")
 
@@ -418,18 +425,25 @@ class StorySparkLoop(Loop):
         Returns:
             Loop result indicating iteration needed
         """
+        completed_steps = [
+            s for s in self.steps if s.status == StepStatus.COMPLETED
+        ]
         return LoopResult(
             success=False,
             loop_id=self.metadata.loop_id,
             artifacts_created=artifacts_created,
             artifacts_modified=artifacts_modified,
-            steps_completed=len([s for s in self.steps if s.status == StepStatus.COMPLETED]),
+            steps_completed=len(completed_steps),
             steps_failed=1,
             error="Pre-gate check failed, iteration needed",
             metadata={
                 "iterations": self.iteration_count,
                 "refinement_needed": True,
-                "gate_status": failed_step.result.get("status") if failed_step.result else "unknown",
+                "gate_status": (
+                    failed_step.result.get("status")
+                    if failed_step.result
+                    else "unknown"
+                ),
             },
         )
 

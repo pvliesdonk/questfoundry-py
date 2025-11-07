@@ -1,7 +1,6 @@
 """Plotwright role implementation."""
 
 import json
-from typing import Any
 
 from .base import Role, RoleContext, RoleResult
 

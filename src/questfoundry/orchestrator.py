@@ -256,7 +256,8 @@ class Orchestrator:
         Raises:
             RuntimeError: If loop ID cannot be extracted
         """
-        # Look for patterns like "Selected Loop: story_spark" or "**Selected Loop**: story_spark"
+        # Look for patterns like "Selected Loop: story_spark"
+        # or "**Selected Loop**: story_spark"
         import re
 
         patterns = [

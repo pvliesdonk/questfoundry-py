@@ -1,13 +1,12 @@
 """Tests for role system."""
 
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
 
 from questfoundry.models.artifact import Artifact
 from questfoundry.providers.base import TextProvider
-from questfoundry.roles.base import Role, RoleContext, RoleResult
+from questfoundry.roles.base import RoleContext
 from questfoundry.roles.gatekeeper import Gatekeeper
 from questfoundry.roles.plotwright import Plotwright
 from questfoundry.roles.scene_smith import SceneSmith
@@ -355,7 +354,11 @@ def test_scene_smith_draft_scene(mock_provider, spec_path):
         artifacts=[
             Artifact(
                 type="tu_brief",
-                data={"title": "Section Brief", "goal": "Test goal", "beats": ["Beat 1", "Beat 2"]},
+                data={
+                    "title": "Section Brief",
+                    "goal": "Test goal",
+                    "beats": ["Beat 1", "Beat 2"],
+                },
                 metadata={"id": "BRIEF-001"},
             )
         ],
@@ -447,7 +450,10 @@ def test_role_context_complete_workflow(mock_provider, spec_path):
 
     # 3. Gatekeeper checks
     gatekeeper = Gatekeeper(provider=mock_provider, spec_path=spec_path)
-    mock_provider.response = '{"status": "pass", "blockers": [], "quick_wins": [], "review_needed": []}'
+    mock_provider.response = (
+        '{"status": "pass", "blockers": [], '
+        '"quick_wins": [], "review_needed": []}'
+    )
 
     gate_context = RoleContext(
         task="pre_gate",

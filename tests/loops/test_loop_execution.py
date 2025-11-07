@@ -8,7 +8,6 @@ import pytest
 
 from questfoundry.loops.base import LoopContext, LoopStep, StepStatus
 from questfoundry.loops.story_spark import StorySparkLoop
-from questfoundry.models.artifact import Artifact
 from questfoundry.providers.base import TextProvider
 from questfoundry.roles.gatekeeper import Gatekeeper
 from questfoundry.roles.plotwright import Plotwright
@@ -83,12 +82,18 @@ def mock_provider():
     """Fixture providing a mock text provider with predefined responses."""
     return MockTextProvider(
         responses={
-            "generate_hooks": '{"hooks": [{"title": "Test Hook", "summary": "A test hook", "tags": ["test"]}]}',
+            "generate_hooks": (
+                '{"hooks": [{"title": "Test Hook", '
+                '"summary": "A test hook", "tags": ["test"]}]}'
+            ),
             "create_topology": "Test topology content",
             "create_tu_brief": "Test TU brief content",
             "create_section_briefs": "Test section briefs content",
             "draft_scene": "Test scene content",
-            "pre_gate": '{"status": "pass", "blockers": [], "quick_wins": [], "review_needed": []}',
+            "pre_gate": (
+                '{"status": "pass", "blockers": [], '
+                '"quick_wins": [], "review_needed": []}'
+            ),
         }
     )
 
@@ -267,7 +272,8 @@ def test_story_spark_failed_step(loop_context):
     # Create provider that fails
     bad_provider = MockTextProvider(responses={"generate_hooks": "Invalid JSON"})
 
-    plotwright = Plotwright(provider=bad_provider, spec_path=loop_context.role_instances["plotwright"].spec_path)
+    spec_path = loop_context.role_instances["plotwright"].spec_path
+    plotwright = Plotwright(provider=bad_provider, spec_path=spec_path)
     loop_context.role_instances["plotwright"] = plotwright
 
     loop = StorySparkLoop(loop_context)
@@ -283,12 +289,18 @@ def test_story_spark_pre_gate_failure_iteration(loop_context):
     # Create provider that fails pre-gate
     provider = MockTextProvider(
         responses={
-            "generate_hooks": '{"hooks": [{"title": "Test", "summary": "Test", "tags": []}]}',
+            "generate_hooks": (
+                '{"hooks": [{"title": "Test", '
+                '"summary": "Test", "tags": []}]}'
+            ),
             "create_topology": "Topology",
             "create_tu_brief": "Brief",
             "create_section_briefs": "Briefs",
             "draft_scene": "Scene",
-            "pre_gate": '{"status": "fail", "blockers": ["Issue 1"], "quick_wins": [], "review_needed": []}',
+            "pre_gate": (
+                '{"status": "fail", "blockers": ["Issue 1"], '
+                '"quick_wins": [], "review_needed": []}'
+            ),
         }
     )
 
@@ -306,8 +318,11 @@ def test_story_spark_pre_gate_failure_iteration(loop_context):
 
     # Should fail due to pre-gate
     assert not result.success
-    assert "iteration needed" in result.error.lower() or "iterations" in result.error.lower()
-    assert result.metadata.get("refinement_needed") or result.metadata.get("iterations", 0) > 0
+    error_lower = result.error.lower()
+    assert "iteration needed" in error_lower or "iterations" in error_lower
+    has_refinement = result.metadata.get("refinement_needed")
+    has_iterations = result.metadata.get("iterations", 0) > 0
+    assert has_refinement or has_iterations
 
 
 def test_story_spark_context_summary(loop_context):

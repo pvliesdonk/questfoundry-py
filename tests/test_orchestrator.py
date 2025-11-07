@@ -2,7 +2,6 @@
 
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
 
@@ -38,20 +37,37 @@ class MockTextProvider(TextProvider):
         if "task: select loop" in prompt_lower:
             return self.responses.get(
                 "select_loop",
-                "**Selected Loop**: story_spark\n\nRationale: This is the foundational loop...",
+                (
+                    "**Selected Loop**: story_spark\n\n"
+                    "Rationale: This is the foundational loop..."
+                ),
             )
 
         # Mock loop execution responses
         if "# task: pre-gate check" in prompt_lower:
-            return self.responses.get("pre_gate", '{"status": "pass", "blockers": [], "quick_wins": [], "review_needed": []}')
+            return self.responses.get(
+                "pre_gate",
+                (
+                    '{"status": "pass", "blockers": [], '
+                    '"quick_wins": [], "review_needed": []}'
+                ),
+            )
         elif "# task: generate quest hooks" in prompt_lower:
-            return self.responses.get("generate_hooks", '{"hooks": [{"title": "Test Hook", "summary": "A test hook", "tags": ["test"]}]}')
+            return self.responses.get(
+                "generate_hooks",
+                (
+                    '{"hooks": [{"title": "Test Hook", '
+                    '"summary": "A test hook", "tags": ["test"]}]}'
+                ),
+            )
         elif "# task: design narrative topology" in prompt_lower:
             return self.responses.get("create_topology", "Test topology content")
         elif "# task: create tu brief" in prompt_lower:
             return self.responses.get("create_tu_brief", "Test TU brief content")
         elif "# task: create section briefs" in prompt_lower:
-            return self.responses.get("create_section_briefs", "Test section briefs content")
+            return self.responses.get(
+                "create_section_briefs", "Test section briefs content"
+            )
         elif "# task: draft scene" in prompt_lower:
             return self.responses.get("draft_scene", "Test scene content")
 

@@ -80,7 +80,12 @@ class LoopRegistry:
                 description="Introduce or reshape narrative structure",
                 typical_duration="2-4 hours",
                 primary_roles=["plotwright", "scene_smith"],
-                consulted_roles=["style_lead", "lore_weaver", "codex_curator", "gatekeeper"],
+                consulted_roles=[
+                    "style_lead",
+                    "lore_weaver",
+                    "codex_curator",
+                    "gatekeeper",
+                ],
                 entry_conditions=[
                     "New chapter/act/subplot needed",
                     "Restructure request",
@@ -93,7 +98,12 @@ class LoopRegistry:
                     "Gatekeeper preview passed",
                 ],
                 output_artifacts=["tu_brief", "hook_card", "canon_pack"],
-                inputs=["Cold snapshot", "Prior topology notes", "Open hooks", "QA findings"],
+                inputs=[
+                    "Cold snapshot",
+                    "Prior topology notes",
+                    "Open hooks",
+                    "QA findings",
+                ],
                 tags=["structure", "content", "foundation"],
             )
         )
@@ -126,7 +136,12 @@ class LoopRegistry:
                     "Ready for Lore Deepening",
                 ],
                 output_artifacts=["hook_card"],
-                inputs=["Hook cards in Hot", "Topology notes", "Section drafts", "QA notes"],
+                inputs=[
+                    "Hook cards in Hot",
+                    "Topology notes",
+                    "Section drafts",
+                    "QA notes",
+                ],
                 tags=["planning", "organization"],
             )
         )
@@ -139,7 +154,12 @@ class LoopRegistry:
                 description="Canonize hooks into world lore",
                 typical_duration="2-3 hours",
                 primary_roles=["lore_weaver"],
-                consulted_roles=["researcher", "codex_curator", "plotwright", "gatekeeper"],
+                consulted_roles=[
+                    "researcher",
+                    "codex_curator",
+                    "plotwright",
+                    "gatekeeper",
+                ],
                 entry_conditions=[
                     "After Hook Harvest",
                     "Canon gaps identified",
