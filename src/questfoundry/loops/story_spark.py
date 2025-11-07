@@ -466,7 +466,7 @@ class StorySparkLoop(Loop):
 
         # For pre_gate_check, validate based on status
         if step.step_id == "pre_gate_check":
-            return result.get("passed", False)
+            return bool(result.get("passed", False))
 
         # For other steps, check if artifacts were created
         if "artifacts" in result:

@@ -8,8 +8,9 @@ from .loops.base import Loop, LoopContext, LoopResult
 from .loops.registry import LoopRegistry
 from .models.artifact import Artifact
 from .providers.base import TextProvider
+from .providers.config import ProviderConfig
 from .providers.registry import ProviderRegistry
-from .roles.base import RoleContext
+from .roles.base import Role, RoleContext
 from .roles.registry import RoleRegistry
 from .state.workspace import WorkspaceManager
 
@@ -50,16 +51,18 @@ class Orchestrator:
         self.spec_path = spec_path or Path.cwd() / "spec"
 
         # Initialize registries
-        self.provider_registry = provider_registry or ProviderRegistry(config={})
+        self.provider_registry = provider_registry or ProviderRegistry(
+            config=ProviderConfig()
+        )
         self.role_registry = role_registry or RoleRegistry(
             self.provider_registry, spec_path=self.spec_path
         )
         self.loop_registry = loop_registry or LoopRegistry(spec_path=self.spec_path)
 
-        # Initialize showrunner and provider
-        self.showrunner = None
-        self.provider = None
-        self.provider_name = None
+        # Initialize showrunner and provider (type annotations for mypy)
+        self.showrunner: Role | None = None
+        self.provider: TextProvider | None = None
+        self.provider_name: str | None = None
 
     def initialize(
         self,

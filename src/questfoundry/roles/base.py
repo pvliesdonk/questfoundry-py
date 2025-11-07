@@ -366,7 +366,8 @@ class Role(ABC):
             # Extract content between ``` and ```
             json_match = response.split("```")[1].split("```")[0]
 
-        return json.loads(json_match.strip())
+        result: dict[str, Any] = json.loads(json_match.strip())
+        return result
 
     def __repr__(self) -> str:
         """String representation of the role."""
