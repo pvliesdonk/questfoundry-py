@@ -4,7 +4,6 @@ Exports cold snapshots as YAML files in a human-readable directory structure
 suitable for version control and diffing.
 """
 
-import json
 from datetime import datetime
 from pathlib import Path
 
@@ -38,6 +37,9 @@ class GitExporter:
         >>> exporter = GitExporter(cold_store)
         >>> exporter.export_snapshot("SNAP-001", "/path/to/export")
     """
+
+    # Export format version
+    EXPORTER_VERSION = "1.0.0"
 
     # Mapping of artifact types to subdirectories
     TYPE_DIRECTORIES = {
@@ -163,22 +165,8 @@ class GitExporter:
             metadata=manifest["snapshot"].get("metadata", {}),
         )
 
-        conn = self.cold_store._get_connection()
-        conn.execute(
-            """
-            INSERT OR REPLACE INTO snapshots
-            (snapshot_id, tu_id, created, description, metadata)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                snapshot.snapshot_id,
-                snapshot.tu_id,
-                snapshot.created.isoformat(),
-                snapshot.description,
-                json.dumps(snapshot.metadata),
-            ),
-        )
-        conn.commit()
+        # Save snapshot (allows replacement for import)
+        self.cold_store.save_or_replace_snapshot(snapshot)
 
         # Import artifacts
         for artifact_type, artifact_ids in manifest["artifacts"].items():
@@ -274,7 +262,7 @@ class GitExporter:
             },
             "export": {
                 "exported_at": datetime.now().isoformat(),
-                "exporter_version": "1.0.0",
+                "exporter_version": self.EXPORTER_VERSION,
             },
             "artifacts": artifact_index,
             "summary": {
@@ -318,27 +306,12 @@ class GitExporter:
         Raises:
             ValueError: If snapshot not found
         """
-        conn = self.cold_store._get_connection()
-        cursor = conn.execute(
-            """
-            SELECT snapshot_id, tu_id, created, description, metadata
-            FROM snapshots
-            WHERE snapshot_id = ?
-            """,
-            (snapshot_id,),
-        )
-        row = cursor.fetchone()
+        snapshot = self.cold_store.get_snapshot(snapshot_id)
 
-        if not row:
+        if not snapshot:
             raise ValueError(f"Snapshot not found: {snapshot_id}")
 
-        return SnapshotInfo(
-            snapshot_id=row["snapshot_id"],
-            tu_id=row["tu_id"],
-            created=datetime.fromisoformat(row["created"]),
-            description=row["description"],
-            metadata=json.loads(row["metadata"]),
-        )
+        return snapshot
 
     def _get_snapshot_artifacts(
         self, snapshot_id: str, include_hot: bool = False
@@ -348,41 +321,22 @@ class GitExporter:
 
         Args:
             snapshot_id: Snapshot ID
-            include_hot: Whether to include hot artifacts
+            include_hot: Whether to include hot artifacts (default: False)
+                        If False, only cold artifacts are returned.
+                        If True, both hot and cold artifacts are returned.
 
         Returns:
             List of artifacts
         """
-        conn = self.cold_store._get_connection()
+        # Get all artifacts for this snapshot
+        artifacts = self.cold_store.get_artifacts_by_snapshot_id(snapshot_id)
 
-        # Build query based on temperature filter
-        if include_hot:
-            query = """
-                SELECT artifact_id, artifact_type, data, metadata, created, modified
-                FROM artifacts
-                WHERE json_extract(metadata, '$.snapshot_id') = ?
-                   OR json_extract(metadata, '$.temperature') = 'cold'
-                ORDER BY artifact_type, artifact_id
-            """
-        else:
-            query = """
-                SELECT artifact_id, artifact_type, data, metadata, created, modified
-                FROM artifacts
-                WHERE json_extract(metadata, '$.temperature') = 'cold'
-                  AND (json_extract(metadata, '$.snapshot_id') = ?
-                       OR json_extract(metadata, '$.snapshot_id') IS NULL)
-                ORDER BY artifact_type, artifact_id
-            """
-
-        cursor = conn.execute(query, (snapshot_id,))
-
-        artifacts = []
-        for row in cursor.fetchall():
-            artifact = Artifact(
-                type=row["artifact_type"],
-                data=json.loads(row["data"]),
-                metadata=json.loads(row["metadata"]),
-            )
-            artifacts.append(artifact)
+        # If not including hot, filter to only cold artifacts
+        if not include_hot:
+            artifacts = [
+                a
+                for a in artifacts
+                if a.metadata.get("temperature") == "cold"
+            ]
 
         return artifacts

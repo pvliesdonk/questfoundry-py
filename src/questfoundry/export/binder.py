@@ -3,6 +3,7 @@
 Transforms view artifacts into player-facing formats (HTML, Markdown, etc.)
 """
 
+import html
 from pathlib import Path
 from typing import Any
 
@@ -369,9 +370,11 @@ class BookBinder:
                     if isinstance(item, dict):
                         parts.append(self._render_data_markdown(item, level + 1))
                     else:
-                        parts.append(f"{indent}- {item}")
+                        # Wrap in backticks to prevent markdown formatting
+                        parts.append(f"{indent}- `{item}`")
             else:
-                parts.append(f"{indent}**{key}:** {value}")
+                # Wrap in backticks to prevent markdown formatting
+                parts.append(f"{indent}**{key}:** `{value}`")
 
         return "\n".join(parts)
 
@@ -421,10 +424,4 @@ class BookBinder:
         Returns:
             Escaped text
         """
-        return (
-            text.replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace('"', "&quot;")
-            .replace("'", "&#39;")
-        )
+        return html.escape(text, quote=True)

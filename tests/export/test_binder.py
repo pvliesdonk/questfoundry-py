@@ -1,7 +1,6 @@
 """Tests for book binder functionality"""
 
 import tempfile
-from datetime import datetime
 from pathlib import Path
 
 import pytest

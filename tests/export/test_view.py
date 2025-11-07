@@ -8,7 +8,7 @@ import pytest
 
 from questfoundry.export import ViewGenerator
 from questfoundry.models.artifact import Artifact
-from questfoundry.state import ProjectInfo, SnapshotInfo, SQLiteStore
+from questfoundry.state import ProjectInfo, SQLiteStore
 
 
 @pytest.fixture

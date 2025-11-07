@@ -169,13 +169,9 @@ class ViewGenerator:
         # Get the view metadata
         data = view_artifact.data
 
-        # Reconstruct view by loading referenced artifacts
-        artifact_ids = data.get("artifact_ids", [])
-        view_artifacts = []
-        for artifact_id in artifact_ids:
-            artifact = self.cold_store.get_artifact(artifact_id)
-            if artifact:
-                view_artifacts.append(artifact)
+        # Reconstruct view by loading referenced artifacts in batch
+        artifact_ids = [aid for aid in data.get("artifact_ids", []) if aid]
+        view_artifacts = self.cold_store.get_artifacts_by_ids(artifact_ids)
 
         return ViewArtifact(
             view_id=data["view_id"],
@@ -198,29 +194,12 @@ class ViewGenerator:
         Raises:
             ValueError: If snapshot not found
         """
-        conn = self.cold_store._get_connection()
-        cursor = conn.execute(
-            """
-            SELECT snapshot_id, tu_id, created, description, metadata
-            FROM snapshots
-            WHERE snapshot_id = ?
-            """,
-            (snapshot_id,),
-        )
-        row = cursor.fetchone()
+        snapshot = self.cold_store.get_snapshot(snapshot_id)
 
-        if not row:
+        if not snapshot:
             raise ValueError(f"Snapshot not found: {snapshot_id}")
 
-        import json
-
-        return SnapshotInfo(
-            snapshot_id=row["snapshot_id"],
-            tu_id=row["tu_id"],
-            created=datetime.fromisoformat(row["created"]),
-            description=row["description"],
-            metadata=json.loads(row["metadata"]),
-        )
+        return snapshot
 
     def _get_snapshot_artifacts(self, snapshot_id: str) -> list[Artifact]:
         """
@@ -235,30 +214,7 @@ class ViewGenerator:
         Returns:
             List of artifacts
         """
-        # Get all artifacts with metadata referencing this snapshot
-        conn = self.cold_store._get_connection()
-        cursor = conn.execute(
-            """
-            SELECT artifact_id, artifact_type, data, metadata, created, modified
-            FROM artifacts
-            WHERE json_extract(metadata, '$.snapshot_id') = ?
-            ORDER BY modified DESC
-            """,
-            (snapshot_id,),
-        )
-
-        import json
-
-        artifacts = []
-        for row in cursor.fetchall():
-            artifact = Artifact(
-                type=row["artifact_type"],
-                data=json.loads(row["data"]),
-                metadata=json.loads(row["metadata"]),
-            )
-            artifacts.append(artifact)
-
-        return artifacts
+        return self.cold_store.get_artifacts_by_snapshot_id(snapshot_id)
 
     def _filter_player_safe(self, artifacts: list[Artifact]) -> list[Artifact]:
         """
