@@ -12,6 +12,12 @@ from ..providers.base import TextProvider
 # Maximum length for artifact value strings in formatted output
 MAX_ARTIFACT_VALUE_LENGTH = 500
 
+# Maximum number of artifacts to include in formatted output
+MAX_ARTIFACTS_IN_CONTEXT = 50
+
+# Maximum total size of formatted artifacts context (characters)
+MAX_FORMATTED_CONTEXT_SIZE = 50000
+
 
 @dataclass
 class RoleContext:
@@ -208,6 +214,9 @@ class Role(ABC):
         """
         Format artifacts for inclusion in prompt context.
 
+        Limits the number of artifacts and total context size to prevent
+        resource exhaustion attacks.
+
         Args:
             artifacts: List of artifacts to format
 
@@ -217,9 +226,15 @@ class Role(ABC):
         if not artifacts:
             return "No artifacts provided."
 
-        formatted = ["# Available Artifacts\n"]
+        # Limit number of artifacts to prevent excessive memory usage
+        artifacts_to_format = artifacts[:MAX_ARTIFACTS_IN_CONTEXT]
+        truncated_count = max(0, len(artifacts) - MAX_ARTIFACTS_IN_CONTEXT)
 
-        for artifact in artifacts:
+        header_text = "# Available Artifacts\n"
+        formatted = [header_text]
+        total_size = len(header_text)
+
+        for artifact in artifacts_to_format:
             # Get title from data.header.short_name or metadata
             title = "Unknown"
             if isinstance(artifact.data, dict):
@@ -231,24 +246,43 @@ class Role(ABC):
                 elif "title" in artifact.data:
                     title = artifact.data.get("title", "Unknown")
 
-            formatted.append(f"## {artifact.type}: {title}")
+            artifact_parts = [f"## {artifact.type}: {title}"]
 
             # Get ID from metadata
             artifact_id = artifact.artifact_id or "no-id"
-            formatted.append(f"ID: {artifact_id}")
+            artifact_parts.append(f"ID: {artifact_id}")
 
             # Include key fields from data
             if artifact.data:
-                formatted.append("\nData:")
+                artifact_parts.append("\nData:")
                 for key, value in artifact.data.items():
                     if key not in ("id", "title"):
                         # Truncate long values
                         str_value = str(value)
                         if len(str_value) > MAX_ARTIFACT_VALUE_LENGTH:
                             str_value = str_value[:MAX_ARTIFACT_VALUE_LENGTH] + "..."
-                        formatted.append(f"  {key}: {str_value}")
+                        artifact_parts.append(f"  {key}: {str_value}")
 
-            formatted.append("")  # Blank line between artifacts
+            artifact_parts.append("")  # Blank line between artifacts
+            artifact_text = "\n".join(artifact_parts)
+            artifact_text_len = len(artifact_text)
+
+            # Check if adding this artifact would exceed total size limit
+            if total_size + artifact_text_len > MAX_FORMATTED_CONTEXT_SIZE:
+                formatted.append(
+                    "\n[Additional artifacts omitted due to size limits]"
+                )
+                break
+
+            formatted.append(artifact_text)
+            total_size += artifact_text_len
+
+        # Add notice if artifacts were truncated
+        if truncated_count > 0:
+            formatted.append(
+                f"\n[Note: {truncated_count} additional artifact(s) omitted. "
+                f"Maximum is {MAX_ARTIFACTS_IN_CONTEXT} artifacts.]"
+            )
 
         return "\n".join(formatted)
 

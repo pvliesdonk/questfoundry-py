@@ -18,6 +18,17 @@ class SQLiteStore(StateStore):
     Provides cold storage with ACID transactions, JSON querying,
     and audit history. Suitable for archived/finalized project state.
 
+    Thread Safety:
+        This class is NOT thread-safe by default. Each thread should create
+        its own SQLiteStore instance. While check_same_thread=False is enabled
+        for the connection, SQLite itself has limitations with concurrent writes.
+        The WAL mode improves concurrent read performance, but writes are still
+        serialized by SQLite's locking mechanism.
+
+        For multi-threaded applications:
+        - Use separate store instances per thread, OR
+        - Implement external synchronization (locks/queues) around write operations
+
     Example:
         >>> store = SQLiteStore("my_game.qfproj")
         >>> store.init_database()
@@ -36,12 +47,37 @@ class SQLiteStore(StateStore):
         self._conn: sqlite3.Connection | None = None
 
     def _get_connection(self) -> sqlite3.Connection:
-        """Get or create database connection"""
+        """
+        Get or create database connection.
+
+        Configures connection for optimal concurrent access with WAL mode
+        and appropriate timeouts. Note that while the connection is configured
+        with check_same_thread=False, proper thread safety requires either:
+        1. One store instance per thread, OR
+        2. External synchronization around database operations
+
+        Returns:
+            SQLite database connection
+        """
         if self._conn is None:
-            self._conn = sqlite3.connect(self.db_path)
+            # Use check_same_thread=False to allow connection sharing
+            # WARNING: This does not make the store thread-safe. See class docstring.
+            self._conn = sqlite3.connect(
+                self.db_path,
+                timeout=30.0,  # Wait up to 30 seconds for locks
+                check_same_thread=False,
+            )
             self._conn.row_factory = sqlite3.Row
+
+            # Enable Write-Ahead Logging for better concurrent read access
+            self._conn.execute("PRAGMA journal_mode=WAL")
+
             # Enable foreign keys
             self._conn.execute("PRAGMA foreign_keys = ON")
+
+            # Commit pragma changes
+            self._conn.commit()
+
         return self._conn
 
     def close(self) -> None:

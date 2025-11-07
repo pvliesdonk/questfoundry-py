@@ -1,6 +1,7 @@
 """File-based transport for QuestFoundry protocol messages"""
 
 import json
+import logging
 import tempfile
 import uuid
 from datetime import datetime
@@ -11,6 +12,9 @@ from pydantic import ValidationError
 
 from .envelope import Envelope
 from .transport import Transport
+
+# Set up logger for this module
+logger = logging.getLogger(__name__)
 
 
 class FileTransport(Transport):
@@ -91,13 +95,39 @@ class FileTransport(Transport):
         # Atomic rename
         tmp_path.replace(file_path)
 
+    def _move_to_error_dir(self, message_file: Path, error_suffix: str) -> None:
+        """
+        Move a message file to the error directory for inspection.
+
+        Args:
+            message_file: Path to the message file
+            error_suffix: Suffix to append to filename (e.g., 'json-error')
+        """
+        try:
+            error_path = self.processed_dir / f"{message_file.name}.{error_suffix}"
+            if message_file.exists():
+                message_file.replace(error_path)
+        except FileNotFoundError:
+            # File was moved by another process - expected in concurrent scenarios
+            logger.debug(
+                "Could not move %s to error directory: already moved",
+                message_file.name,
+            )
+        except OSError as e:
+            # File system error - log but don't fail
+            logger.warning(
+                "Failed to move %s to error directory: %s",
+                message_file.name,
+                str(e),
+            )
+
     def receive(self) -> Iterator[Envelope]:
         """
         Receive envelopes from the inbox directory.
 
         Yields envelopes in order (sorted by filename timestamp).
         After yielding, messages are moved to processed/ directory
-        for acknowledgment. Invalid messages are silently skipped.
+        for acknowledgment. Invalid messages are logged and skipped.
 
         Yields:
             Envelope: Received envelopes
@@ -134,21 +164,43 @@ class FileTransport(Transport):
                     processed_path = self.processed_dir / message_file.name
                     message_file.replace(processed_path)
                 except FileNotFoundError:
-                    # File was already moved by another process/thread, skip
-                    pass
+                    # File was already moved by another process/thread
+                    logger.debug(
+                        "Message file %s already processed by another process",
+                        message_file.name,
+                    )
 
-            except (FileNotFoundError, json.JSONDecodeError, ValidationError):
-                # Skip if file was moved/deleted or is invalid
-                # Don't raise error for these cases
-                pass
+            except FileNotFoundError:
+                # File deleted/moved during processing - expected in concurrent mode
+                logger.debug(
+                    "Message file %s not found during processing (concurrent access)",
+                    message_file.name,
+                )
+            except json.JSONDecodeError as e:
+                # Invalid JSON - log and skip
+                logger.warning(
+                    "Skipping invalid JSON message %s: %s",
+                    message_file.name,
+                    str(e),
+                )
+                self._move_to_error_dir(message_file, "json-error")
+            except ValidationError as e:
+                # Invalid envelope structure - log and skip
+                logger.warning(
+                    "Skipping invalid envelope %s: %s",
+                    message_file.name,
+                    str(e),
+                )
+                self._move_to_error_dir(message_file, "validation-error")
             except Exception as e:
-                # For other exceptions, try to move to error and raise
-                if message_file.exists():
-                    try:
-                        error_path = self.processed_dir / f"{message_file.name}.error"
-                        message_file.replace(error_path)
-                    except FileNotFoundError:
-                        pass
+                # Unexpected error - log and raise
+                logger.error(
+                    "Unexpected error processing message %s: %s",
+                    message_file.name,
+                    str(e),
+                    exc_info=True,
+                )
+                self._move_to_error_dir(message_file, "error")
                 raise IOError(
                     f"Failed to process message {message_file.name}: {e}"
                 ) from e
