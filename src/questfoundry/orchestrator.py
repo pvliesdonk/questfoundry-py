@@ -1,5 +1,6 @@
 """Orchestrator for QuestFoundry loop execution."""
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -258,8 +259,6 @@ class Orchestrator:
         """
         # Look for patterns like "Selected Loop: story_spark"
         # or "**Selected Loop**: story_spark"
-        import re
-
         patterns = [
             r"Selected Loop:?\s*[*]*\s*([a-z_]+)",
             r"\*\*Selected Loop\*\*:?\s*([a-z_]+)",
