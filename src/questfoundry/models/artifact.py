@@ -57,10 +57,19 @@ class Artifact(BaseModel):
 
     @property
     def created(self) -> datetime | None:
-        """Get creation timestamp from metadata"""
+        """
+        Get creation timestamp from metadata.
+
+        Returns:
+            Datetime object if valid timestamp exists, None otherwise
+        """
         created = self.metadata.get("created")
         if isinstance(created, str):
-            return datetime.fromisoformat(created)
+            try:
+                return datetime.fromisoformat(created)
+            except ValueError:
+                # Invalid ISO format - return None rather than raise
+                return None
         if isinstance(created, datetime):
             return created
         return None
@@ -72,10 +81,19 @@ class Artifact(BaseModel):
 
     @property
     def modified(self) -> datetime | None:
-        """Get modification timestamp from metadata"""
+        """
+        Get modification timestamp from metadata.
+
+        Returns:
+            Datetime object if valid timestamp exists, None otherwise
+        """
         modified = self.metadata.get("modified")
         if isinstance(modified, str):
-            return datetime.fromisoformat(modified)
+            try:
+                return datetime.fromisoformat(modified)
+            except ValueError:
+                # Invalid ISO format - return None rather than raise
+                return None
         if isinstance(modified, datetime):
             return modified
         return None
