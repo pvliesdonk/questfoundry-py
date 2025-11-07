@@ -8,6 +8,14 @@ import pytest
 from questfoundry.providers.config import ProviderConfig
 
 
+@pytest.fixture(autouse=True)
+def setup_env_vars(monkeypatch):
+    """Set required environment variables for tests by default"""
+    # Set a dummy OPENAI_API_KEY for tests that don't care about the actual value
+    # Individual tests can explicitly delete it to test missing env var behavior
+    monkeypatch.setenv("OPENAI_API_KEY", "test-dummy-key")
+
+
 @pytest.fixture
 def temp_config_dir():
     """Create temporary config directory"""
@@ -60,13 +68,12 @@ def test_config_env_var_substitution(sample_config_file, monkeypatch):
 
 
 def test_config_missing_env_var(sample_config_file, monkeypatch):
-    """Test missing environment variables are replaced with empty string"""
+    """Test missing environment variables raise ValueError"""
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
 
-    config = ProviderConfig(sample_config_file)
-    openai_config = config.get_provider_config("text", "openai")
-
-    assert openai_config["api_key"] == ""
+    # Should raise ValueError when trying to load config with missing env var
+    with pytest.raises(ValueError, match="Environment variable 'OPENAI_API_KEY' is not set"):
+        ProviderConfig(sample_config_file)
 
 
 def test_config_get_provider_config(sample_config_file):
