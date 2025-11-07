@@ -10,6 +10,7 @@ class MockTextProvider(TextProvider):
     Supports two modes:
     1. Simple mode: Single response for all prompts (set via `response` param)
     2. Dict mode: Task-specific responses (set via `responses` param)
+    3. Flexible mode: Returns valid JSON for any task (default if no modes specified)
 
     Attributes:
         response: Single response to return for all prompts
@@ -33,7 +34,8 @@ class MockTextProvider(TextProvider):
         super().__init__({"api_key": "test"})
         self.response = response
         self.responses = responses or {}
-        self.default_response = '{"status": "ok"}'
+        # Use a flexible default response that works for most tasks
+        self.default_response = '{"status": "success", "result": "Mock response", "data": {}}'
         self.last_prompt = None
 
     def validate_config(self) -> None:
@@ -53,6 +55,7 @@ class MockTextProvider(TextProvider):
 
         In simple mode (response set), returns that response.
         In dict mode (responses set), matches prompt against task patterns.
+        Falls back to flexible default response for any task.
 
         Args:
             prompt: Input prompt
@@ -64,6 +67,8 @@ class MockTextProvider(TextProvider):
         Returns:
             Mock response text
         """
+        import json
+
         self.last_prompt = prompt
 
         # Simple mode: return fixed response
@@ -116,7 +121,20 @@ class MockTextProvider(TextProvider):
             if task_key in prompt_lower:
                 return response_text
 
-        return self.default_response
+        # Return flexible default response for any unmatched task
+        # Detect if JSON is needed by looking for common indicators
+        needs_json = (
+            "json" in prompt_lower
+            or "respond in json" in prompt_lower
+            or "format as json" in prompt_lower
+            or "```json" in prompt_lower
+            or prompt_lower.count("{") > 0
+        )
+
+        if needs_json:
+            return self.default_response
+        else:
+            return "Mock response to task"
 
     def generate_text_streaming(
         self,

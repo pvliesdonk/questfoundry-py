@@ -41,6 +41,10 @@ class Gatekeeper(Role):
         - 'gate_check': Full quality bar validation
         - 'validate_bar': Check specific quality bar
         - 'export_check': Validate export/view formatting
+        - 'evaluate_quality_bars': Evaluate all quality bars (alias for gate_check)
+        - 'collect_findings': Collect quality findings (delegates to gate_check)
+        - 'triage_blockers': Triage findings by severity (delegates to gate_check)
+        - 'create_gatecheck_report': Create comprehensive report (delegates to gate_check)
 
         Args:
             context: Execution context
@@ -58,6 +62,23 @@ class Gatekeeper(Role):
             return self._validate_bar(context)
         elif task == "export_check":
             return self._export_check(context)
+        # New tasks for gatecheck loop
+        elif task == "evaluate_quality_bars":
+            return self._gate_check(context)
+        elif task == "collect_findings":
+            return self._gate_check(context)
+        elif task == "triage_blockers":
+            return self._gate_check(context)
+        elif task == "create_gatecheck_report":
+            return self._gate_check(context)
+        # New tasks for post_mortem loop
+        elif task == "final_validation":
+            return self._gate_check(context)
+        elif task == "create_post_mortem_report":
+            return self._gate_check(context)
+        # New tasks for archive_snapshot loop
+        elif task == "validate_snapshot":
+            return self._gate_check(context)
         else:
             return RoleResult(
                 success=False,
