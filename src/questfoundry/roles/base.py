@@ -228,9 +228,7 @@ class Role(ABC):
 
         # Limit number of artifacts to prevent excessive memory usage
         artifacts_to_format = artifacts[:MAX_ARTIFACTS_IN_CONTEXT]
-        truncated_count = 0
-        if len(artifacts) > MAX_ARTIFACTS_IN_CONTEXT:
-            truncated_count = len(artifacts) - MAX_ARTIFACTS_IN_CONTEXT
+        truncated_count = max(0, len(artifacts) - MAX_ARTIFACTS_IN_CONTEXT)
 
         header_text = "# Available Artifacts\n"
         formatted = [header_text]
