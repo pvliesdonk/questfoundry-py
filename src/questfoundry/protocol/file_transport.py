@@ -1,6 +1,7 @@
 """File-based transport for QuestFoundry protocol messages"""
 
 import json
+import logging
 import tempfile
 import uuid
 from datetime import datetime
@@ -11,6 +12,9 @@ from pydantic import ValidationError
 
 from .envelope import Envelope
 from .transport import Transport
+
+# Set up logger for this module
+logger = logging.getLogger(__name__)
 
 
 class FileTransport(Transport):
@@ -97,7 +101,7 @@ class FileTransport(Transport):
 
         Yields envelopes in order (sorted by filename timestamp).
         After yielding, messages are moved to processed/ directory
-        for acknowledgment. Invalid messages are silently skipped.
+        for acknowledgment. Invalid messages are logged and skipped.
 
         Yields:
             Envelope: Received envelopes
@@ -134,20 +138,62 @@ class FileTransport(Transport):
                     processed_path = self.processed_dir / message_file.name
                     message_file.replace(processed_path)
                 except FileNotFoundError:
-                    # File was already moved by another process/thread, skip
-                    pass
+                    # File was already moved by another process/thread
+                    logger.debug(
+                        "Message file %s already processed by another process",
+                        message_file.name,
+                    )
 
-            except (FileNotFoundError, json.JSONDecodeError, ValidationError):
-                # Skip if file was moved/deleted or is invalid
-                # Don't raise error for these cases
-                pass
+            except FileNotFoundError:
+                # File was deleted/moved during processing - expected in concurrent scenarios
+                logger.debug(
+                    "Message file %s not found during processing (concurrent access)",
+                    message_file.name,
+                )
+            except json.JSONDecodeError as e:
+                # Invalid JSON - log and skip
+                logger.warning(
+                    "Skipping invalid JSON message %s: %s",
+                    message_file.name,
+                    str(e),
+                )
+                # Move to error directory for inspection
+                try:
+                    error_path = self.processed_dir / f"{message_file.name}.json-error"
+                    if message_file.exists():
+                        message_file.replace(error_path)
+                except (FileNotFoundError, OSError):
+                    pass
+            except ValidationError as e:
+                # Invalid envelope structure - log and skip
+                logger.warning(
+                    "Skipping invalid envelope %s: %s",
+                    message_file.name,
+                    str(e),
+                )
+                # Move to error directory for inspection
+                try:
+                    error_path = (
+                        self.processed_dir / f"{message_file.name}.validation-error"
+                    )
+                    if message_file.exists():
+                        message_file.replace(error_path)
+                except (FileNotFoundError, OSError):
+                    pass
             except Exception as e:
-                # For other exceptions, try to move to error and raise
+                # Unexpected error - log and raise
+                logger.error(
+                    "Unexpected error processing message %s: %s",
+                    message_file.name,
+                    str(e),
+                    exc_info=True,
+                )
+                # Try to move to error directory
                 if message_file.exists():
                     try:
                         error_path = self.processed_dir / f"{message_file.name}.error"
                         message_file.replace(error_path)
-                    except FileNotFoundError:
+                    except (FileNotFoundError, OSError):
                         pass
                 raise IOError(
                     f"Failed to process message {message_file.name}: {e}"
