@@ -228,6 +228,7 @@ class Role(ABC):
 
         # Limit number of artifacts to prevent excessive memory usage
         artifacts_to_format = artifacts[:MAX_ARTIFACTS_IN_CONTEXT]
+        truncated_count = 0
         if len(artifacts) > MAX_ARTIFACTS_IN_CONTEXT:
             truncated_count = len(artifacts) - MAX_ARTIFACTS_IN_CONTEXT
 
@@ -277,7 +278,7 @@ class Role(ABC):
             total_size += len(artifact_text)
 
         # Add notice if artifacts were truncated
-        if len(artifacts) > MAX_ARTIFACTS_IN_CONTEXT:
+        if truncated_count > 0:
             formatted.append(
                 f"\n[Note: {truncated_count} additional artifact(s) omitted. "
                 f"Maximum is {MAX_ARTIFACTS_IN_CONTEXT} artifacts.]"
