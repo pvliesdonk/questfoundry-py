@@ -5,8 +5,8 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-
 from conftest import MockTextProvider
+
 from questfoundry.loops.base import LoopContext, LoopStep, StepStatus
 from questfoundry.loops.story_spark import StorySparkLoop
 from questfoundry.roles.gatekeeper import Gatekeeper
