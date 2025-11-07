@@ -3,7 +3,7 @@
 import pytest
 
 from questfoundry.models.artifact import Artifact
-from questfoundry.validation import Gatekeeper, GatecheckReport
+from questfoundry.validation import GatecheckReport, Gatekeeper
 
 
 class TestGatekeeper:
@@ -205,7 +205,7 @@ class TestGatekeeper:
         report = gk.run_gatecheck(artifacts, timestamp="2024-01-01")
         artifact = report.to_artifact()
 
-        assert artifact.artifact_type == "gatecheck_report"
+        assert artifact.type == "gatecheck_report"
         assert "passed" in artifact.data
         assert "merge_safe" in artifact.data
         assert "bars" in artifact.data

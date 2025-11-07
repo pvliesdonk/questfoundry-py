@@ -51,7 +51,7 @@ class StyleBar(QualityBar):
 
         # Check manuscript sections for style
         sections = [
-            a for a in artifacts if a.artifact_type == "manuscript_section"
+            a for a in artifacts if a.type == "manuscript_section"
         ]
 
         if sections:
@@ -66,7 +66,7 @@ class StyleBar(QualityBar):
 
         # Check style artifacts
         style_artifacts = [
-            a for a in artifacts if a.artifact_type == "style_guide"
+            a for a in artifacts if a.type == "style_guide"
         ]
         for artifact in style_artifacts:
             issues.extend(self._validate_style_guide(artifact))
@@ -103,7 +103,7 @@ class StyleBar(QualityBar):
             # Check for common voice shift indicators
             # Present tense vs past tense mixing
             has_present = bool(
-                re.search(r"\b(am|is|are|walks|runs|says)\b", text)
+                re.search(r"\b(am|is|are|walks|runs|says|see)\b", text)
             )
             has_past = bool(
                 re.search(r"\b(was|were|walked|ran|said)\b", text)

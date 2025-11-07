@@ -47,7 +47,7 @@ class ReachabilityBar(QualityBar):
 
         # Build graph of manuscript sections
         sections = [
-            a for a in artifacts if a.artifact_type == "manuscript_section"
+            a for a in artifacts if a.type == "manuscript_section"
         ]
 
         if not sections:

@@ -47,7 +47,7 @@ class DeterminismBar(QualityBar):
         visual_artifacts = [
             a
             for a in artifacts
-            if a.artifact_type in ["visual_asset", "image_plan", "art_plan"]
+            if a.type in ["visual_asset", "image_plan", "art_plan"]
         ]
 
         for artifact in visual_artifacts:
@@ -79,7 +79,7 @@ class DeterminismBar(QualityBar):
         audio_artifacts = [
             a
             for a in artifacts
-            if a.artifact_type in ["audio_asset", "audio_plan"]
+            if a.type in ["audio_asset", "audio_plan"]
         ]
 
         for artifact in audio_artifacts:

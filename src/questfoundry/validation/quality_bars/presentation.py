@@ -72,7 +72,7 @@ class PresentationBar(QualityBar):
         ]
 
         player_facing = [
-            a for a in artifacts if a.artifact_type in player_facing_types
+            a for a in artifacts if a.type in player_facing_types
         ]
 
         for artifact in player_facing:

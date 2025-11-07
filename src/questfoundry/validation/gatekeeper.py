@@ -67,7 +67,7 @@ class GatecheckReport:
     def to_artifact(self) -> Artifact:
         """Convert report to gatecheck_report artifact."""
         return Artifact(
-            artifact_type="gatecheck_report",
+            type="gatecheck_report",
             data={
                 "id": f"gatecheck_{self.metadata.get('timestamp', 'unknown')}",
                 "passed": self.passed,

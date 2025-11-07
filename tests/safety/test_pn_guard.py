@@ -2,8 +2,6 @@
 
 from datetime import datetime
 
-import pytest
-
 from questfoundry.models.artifact import Artifact
 from questfoundry.protocol.envelope import EnvelopeBuilder
 from questfoundry.safety import PNGuard, PNViolation

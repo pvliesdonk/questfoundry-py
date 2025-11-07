@@ -62,7 +62,7 @@ class GatewaysBar(QualityBar):
 
         # Check manuscript sections
         sections = [
-            a for a in artifacts if a.artifact_type == "manuscript_section"
+            a for a in artifacts if a.type == "manuscript_section"
         ]
 
         for section in sections:
