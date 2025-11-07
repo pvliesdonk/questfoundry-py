@@ -107,9 +107,19 @@ class FileTransport(Transport):
             error_path = self.processed_dir / f"{message_file.name}.{error_suffix}"
             if message_file.exists():
                 message_file.replace(error_path)
-        except (FileNotFoundError, OSError):
-            # If file doesn't exist or can't be moved, silently continue
-            pass
+        except FileNotFoundError:
+            # File was moved by another process - this is expected in concurrent scenarios
+            logger.debug(
+                "Could not move %s to error directory: already moved",
+                message_file.name,
+            )
+        except OSError as e:
+            # File system error - log but don't fail
+            logger.warning(
+                "Failed to move %s to error directory: %s",
+                message_file.name,
+                str(e),
+            )
 
     def receive(self) -> Iterator[Envelope]:
         """

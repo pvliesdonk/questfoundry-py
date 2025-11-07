@@ -266,16 +266,17 @@ class Role(ABC):
 
             artifact_parts.append("")  # Blank line between artifacts
             artifact_text = "\n".join(artifact_parts)
+            artifact_text_len = len(artifact_text)
 
             # Check if adding this artifact would exceed total size limit
-            if total_size + len(artifact_text) > MAX_FORMATTED_CONTEXT_SIZE:
+            if total_size + artifact_text_len > MAX_FORMATTED_CONTEXT_SIZE:
                 formatted.append(
                     "\n[Additional artifacts omitted due to size limits]"
                 )
                 break
 
             formatted.append(artifact_text)
-            total_size += len(artifact_text)
+            total_size += artifact_text_len
 
         # Add notice if artifacts were truncated
         if truncated_count > 0:
