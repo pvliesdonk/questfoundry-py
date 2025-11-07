@@ -9,6 +9,9 @@ from typing import Any
 from ..models.artifact import Artifact
 from ..providers.base import TextProvider
 
+# Maximum length for artifact value strings in formatted output
+MAX_ARTIFACT_VALUE_LENGTH = 500
+
 
 @dataclass
 class RoleContext:
@@ -241,8 +244,8 @@ class Role(ABC):
                     if key not in ("id", "title"):
                         # Truncate long values
                         str_value = str(value)
-                        if len(str_value) > 500:
-                            str_value = str_value[:500] + "..."
+                        if len(str_value) > MAX_ARTIFACT_VALUE_LENGTH:
+                            str_value = str_value[:MAX_ARTIFACT_VALUE_LENGTH] + "..."
                         formatted.append(f"  {key}: {str_value}")
 
             formatted.append("")  # Blank line between artifacts
@@ -335,6 +338,35 @@ class Role(ABC):
             max_tokens=max_tokens or self.config.get("max_tokens", 2000),
             temperature=temperature or self.config.get("temperature", 0.7),
         )
+
+    def _parse_json_from_response(self, response: str) -> dict[str, Any]:
+        """
+        Parse JSON from LLM response, handling markdown code blocks.
+
+        LLMs often wrap JSON in markdown code blocks like ```json or ```.
+        This method extracts the JSON content and parses it.
+
+        Args:
+            response: Raw LLM response text
+
+        Returns:
+            Parsed JSON as dictionary
+
+        Raises:
+            json.JSONDecodeError: If response doesn't contain valid JSON
+        """
+        import json
+
+        # Try to extract JSON from markdown code blocks
+        json_match = response
+        if "```json" in response:
+            # Extract content between ```json and ```
+            json_match = response.split("```json")[1].split("```")[0]
+        elif "```" in response:
+            # Extract content between ``` and ```
+            json_match = response.split("```")[1].split("```")[0]
+
+        return json.loads(json_match.strip())
 
     def __repr__(self) -> str:
         """String representation of the role."""

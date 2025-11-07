@@ -101,14 +101,8 @@ Format as JSON:
                 system_prompt, user_prompt, max_tokens=1500
             )
 
-            # Parse JSON
-            json_match = response
-            if "```json" in response:
-                json_match = response.split("```json")[1].split("```")[0]
-            elif "```" in response:
-                json_match = response.split("```")[1].split("```")[0]
-
-            data = json.loads(json_match.strip())
+            # Parse JSON from response (handles markdown code blocks)
+            data = self._parse_json_from_response(response)
 
             return RoleResult(
                 success=True,
@@ -197,14 +191,8 @@ Format as JSON:
                 system_prompt, user_prompt, max_tokens=3000
             )
 
-            # Parse JSON
-            json_match = response
-            if "```json" in response:
-                json_match = response.split("```json")[1].split("```")[0]
-            elif "```" in response:
-                json_match = response.split("```")[1].split("```")[0]
-
-            data = json.loads(json_match.strip())
+            # Parse JSON from response (handles markdown code blocks)
+            data = self._parse_json_from_response(response)
 
             return RoleResult(
                 success=True,

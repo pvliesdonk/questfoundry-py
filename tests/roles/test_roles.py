@@ -4,52 +4,12 @@ from pathlib import Path
 
 import pytest
 
+from conftest import MockTextProvider
 from questfoundry.models.artifact import Artifact
-from questfoundry.providers.base import TextProvider
 from questfoundry.roles.base import RoleContext
 from questfoundry.roles.gatekeeper import Gatekeeper
 from questfoundry.roles.plotwright import Plotwright
 from questfoundry.roles.scene_smith import SceneSmith
-
-
-class MockTextProvider(TextProvider):
-    """Mock text provider for testing."""
-
-    def __init__(self, response: str = "Mock response"):
-        super().__init__({"api_key": "test"})
-        self.response = response
-        self.last_prompt = None
-
-    def validate_config(self) -> None:
-        """No validation needed for mock."""
-        pass
-
-    def generate_text(
-        self,
-        prompt: str,
-        model: str | None = None,
-        max_tokens: int | None = None,
-        temperature: float | None = None,
-        **kwargs,
-    ) -> str:
-        """Return mock response and capture prompt."""
-        self.last_prompt = prompt
-        return self.response
-
-    def generate_text_streaming(
-        self,
-        prompt: str,
-        model: str | None = None,
-        max_tokens: int | None = None,
-        temperature: float | None = None,
-        **kwargs,
-    ):
-        """Not implemented for mock."""
-        yield self.response
-
-    def close(self) -> None:
-        """Nothing to close."""
-        pass
 
 
 @pytest.fixture

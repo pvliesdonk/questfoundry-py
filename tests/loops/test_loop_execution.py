@@ -6,63 +6,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from conftest import MockTextProvider
 from questfoundry.loops.base import LoopContext, LoopStep, StepStatus
 from questfoundry.loops.story_spark import StorySparkLoop
-from questfoundry.providers.base import TextProvider
 from questfoundry.roles.gatekeeper import Gatekeeper
 from questfoundry.roles.plotwright import Plotwright
 from questfoundry.roles.scene_smith import SceneSmith
 from questfoundry.state.workspace import WorkspaceManager
-
-
-class MockTextProvider(TextProvider):
-    """Mock text provider for testing."""
-
-    def __init__(self, responses: dict[str, str] | None = None):
-        super().__init__({"api_key": "test"})
-        self.responses = responses or {}
-        self.default_response = '{"status": "ok"}'  # Valid JSON default
-
-    def validate_config(self) -> None:
-        pass
-
-    def generate_text(
-        self,
-        prompt: str,
-        model: str | None = None,
-        max_tokens: int | None = None,
-        temperature: float | None = None,
-        **kwargs,
-    ) -> str:
-        # Return task-specific response if available
-        prompt_lower = prompt.lower()
-
-        # Match on task headers (most specific first)
-        if "# task: pre-gate check" in prompt_lower:
-            return self.responses.get("pre_gate", self.default_response)
-        elif "# task: generate quest hooks" in prompt_lower:
-            return self.responses.get("generate_hooks", self.default_response)
-        elif "# task: design narrative topology" in prompt_lower:
-            return self.responses.get("create_topology", self.default_response)
-        elif "# task: create tu brief" in prompt_lower:
-            return self.responses.get("create_tu_brief", self.default_response)
-        elif "# task: create section briefs" in prompt_lower:
-            return self.responses.get("create_section_briefs", self.default_response)
-        elif "# task: draft scene" in prompt_lower:
-            return self.responses.get("draft_scene", self.default_response)
-
-        # Fallback to key matching in responses dict
-        for task_key, response in self.responses.items():
-            if task_key in prompt_lower:
-                return response
-
-        return self.default_response
-
-    def generate_text_streaming(self, prompt: str, **kwargs):
-        yield self.generate_text(prompt, **kwargs)
-
-    def close(self) -> None:
-        pass
 
 
 @pytest.fixture

@@ -53,70 +53,70 @@ class RoleRegistry:
 
             self.register_role("gatekeeper", Gatekeeper)
         except ImportError:
-            pass
+            pass  # Role not yet implemented
 
         try:
             from .scene_smith import SceneSmith
 
             self.register_role("scene_smith", SceneSmith)
         except ImportError:
-            pass
+            pass  # Role not yet implemented
 
         try:
             from .lore_weaver import LoreWeaver
 
             self.register_role("lore_weaver", LoreWeaver)
         except ImportError:
-            pass
+            pass  # Optional role, not yet implemented
 
         try:
             from .codex_curator import CodexCurator
 
             self.register_role("codex_curator", CodexCurator)
         except ImportError:
-            pass
+            pass  # Optional role, not yet implemented
 
         try:
             from .style_lead import StyleLead
 
             self.register_role("style_lead", StyleLead)
         except ImportError:
-            pass
+            pass  # Optional role, not yet implemented
 
         try:
             from .illustrator import Illustrator
 
             self.register_role("illustrator", Illustrator)
         except ImportError:
-            pass
+            pass  # Optional role, not yet implemented
 
         try:
             from .art_director import ArtDirector
 
             self.register_role("art_director", ArtDirector)
         except ImportError:
-            pass
+            pass  # Optional role, not yet implemented
 
         try:
             from .translator import Translator
 
             self.register_role("translator", Translator)
         except ImportError:
-            pass
+            pass  # Optional role, not yet implemented
 
         try:
             from .audio_producer import AudioProducer
 
             self.register_role("audio_producer", AudioProducer)
         except ImportError:
-            pass
+            pass  # Optional role, not yet implemented
 
         try:
             from .showrunner import Showrunner
 
             self.register_role("showrunner", Showrunner)
         except ImportError:
-            pass
+            pass  # Role not yet implemented
 
     def register_role(
         self,

@@ -5,79 +5,11 @@ from pathlib import Path
 
 import pytest
 
+from conftest import MockTextProvider
 from questfoundry.loops.base import LoopResult
 from questfoundry.models.artifact import Artifact
 from questfoundry.orchestrator import Orchestrator
-from questfoundry.providers.base import TextProvider
 from questfoundry.state.workspace import WorkspaceManager
-
-
-class MockTextProvider(TextProvider):
-    """Mock text provider for testing."""
-
-    def __init__(self, responses: dict[str, str] | None = None):
-        super().__init__({"api_key": "test"})
-        self.responses = responses or {}
-        self.default_response = '{"status": "ok"}'
-
-    def validate_config(self) -> None:
-        pass
-
-    def generate_text(
-        self,
-        prompt: str,
-        model: str | None = None,
-        max_tokens: int | None = None,
-        temperature: float | None = None,
-        **kwargs,
-    ) -> str:
-        prompt_lower = prompt.lower()
-
-        # Mock showrunner's select_loop response
-        if "task: select loop" in prompt_lower:
-            return self.responses.get(
-                "select_loop",
-                (
-                    "**Selected Loop**: story_spark\n\n"
-                    "Rationale: This is the foundational loop..."
-                ),
-            )
-
-        # Mock loop execution responses
-        if "# task: pre-gate check" in prompt_lower:
-            return self.responses.get(
-                "pre_gate",
-                (
-                    '{"status": "pass", "blockers": [], '
-                    '"quick_wins": [], "review_needed": []}'
-                ),
-            )
-        elif "# task: generate quest hooks" in prompt_lower:
-            return self.responses.get(
-                "generate_hooks",
-                (
-                    '{"hooks": [{"title": "Test Hook", '
-                    '"summary": "A test hook", "tags": ["test"]}]}'
-                ),
-            )
-        elif "# task: design narrative topology" in prompt_lower:
-            return self.responses.get("create_topology", "Test topology content")
-        elif "# task: create tu brief" in prompt_lower:
-            return self.responses.get("create_tu_brief", "Test TU brief content")
-        elif "# task: create section briefs" in prompt_lower:
-            return self.responses.get(
-                "create_section_briefs", "Test section briefs content"
-            )
-        elif "# task: draft scene" in prompt_lower:
-            return self.responses.get("draft_scene", "Test scene content")
-
-        return self.default_response
-
-    def generate_text_streaming(self, prompt: str, **kwargs):
-        yield self.generate_text(prompt, **kwargs)
-
-    def close(self) -> None:
-        pass
 
 
 @pytest.fixture

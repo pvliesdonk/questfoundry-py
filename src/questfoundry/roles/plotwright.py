@@ -95,15 +95,8 @@ Format your response as JSON:
         try:
             response = self._call_llm(system_prompt, user_prompt)
 
-            # Try to parse JSON from response
-            # LLMs sometimes wrap JSON in markdown blocks
-            json_match = response
-            if "```json" in response:
-                json_match = response.split("```json")[1].split("```")[0]
-            elif "```" in response:
-                json_match = response.split("```")[1].split("```")[0]
-
-            data = json.loads(json_match.strip())
+            # Parse JSON from response (handles markdown code blocks)
+            data = self._parse_json_from_response(response)
 
             return RoleResult(
                 success=True,
