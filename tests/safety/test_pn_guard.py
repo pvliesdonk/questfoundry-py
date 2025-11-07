@@ -29,7 +29,7 @@ class TestPNGuard:
             .with_receiver("PN")
             .with_intent("deliver.section")
             .with_context("cold", tu="TU-2024-01-01-TEST01")
-            .with_safety(player_safe=True, spoilers="none")
+            .with_safety(player_safe=True, spoilers="forbidden")
             .with_payload("manuscript_section", {"content": "Safe player-facing text"})
             .build()
         )
@@ -52,7 +52,7 @@ class TestPNGuard:
             .with_receiver("PN")
             .with_intent("deliver.section")
             .with_context("hot", tu="TU-2024-01-01-TEST01")
-            .with_safety(player_safe=True, spoilers="none")
+            .with_safety(player_safe=True, spoilers="forbidden")
             .with_payload("manuscript_section", {"content": "Hot content"})
             .build()
         )
@@ -207,14 +207,13 @@ class TestPNGuard:
         """Test that violations have correct severity levels."""
         guard = PNGuard()
 
-        # Blocker: hot content
-        hot_artifact = Artifact(
+        # Blocker: spoiler field in artifact data
+        spoiler_artifact = Artifact(
             type="manuscript_section",
-            data={"id": "s1", "text": "Text"},
-            metadata={"temperature": "hot"},
+            data={"id": "s1", "text": "Text", "author_notes": "Secret"},
         )
 
-        result = guard.validate_artifact(hot_artifact)
+        result = guard.validate_artifact(spoiler_artifact)
         assert any(v.severity == "blocker" for v in result.violations)
 
         # Warning: non-diegetic gateway
@@ -228,7 +227,7 @@ class TestPNGuard:
 
         result = guard.validate_artifact(gateway_artifact)
         # May have warnings about diegetic gateways
-        assert len(result.violations) >= 0  # Depends on validation rules
+        assert len(result.warnings) >= 0  # Warnings don't block
 
     def test_pn_guard_result_properties(self):
         """Test PNGuardResult helper properties."""
