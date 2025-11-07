@@ -131,7 +131,10 @@ class StyleBar(QualityBar):
                         severity="info",
                         message="Mixed person (I/you) detected - verify intentional",
                         location=f"section:{section_id}",
-                        fix="Ensure consistent point of view unless intentionally switching",
+                        fix=(
+                            "Ensure consistent point of view unless "
+                            "intentionally switching"
+                        ),
                     )
                 )
 

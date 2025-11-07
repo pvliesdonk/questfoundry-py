@@ -127,9 +127,11 @@ class NonlinearityBar(QualityBar):
         for neighbor in graph.get(start, []):
             if neighbor == target:
                 return True
-            if self._can_reach(graph, neighbor, target, visited.copy()):
+            if self._can_reach(graph, neighbor, target, visited):
                 return True
 
+        # Backtrack: remove from visited to allow other paths to explore
+        visited.remove(start)
         return False
 
     def _check_meaningful_choices(
@@ -157,7 +159,10 @@ class NonlinearityBar(QualityBar):
                             severity="warning",
                             message="Multiple choices lead to same immediate target",
                             location=f"section:{section_id}",
-                            fix="Ensure choices have different immediate outcomes or effects",
+                            fix=(
+                            "Ensure choices have different immediate "
+                            "outcomes or effects"
+                        ),
                         )
                     )
 
@@ -192,9 +197,15 @@ class NonlinearityBar(QualityBar):
                 issues.append(
                     QualityIssue(
                         severity="info",
-                        message=f"Convergence point may lack first-choice integrity (merges {len(sources)} paths)",
+                        message=(
+                            f"Convergence point may lack first-choice integrity "
+                            f"(merges {len(sources)} paths)"
+                        ),
                         location=f"section:{hub_id}",
-                        fix="Consider adding variation in first paragraph to reflect entering path",
+                        fix=(
+                            "Consider adding variation in first paragraph "
+                            "to reflect entering path"
+                        ),
                     )
                 )
 

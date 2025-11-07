@@ -76,9 +76,15 @@ class SpoilerHygieneBar(QualityBar):
                         issues.append(
                             QualityIssue(
                                 severity="blocker",
-                                message=f"Player-safe artifact contains spoiler field '{field}'",
+                                message=(
+                                    f"Player-safe artifact contains spoiler "
+                                    f"field '{field}'"
+                                ),
                                 location=f"artifact:{artifact_id}.{field}",
-                                fix=f"Remove '{field}' from player-safe artifact or move to separate canon artifact",
+                                fix=(
+                                    f"Remove '{field}' from player-safe artifact "
+                                    f"or move to separate canon artifact"
+                                ),
                             )
                         )
 
@@ -116,7 +122,10 @@ class SpoilerHygieneBar(QualityBar):
                     issues.append(
                         QualityIssue(
                             severity="blocker",
-                            message=f"Spoiler marker '{marker}' found in player-safe text",
+                            message=(
+                                f"Spoiler marker '{marker}' found in "
+                                f"player-safe text"
+                            ),
                             location=f"artifact:{artifact_id}",
                             fix="Remove or properly mask spoiler content",
                         )
@@ -155,9 +164,15 @@ class SpoilerHygieneBar(QualityBar):
                     issues.append(
                         QualityIssue(
                             severity="info",
-                            message=f"Choice text may reveal outcome: '{choice_text[:50]}'",
+                            message=(
+                                f"Choice text may reveal outcome: "
+                                f"'{choice_text[:50]}'"
+                            ),
                             location=f"artifact:{artifact_id}.choices[{i}]",
-                            fix="Avoid revealing outcomes in choice text; keep possibilities open",
+                            fix=(
+                                "Avoid revealing outcomes in choice text; "
+                                "keep possibilities open"
+                            ),
                         )
                     )
                     break

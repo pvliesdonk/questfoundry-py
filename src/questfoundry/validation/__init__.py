@@ -1,6 +1,6 @@
 """Validation module for quality bars and gatekeeper."""
 
-from .gatekeeper import Gatekeeper, GatecheckReport
+from .gatekeeper import GatecheckReport, Gatekeeper
 from .quality_bars import (
     QUALITY_BARS,
     DeterminismBar,

@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ..models.artifact import Artifact
-from ..protocol.envelope import Envelope
+from ..protocol.envelope import Envelope, Payload
 
 
 @dataclass
@@ -140,7 +140,10 @@ class PNGuard:
                     category="hot_content",
                     message="Hot content cannot be sent to PN",
                     location=f"envelope:{envelope.id}",
-                    suggestion="Only cold (merged to Cold SoT) content can be exposed to PN",
+                    suggestion=(
+                        "Only cold (merged to Cold SoT) content "
+                        "can be exposed to PN"
+                    ),
                 )
             )
 
@@ -152,7 +155,10 @@ class PNGuard:
                     category="not_player_safe",
                     message="Content not marked as player_safe",
                     location=f"envelope:{envelope.id}",
-                    suggestion="Mark content as player_safe after removing spoilers and internal notes",
+                    suggestion=(
+                        "Mark content as player_safe after removing "
+                        "spoilers and internal notes"
+                    ),
                 )
             )
 
@@ -169,7 +175,7 @@ class PNGuard:
             filtered_envelope = self._filter_envelope(envelope)
 
         return PNGuardResult(
-            safe=len([v for v in violations if v.severity == "blocker"]) == 0,
+            safe=not any(v.severity == "blocker" for v in violations),
             violations=violations,
             filtered_envelope=filtered_envelope,
         )
@@ -196,7 +202,7 @@ class PNGuard:
                 filtered_artifacts.extend(result.filtered_artifacts)
 
         return PNGuardResult(
-            safe=len([v for v in violations if v.severity == "blocker"]) == 0,
+            safe=not any(v.severity == "blocker" for v in violations),
             violations=violations,
             filtered_artifacts=filtered_artifacts,
         )
@@ -227,7 +233,7 @@ class PNGuard:
             filtered_artifact = self._filter_artifact(artifact)
 
         return PNGuardResult(
-            safe=len([v for v in violations if v.severity == "blocker"]) == 0,
+            safe=not any(v.severity == "blocker" for v in violations),
             violations=violations,
             filtered_artifacts=[filtered_artifact]
             if filtered_artifact
@@ -250,15 +256,21 @@ class PNGuard:
         violations: list[PNViolation] = []
 
         # Check for spoiler fields
-        for field in self.SPOILER_FIELDS:
-            if field in payload and payload[field]:
+        for field_name in self.SPOILER_FIELDS:
+            if field_name in payload and payload[field_name]:
                 violations.append(
                     PNViolation(
                         severity="blocker",
                         category="spoiler_field",
-                        message=f"Spoiler field '{field}' present in player-facing content",
-                        location=f"{location}.{field}",
-                        suggestion=f"Remove the '{field}' field or move to canon notes",
+                        message=(
+                            f"Spoiler field '{field_name}' present in "
+                            f"player-facing content"
+                        ),
+                        location=f"{location}.{field_name}",
+                        suggestion=(
+                            f"Remove the '{field_name}' field or "
+                            f"move to canon notes"
+                        ),
                     )
                 )
 
@@ -289,17 +301,23 @@ class PNGuard:
         # Fields to check for player-facing text
         text_fields = ["text", "body", "content", "description", "choice"]
 
-        for field in text_fields:
-            if field in data and isinstance(data[field], str):
-                matches = self._meta_regex.findall(data[field])
+        for field_name in text_fields:
+            if field_name in data and isinstance(data[field_name], str):
+                matches = self._meta_regex.findall(data[field_name])
                 if matches:
                     violations.append(
                         PNViolation(
                             severity="blocker",
                             category="meta_language",
-                            message=f"Meta/mechanical language found in '{field}': {matches[:3]}",
-                            location=f"{location}.{field}",
-                            suggestion="Use diegetic (in-world) phrasing instead of technical terms",
+                            message=(
+                                f"Meta/mechanical language found in "
+                                f"'{field_name}': {matches[:3]}"
+                            ),
+                            location=f"{location}.{field_name}",
+                            suggestion=(
+                                "Use diegetic (in-world) phrasing "
+                                "instead of technical terms"
+                            ),
                         )
                     )
 
@@ -355,9 +373,15 @@ class PNGuard:
                         PNViolation(
                             severity="warning",
                             category="non_diegetic_gateway",
-                            message=f"Gateway condition may not be diegetic: '{condition[:50]}'",
+                            message=(
+                                f"Gateway condition may not be diegetic: "
+                                f"'{condition[:50]}'"
+                            ),
                             location=f"{location}.gateways[{i}]",
-                            suggestion="Use in-world items, knowledge, or reputation instead of technical state",
+                            suggestion=(
+                                "Use in-world items, knowledge, or reputation "
+                                "instead of technical state"
+                            ),
                         )
                     )
 
@@ -373,8 +397,6 @@ class PNGuard:
         Returns:
             Filtered envelope safe for PN
         """
-        from ..protocol.envelope import Payload
-
         # Create filtered payload data
         filtered_data = self._filter_data(envelope.payload.data)
 
@@ -412,7 +434,7 @@ class PNGuard:
         filtered_data = self._filter_data(artifact.data)
 
         return Artifact(
-            artifact_type=artifact.artifact_type,
+            type=artifact.type,
             data=filtered_data,
             metadata=artifact.metadata,
         )

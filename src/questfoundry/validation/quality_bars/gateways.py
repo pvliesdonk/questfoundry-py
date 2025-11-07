@@ -76,16 +76,21 @@ class GatewaysBar(QualityBar):
 
                 # Check if condition is diegetic
                 condition = choice.get("condition", "")
-                requires = choice.get("requires", "")
 
                 if condition and isinstance(condition, str):
                     if non_diegetic.search(condition):
                         issues.append(
                             QualityIssue(
                                 severity="warning",
-                                message=f"Choice condition not diegetic: '{condition[:50]}'",
+                                message=(
+                                    f"Choice condition not diegetic: "
+                                    f"'{condition[:50]}'"
+                                ),
                                 location=f"section:{section_id}.choices[{i}]",
-                                fix="Use in-world phrasing (items, knowledge, reputation) instead of technical terms",
+                                fix=(
+                                    "Use in-world phrasing (items, knowledge, "
+                                    "reputation) instead of technical terms"
+                                ),
                             )
                         )
 
@@ -95,9 +100,14 @@ class GatewaysBar(QualityBar):
                     issues.append(
                         QualityIssue(
                             severity="blocker",
-                            message=f"Choice text contains non-diegetic language",
+                            message=(
+                                "Choice text contains non-diegetic language"
+                            ),
                             location=f"section:{section_id}.choices[{i}]",
-                            fix="Remove technical/meta terms from player-visible choice text",
+                            fix=(
+                                "Remove technical/meta terms from "
+                                "player-visible choice text"
+                            ),
                         )
                     )
 

@@ -57,7 +57,7 @@ class IntegrityBar(QualityBar):
                 artifact_ids.add(artifact_id)
 
             # Track section IDs for manuscript sections
-            if artifact.type == "manuscript_section":
+            if artifact.type == "manuscript_section" and artifact_id:
                 section_ids.add(artifact_id)
 
         # Validate each artifact
@@ -142,7 +142,10 @@ class IntegrityBar(QualityBar):
                             severity="blocker",
                             message=f"Choice target '{target}' does not exist",
                             location=f"artifact:{artifact_id}.choices[{i}]",
-                            fix=f"Create section '{target}' or update target reference",
+                            fix=(
+                                f"Create section '{target}' or update "
+                                f"target reference"
+                            ),
                         )
                     )
 
@@ -208,7 +211,10 @@ class IntegrityBar(QualityBar):
                         severity="warning",
                         message="Section has no choices and not marked terminal",
                         location=f"artifact:{artifact_id}",
-                        fix="Add choices or mark with 'terminal: true' if intentional ending",
+                        fix=(
+                        "Add choices or mark with 'terminal: true' "
+                        "if intentional ending"
+                    ),
                     )
                 )
 

@@ -86,9 +86,15 @@ class PresentationBar(QualityBar):
                 issues.append(
                     QualityIssue(
                         severity="blocker",
-                        message=f"Player-facing text contains internal/technical content: {matches[:2]}",
+                        message=(
+                        f"Player-facing text contains internal/technical "
+                        f"content: {matches[:2]}"
+                    ),
                         location=f"artifact:{artifact_id}",
-                        fix="Remove technical details and internal notes from player-visible text",
+                        fix=(
+                        "Remove technical details and internal notes from "
+                        "player-visible text"
+                    ),
                     )
                 )
 
@@ -105,9 +111,15 @@ class PresentationBar(QualityBar):
                     issues.append(
                         QualityIssue(
                             severity="blocker",
-                            message=f"Spoiler field '{field}' present in player-facing artifact",
+                            message=(
+                            f"Spoiler field '{field}' present in "
+                            f"player-facing artifact"
+                        ),
                             location=f"artifact:{artifact_id}.{field}",
-                            fix=f"Move '{field}' to canon notes or remove from player-facing content",
+                            fix=(
+                            f"Move '{field}' to canon notes or remove from "
+                            f"player-facing content"
+                        ),
                         )
                     )
 
@@ -123,7 +135,10 @@ class PresentationBar(QualityBar):
                         issues.append(
                             QualityIssue(
                                 severity="blocker",
-                                message="Choice text contains internal/technical content",
+                                message=(
+                            "Choice text contains internal/technical "
+                            "content"
+                        ),
                                 location=f"artifact:{artifact_id}.choices[{i}]",
                                 fix="Remove technical terms from choice text",
                             )

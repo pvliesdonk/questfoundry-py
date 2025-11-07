@@ -9,7 +9,6 @@ Validates that:
 """
 
 from collections import defaultdict, deque
-from typing import Any
 
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
@@ -101,7 +100,10 @@ class ReachabilityBar(QualityBar):
                 issues.append(
                     QualityIssue(
                         severity="blocker",
-                        message=f"Keystone section '{keystone_id}' not reachable from start",
+                        message=(
+                        f"Keystone section '{keystone_id}' not "
+                        f"reachable from start"
+                    ),
                         location=f"section:{keystone_id}",
                         fix="Add a path from start to this keystone section",
                     )
@@ -120,7 +122,10 @@ class ReachabilityBar(QualityBar):
                             severity="warning",
                             message=f"Section '{section_id}' not reachable from start",
                             location=f"section:{section_id}",
-                            fix="Add path to this section or mark 'alternate_start: true' if intentional",
+                            fix=(
+                            "Add path to this section or mark "
+                            "'alternate_start: true' if intentional"
+                        ),
                         )
                     )
 
@@ -208,9 +213,15 @@ class ReachabilityBar(QualityBar):
                         issues.append(
                             QualityIssue(
                                 severity="warning",
-                                message=f"Choice requires '{req}' but no section grants it",
+                                message=(
+                                f"Choice requires '{req}' but no "
+                                f"section grants it"
+                            ),
                                 location=f"section:{section_id}.choices[{i}]",
-                                fix=f"Add a section that grants '{req}' or remove requirement",
+                                fix=(
+                                f"Add a section that grants '{req}' or "
+                                f"remove requirement"
+                            ),
                             )
                         )
 

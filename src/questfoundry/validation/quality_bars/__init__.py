@@ -1,14 +1,14 @@
 """Quality bar validators for gatekeeper checks."""
 
 from .base import QualityBar, QualityBarResult, QualityIssue
-from .integrity import IntegrityBar
-from .reachability import ReachabilityBar
-from .style import StyleBar
-from .gateways import GatewaysBar
-from .nonlinearity import NonlinearityBar
 from .determinism import DeterminismBar
+from .gateways import GatewaysBar
+from .integrity import IntegrityBar
+from .nonlinearity import NonlinearityBar
 from .presentation import PresentationBar
+from .reachability import ReachabilityBar
 from .spoiler_hygiene import SpoilerHygieneBar
+from .style import StyleBar
 
 __all__ = [
     "QualityBar",
