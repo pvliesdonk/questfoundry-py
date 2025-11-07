@@ -95,6 +95,7 @@ Format as JSON:
 }}
 """
 
+        response = ""
         try:
             response = self._call_llm(
                 system_prompt, user_prompt, max_tokens=1500
@@ -190,6 +191,7 @@ Format as JSON:
 }}
 """
 
+        response = ""
         try:
             response = self._call_llm(
                 system_prompt, user_prompt, max_tokens=3000

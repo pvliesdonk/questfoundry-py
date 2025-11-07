@@ -1,5 +1,6 @@
 """Base classes for QuestFoundry loops."""
 
+import copy
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -153,6 +154,8 @@ class Loop(ABC):
         """
         self.context = context
         self.current_step_index = context.current_step
+        # Create instance-specific copy of steps to avoid shared state
+        self.steps = copy.deepcopy(self.__class__.steps)
 
     @abstractmethod
     def execute(self) -> LoopResult:

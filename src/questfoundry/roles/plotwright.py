@@ -91,6 +91,7 @@ Format your response as JSON:
 }}
 """
 
+        response = ""
         try:
             response = self._call_llm(system_prompt, user_prompt)
 
@@ -215,7 +216,7 @@ For each major section, provide:
 4. **Expected Outcomes**: Where choices lead
 5. **Open Questions**: What the Scene Smith should decide
 
-Number of sections: {context.additional_context.get('section_count', 3-5)}
+Number of sections: {context.additional_context.get('section_count', 4)}
 """
 
         try:
