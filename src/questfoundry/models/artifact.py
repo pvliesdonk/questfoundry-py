@@ -61,7 +61,9 @@ class Artifact(BaseModel):
         created = self.metadata.get("created")
         if isinstance(created, str):
             return datetime.fromisoformat(created)
-        return created
+        if isinstance(created, datetime):
+            return created
+        return None
 
     @created.setter
     def created(self, value: datetime) -> None:
@@ -74,7 +76,9 @@ class Artifact(BaseModel):
         modified = self.metadata.get("modified")
         if isinstance(modified, str):
             return datetime.fromisoformat(modified)
-        return modified
+        if isinstance(modified, datetime):
+            return modified
+        return None
 
     @modified.setter
     def modified(self, value: datetime) -> None:
@@ -84,7 +88,10 @@ class Artifact(BaseModel):
     @property
     def author(self) -> str | None:
         """Get author from metadata"""
-        return self.metadata.get("author")
+        author = self.metadata.get("author")
+        if isinstance(author, str):
+            return author
+        return None
 
     @author.setter
     def author(self, value: str) -> None:
