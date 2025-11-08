@@ -1,5 +1,11 @@
 name: Release
 
+# IMPORTANT: This workflow requires branch protection configuration.
+# Go to Settings → Branches → main protection rule
+# Enable "Allow specified actors to bypass required pull requests"
+# Add "github-actions[bot]" as an authorized actor
+# This allows the release automation to push directly to main
+
 on:
   workflow_dispatch:
     inputs:
