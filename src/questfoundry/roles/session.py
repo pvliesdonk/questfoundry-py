@@ -65,10 +65,7 @@ class RoleSession:
         Returns:
             List of recent envelopes (most recent last)
         """
-        if len(self.conversation_history) <= max_messages:
-            return self.conversation_history.copy()
-
-        # Return the most recent max_messages
+        # Use slice notation consistently for better performance
         return self.conversation_history[-max_messages:]
 
     def add_dormancy_signal(self, signal: str) -> None:
@@ -107,6 +104,7 @@ class RoleSession:
         return {
             "role": self.role,
             "tu_context": self.tu_context,
+            "workspace_path": str(self.workspace_path),
             "active_since": self.active_since.isoformat(),
             "active_duration_seconds": (
                 datetime.now(timezone.utc) - self.active_since
@@ -169,14 +167,19 @@ class RoleSession:
             for env_data in data.get("conversation_history", [])
         ]
 
-        # Reconstruct session
+        # Reconstruct session with workspace_path from saved data
+        # Fallback to inferring from path if not in saved data
+        workspace_path = Path(
+            data.get("workspace_path", path.parent.parent.parent.parent)
+        )
+
         return cls(
             role=data["role"],
             tu_context=data.get("tu_context"),
             conversation_history=conversation_history,
             active_since=datetime.fromisoformat(data["active_since"]),
             dormancy_signals=data.get("dormancy_signals", []),
-            workspace_path=path.parent.parent.parent.parent,  # Back to workspace root
+            workspace_path=workspace_path,
         )
 
     def __repr__(self) -> str:

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from ..models.artifact import Artifact
 from ..providers.base import TextProvider
+from .human_callback import batch_mode_callback
 
 # Avoid circular imports
 if TYPE_CHECKING:
@@ -442,9 +443,6 @@ class Role(ABC):
             ...     suggestions=["dark", "lighthearted", "neutral"]
             ... )
         """
-        # Import here to avoid circular dependency
-        from .human_callback import batch_mode_callback
-
         callback = self.human_callback or batch_mode_callback
 
         # Build callback context
@@ -537,10 +535,13 @@ class Role(ABC):
             if 0 <= index < len(choices):
                 return choices[index]
         except ValueError:
+            # If input is not a valid integer, fall back to default below
             pass
 
-        # Fall back to default
-        return choices[default] if choices else ""
+        # Fall back to default with bounds checking
+        if 0 <= default < len(choices):
+            return choices[default]
+        return choices[0] if choices else ""
 
     def __repr__(self) -> str:
         """String representation of the role."""
