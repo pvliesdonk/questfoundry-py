@@ -2,12 +2,9 @@
 
 from typing import Any
 
-import pytest
-
 from questfoundry.roles.human_callback import (
     HumanInteractionMixin,
     batch_mode_callback,
-    default_human_callback,
 )
 
 

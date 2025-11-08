@@ -130,7 +130,9 @@ class RoleSession:
         """
         if path is None:
             # Default: .questfoundry/sessions/{role}/{timestamp}.json
-            sessions_dir = self.workspace_path / ".questfoundry" / "sessions" / self.role
+            sessions_dir = (
+                self.workspace_path / ".questfoundry" / "sessions" / self.role
+            )
             sessions_dir.mkdir(parents=True, exist_ok=True)
             timestamp = self.active_since.strftime("%Y%m%d-%H%M%S")
             path = sessions_dir / f"session-{timestamp}.json"

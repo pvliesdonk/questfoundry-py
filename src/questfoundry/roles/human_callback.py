@@ -115,7 +115,7 @@ class HumanInteractionMixin:
             *args: Passed to parent class
             **kwargs: Passed to parent class
         """
-        super().__init__(*args, **kwargs)  # type: ignore
+        super().__init__(*args, **kwargs)
         self.human_callback = human_callback or batch_mode_callback
 
     def ask_human(

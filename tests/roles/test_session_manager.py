@@ -196,7 +196,7 @@ def test_clear_dormancy_signals_not_awake(manager):
 def test_get_sessions_needing_dormancy(manager):
     """Test getting list of sessions that need dormancy."""
     session1 = manager.wake_role("scene_smith")
-    session2 = manager.wake_role("showrunner")
+    manager.wake_role("showrunner")  # No dormancy signals
     session3 = manager.wake_role("gatekeeper")
 
     # Add dormancy signals to some sessions
