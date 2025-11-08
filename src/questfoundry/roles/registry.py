@@ -63,49 +63,49 @@ class RoleRegistry:
             pass  # Role not yet implemented
 
         try:
-            from .lore_weaver import LoreWeaver  # type: ignore[import-not-found]
+            from .lore_weaver import LoreWeaver
 
             self.register_role("lore_weaver", LoreWeaver)
         except ImportError:
             pass  # Optional role, not yet implemented
 
         try:
-            from .codex_curator import CodexCurator  # type: ignore[import-not-found]
+            from .codex_curator import CodexCurator
 
             self.register_role("codex_curator", CodexCurator)
         except ImportError:
             pass  # Optional role, not yet implemented
 
         try:
-            from .style_lead import StyleLead  # type: ignore[import-not-found]
+            from .style_lead import StyleLead
 
             self.register_role("style_lead", StyleLead)
         except ImportError:
             pass  # Optional role, not yet implemented
 
         try:
-            from .illustrator import Illustrator  # type: ignore[import-not-found]
+            from .illustrator import Illustrator
 
             self.register_role("illustrator", Illustrator)
         except ImportError:
             pass  # Optional role, not yet implemented
 
         try:
-            from .art_director import ArtDirector  # type: ignore[import-not-found]
+            from .art_director import ArtDirector
 
             self.register_role("art_director", ArtDirector)
         except ImportError:
             pass  # Optional role, not yet implemented
 
         try:
-            from .translator import Translator  # type: ignore[import-not-found]
+            from .translator import Translator
 
             self.register_role("translator", Translator)
         except ImportError:
             pass  # Optional role, not yet implemented
 
         try:
-            from .audio_producer import AudioProducer  # type: ignore[import-not-found]
+            from .audio_producer import AudioProducer
 
             self.register_role("audio_producer", AudioProducer)
         except ImportError:

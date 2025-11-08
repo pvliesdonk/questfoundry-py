@@ -43,6 +43,8 @@ class Showrunner(Role):
         - 'plan_roles': Determine which roles to wake
         - 'coordinate_step': Manage handoff between roles
         - 'review_progress': Check TU progress and next steps
+        - 'collect_metrics': Collect project metrics (alias for review_progress)
+        - 'create_snapshot': Create project snapshot (alias for coordinate_step)
 
         Args:
             context: Execution context
@@ -62,6 +64,11 @@ class Showrunner(Role):
             return self._coordinate_step(context)
         elif task == "review_progress":
             return self._review_progress(context)
+        # New tasks for loops
+        elif task == "collect_metrics":
+            return self._review_progress(context)
+        elif task == "create_snapshot":
+            return self._coordinate_step(context)
         else:
             return RoleResult(
                 success=False,
