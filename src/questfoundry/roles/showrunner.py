@@ -1,8 +1,13 @@
 """Showrunner role implementation."""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .base import Role, RoleContext, RoleResult
+
+if TYPE_CHECKING:
+    from questfoundry.providers.base import TextProvider
+    from questfoundry.providers.config import ProviderConfig
+    from questfoundry.providers.registry import ProviderRegistry
 
 
 class Showrunner(Role):
@@ -356,3 +361,109 @@ Be concise and action-oriented.
                 f"({loop.get('typical_duration')})"
             )
         return "\n".join(formatted)
+
+    def get_provider_for_role(
+        self,
+        registry: "ProviderRegistry",
+        provider_type: str = "text",
+    ) -> "TextProvider":
+        """
+        Get the appropriate provider for this role based on configuration.
+
+        Uses role-specific configuration to determine which provider instance
+        to use. Falls back to default if no role-specific configuration exists.
+
+        Args:
+            registry: ProviderRegistry instance with all configured providers
+            provider_type: Type of provider ('text' or 'image')
+
+        Returns:
+            Provider instance configured for this role
+
+        Raises:
+            ValueError: If provider cannot be initialized
+
+        Example:
+            registry = ProviderRegistry(config)
+            provider = showrunner.get_provider_for_role(registry, "text")
+        """
+        # Get the provider name for this role
+        provider_name = registry.config.get_role_provider(
+            self.role_name, provider_type
+        )
+
+        # Use registry to get/create the provider instance
+        if provider_type == "text":
+            return registry.get_text_provider(provider_name)
+        elif provider_type == "image":
+            return registry.get_image_provider(provider_name)
+        else:
+            raise ValueError(f"Unknown provider type: {provider_type}")
+
+    def initialize_role_with_config(
+        self,
+        role_class: type[Role],
+        registry: "ProviderRegistry",
+        spec_path: Any | None = None,
+        config: dict[str, Any] | None = None,
+        session: Any | None = None,
+        human_callback: Any | None = None,
+    ) -> Role:
+        """
+        Initialize a role with provider configuration from global config.
+
+        This method creates a role instance using the appropriate provider
+        based on role-specific configuration. It handles:
+        - Provider selection (per-role vs default)
+        - Cache and rate limiting configuration
+        - Per-role provider instantiation
+
+        Args:
+            role_class: Role class to instantiate
+            registry: ProviderRegistry with all providers and configuration
+            spec_path: Path to spec directory (optional)
+            config: Task-specific configuration (optional)
+            session: RoleSession for conversation tracking (optional)
+            human_callback: Callback for human interaction (optional)
+
+        Returns:
+            Initialized role instance ready for use
+
+        Raises:
+            ValueError: If provider cannot be initialized
+
+        Example:
+            config = ProviderConfig()
+            registry = ProviderRegistry(config)
+            plotwright = showrunner.initialize_role_with_config(
+                PlotWright,
+                registry,
+                config={"max_tokens": 2000}
+            )
+        """
+        try:
+            # We need to know the role_name to get its config
+            # Create temporary role instance to get role_name
+            temp_provider = registry.get_text_provider()  # Uses default
+            temp_role = role_class(provider=temp_provider)
+            role_name = temp_role.role_name
+
+            # Now get the actual provider for this role
+            provider_name = registry.config.get_role_provider(role_name, "text")
+            provider = registry.get_text_provider(provider_name)
+
+            # Get role-specific configuration
+            role_config = registry.config.get_role_config(role_name)
+
+        except Exception as e:
+            raise ValueError(f"Failed to initialize provider for role: {e}") from e
+
+        # Create and return the role with proper configuration
+        return role_class(
+            provider=provider,
+            spec_path=spec_path,
+            config=config,
+            session=session,
+            human_callback=human_callback,
+            role_config=role_config,
+        )

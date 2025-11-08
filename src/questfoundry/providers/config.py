@@ -152,6 +152,130 @@ class ProviderConfig:
         # Exclude 'default' key from list
         return [name for name in provider_configs.keys() if name != "default"]
 
+    def get_role_config(self, role_name: str) -> dict[str, Any]:
+        """
+        Get configuration for a specific role.
+
+        Roles can have per-role provider selection, caching config,
+        rate limiting config, and other role-specific settings.
+
+        Args:
+            role_name: Name of the role (e.g., 'plotwright', 'illustrator')
+
+        Returns:
+            Role configuration dictionary (empty dict if not configured)
+
+        Example:
+            config = provider_config.get_role_config("plotwright")
+            # Returns: {
+            #   "text_provider": "ollama",
+            #   "cache": {"ttl_seconds": 3600},
+            #   "rate_limit": {"requests_per_minute": 30}
+            # }
+        """
+        roles = self._config.get("roles", {})
+        return roles.get(role_name, {})
+
+    def get_role_provider(
+        self, role_name: str, provider_type: str
+    ) -> str | None:
+        """
+        Get the provider to use for a specific role and provider type.
+
+        First checks role-specific configuration, then falls back to default.
+
+        Args:
+            role_name: Name of the role
+            provider_type: Type of provider ('text' or 'image')
+
+        Returns:
+            Provider name to use for this role, or None if not configured
+
+        Example:
+            provider = config.get_role_provider("plotwright", "text")
+            # Returns: "ollama" if configured, else falls back to default
+        """
+        # Check role-specific config first
+        role_config = self.get_role_config(role_name)
+
+        # Look for role-specific provider selection
+        # Supports both "text_provider" and "image_provider" keys
+        provider_key = f"{provider_type}_provider"
+        if provider_key in role_config:
+            return str(role_config[provider_key])
+
+        # Fall back to default provider
+        return self.get_default_provider(provider_type)
+
+    def get_role_provider_config(
+        self, role_name: str, provider_type: str
+    ) -> dict[str, Any]:
+        """
+        Get the full provider configuration for a role.
+
+        This combines the provider configuration with any role-specific
+        overrides (cache settings, rate limiting, etc).
+
+        Args:
+            role_name: Name of the role
+            provider_type: Type of provider ('text' or 'image')
+
+        Returns:
+            Combined provider configuration dictionary
+
+        Example:
+            config = provider_config.get_role_provider_config("plotwright", "text")
+            # Returns: {
+            #   "api_key": "...",
+            #   "model": "llama3",
+            #   "cache": {"ttl_seconds": 3600},
+            #   "rate_limit": {"requests_per_minute": 30}
+            # }
+        """
+        # Get the provider name for this role
+        provider_name = self.get_role_provider(role_name, provider_type)
+        if not provider_name:
+            return {}
+
+        # Get base provider configuration
+        try:
+            provider_config = self.get_provider_config(provider_type, provider_name)
+        except KeyError:
+            provider_config = {}
+
+        # Get role-specific config
+        role_config = self.get_role_config(role_name)
+
+        # Merge configurations (role config takes precedence)
+        # Combine base provider config with role overrides
+        merged_config = {**provider_config}
+
+        # Apply role-specific cache configuration if present
+        if "cache" in role_config:
+            merged_config["cache"] = role_config["cache"]
+
+        # Apply role-specific rate limiting if present
+        if "rate_limit" in role_config:
+            merged_config["rate_limit"] = role_config["rate_limit"]
+
+        # Apply any other role-specific overrides
+        for key, value in role_config.items():
+            if key not in ("text_provider", "image_provider"):
+                if key not in ("cache", "rate_limit"):
+                    merged_config[key] = value
+
+        return merged_config
+
+    def list_roles(self) -> list[str]:
+        """
+        List all roles that have specific configuration.
+
+        Returns:
+            List of role names with custom configuration
+        """
+        roles = self._config.get("roles", {})
+        return list(roles.keys())
+
     def _substitute_env_vars(self, obj: Any) -> Any:
         """
         Recursively substitute environment variables in configuration.

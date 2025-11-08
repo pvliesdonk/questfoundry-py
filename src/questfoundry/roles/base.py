@@ -89,6 +89,7 @@ class Role(ABC):
         config: dict[str, Any] | None = None,
         session: "RoleSession | None" = None,
         human_callback: "HumanCallback | None" = None,
+        role_config: dict[str, Any] | None = None,
     ):
         """
         Initialize role with provider and configuration.
@@ -96,12 +97,38 @@ class Role(ABC):
         Args:
             provider: Text provider for LLM interactions
             spec_path: Path to spec directory (default: ./spec)
-            config: Role-specific configuration
+            config: Role-specific configuration (task settings, parameters)
             session: Optional session for conversation history tracking
             human_callback: Optional callback for agent-to-human questions
+            role_config: Role-level configuration from global config file
+                        (provider selection, cache settings, rate limits)
+
+        Note:
+            The `role_config` parameter contains settings from the global
+            configuration file's roles section and is typically used for
+            provider selection and global rate limiting/caching settings.
+
+            The `config` parameter is for local, task-specific settings
+            and overrides from the application code.
+
+        Example:
+            # From configuration file
+            role_config = {
+                "text_provider": "ollama",
+                "cache": {"ttl_seconds": 3600},
+                "rate_limit": {"requests_per_minute": 30}
+            }
+
+            # Initialize role
+            role = PlotWright(
+                provider=provider,
+                config={"max_tokens": 2000},
+                role_config=role_config
+            )
         """
         self.provider = provider
         self.config = config or {}
+        self.role_config = role_config or {}
         self.session = session
         self.human_callback = human_callback
 
