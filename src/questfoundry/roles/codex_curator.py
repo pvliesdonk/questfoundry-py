@@ -99,8 +99,10 @@ class CodexCurator(Role):
 Create a codex entry following this structure:
 
 **Overview** (1-3 lines, plain language): What is this?
-**Usage** (When player cares): What does it enable or limit? When will they encounter it?
-**Context** (Neutral background): Surface-level facts that clarify without revealing causes or twists
+**Usage** (When player cares): What does it enable or limit?
+    When will they encounter it?
+**Context** (Neutral background): Surface-level facts that clarify
+    without revealing causes or twists
 **See also** (2-5 terms): Helpful related entries (prefer breadth over recursion)
 **Notes** (Optional): Variants, pronunciation, units, accessibility hints
 **Lineage** (Traceability): TU reference

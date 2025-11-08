@@ -44,7 +44,8 @@ class Gatekeeper(Role):
         - 'evaluate_quality_bars': Evaluate all quality bars (alias for gate_check)
         - 'collect_findings': Collect quality findings (delegates to gate_check)
         - 'triage_blockers': Triage findings by severity (delegates to gate_check)
-        - 'create_gatecheck_report': Create comprehensive report (delegates to gate_check)
+        - 'create_gatecheck_report': Create comprehensive report
+          (delegates to gate_check)
 
         Args:
             context: Execution context

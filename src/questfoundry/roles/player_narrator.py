@@ -44,10 +44,13 @@ class PlayerNarrator(Role):
         - 'generate_experience_report': Create player perspective report
         - 'perform_narration': Perform narration/flow testing (alias for test_flow)
         - 'identify_issues': Identify issues in flow (alias for validate_gates)
-        - 'create_report': Create experience report (alias for generate_experience_report)
+        - 'create_report': Create experience report
+          (alias for generate_experience_report)
         - 'collect_metrics': Collect experience metrics (alias for test_flow)
-        - 'final_validation': Final validation of experience (alias for validate_gates)
-        - 'create_post_mortem_report': Create post-mortem report (alias for generate_experience_report)
+        - 'final_validation': Final validation of experience
+          (alias for validate_gates)
+        - 'create_post_mortem_report': Create post-mortem report
+          (alias for generate_experience_report)
 
         Args:
             context: Execution context

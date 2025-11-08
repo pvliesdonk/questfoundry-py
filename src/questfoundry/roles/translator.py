@@ -358,13 +358,15 @@ Respond in JSON format:
             )
 
             data = self._parse_json_from_response(response)
+            validation = data.get("validation", {})
+            all_valid = validation.get("all_links_valid", False)
 
             return RoleResult(
                 success=True,
                 output=response,
                 metadata={
                     "content_type": "link_validation",
-                    "all_valid": data.get("validation", {}).get("all_links_valid", False),
+                    "all_valid": all_valid,
                 },
             )
 

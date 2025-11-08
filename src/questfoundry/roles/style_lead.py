@@ -110,7 +110,8 @@ Respond in JSON format:
   "issues": [
     {{
       "location": "section-id or line ref",
-      "type": "voice-shift|register-mismatch|motif-missing|over-exposition|jargon-spike",
+      "type": "voice-shift|register-mismatch|motif-missing|over-exposition
+              |jargon-spike",
       "description": "Issue description",
       "severity": "blocker|warning|info",
       "example": "Quote showing the problem"
@@ -161,7 +162,8 @@ Respond in JSON format:
 
 Create a style addendum with:
 
-1. **Rules/Clarifications**: Sentence rhythm, idiom boundaries, POV distance, caption tone
+1. **Rules/Clarifications**: Sentence rhythm, idiom boundaries, POV distance,
+   caption tone
 2. **Motif Kit**: Reaffirm house motifs (e.g., "shadow-side neon", "low-G dust")
 3. **Exemplars**: Before/after examples (3-5) showing the fix
 4. **Localization Notes**: Puns to avoid, alternative phrasings
