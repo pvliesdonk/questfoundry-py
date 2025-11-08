@@ -17,20 +17,19 @@ Before doing anything on GitHub, test the entire release process locally:
 ### 1a. Test commitizen bump locally
 
 ```bash
-# This will show what would happen without actually doing it
+# This will show what commitizen will do
 cd /home/user/questfoundry-py
 
 # Install commitizen as a tool
 uv tool install commitizen
 
-# Dry run to see what commitizen would do
-cz bump --dry-run --changelog
+# Check current version
+cz version --project
 ```
 
 This shows:
-- What version it would bump to
-- What changelog entries it would create
-- What files would be modified
+- Current version in pyproject.toml
+- Ready for committing and bumping version
 
 ### 1b. Verify package builds
 
