@@ -50,6 +50,15 @@ dev = [
     "pre-commit>=3.0",
     "types-jsonschema>=4.0",
     "types-pyyaml>=6.0",
+    "commitizen>=3.12.0",
+]
+
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.23.0",
+    "pymdown-extensions>=10.0",
+    "markdown>=3.4",
 ]
 
 [project.urls]
@@ -99,6 +108,19 @@ exclude = ["spec"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_files = [
+    "src/questfoundry/version.py:__version__",
+    "pyproject.toml:version"
+]
+update_changelog_on_bump = true
+changelog_file = "CHANGELOG.md"
+tag_format = "v$version"
+bump_message = "bump: version $current_version → $new_version"
+annotated_tag = true
 
 [dependency-groups]
 dev = [

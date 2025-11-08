@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (leave empty for auto)'
+        required: false
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - uses: astral-sh/setup-uv@v3
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Install commitizen
+      - run: uv tool install commitizen
+
+      # Configure git
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Bump version and create tag with commitizen
+      - name: Create release with commitizen
+        run: |
+          if [ -z "${{ github.event.inputs.version }}" ]; then
+            cz bump --check-dirty --changelog
+          else
+            cz bump --check-dirty --changelog --bump-message "bump: version {current_version} → {new_version}" ${{ github.event.inputs.version }}
+          fi
+
+      # Push changes and tags
+      - name: Push changes
+        run: |
+          git push
+          git push --tags
+
+      # Build package
+      - name: Build package
+        run: uv build
+
+      # Publish to PyPI
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+
+      # Create GitHub Release
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(cz version --project)
+          gh release create "v${VERSION}" \
+            dist/* \
+            --title "Release ${VERSION}" \
+            --notes-file CHANGELOG.md \
+            --latest

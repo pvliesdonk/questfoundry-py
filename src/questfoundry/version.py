@@ -1,26 +1,17 @@
-"""Version information"""
+"""Version information for QuestFoundry-Py."""
 
-from importlib.metadata import version
+__version__ = "0.1.0"
+__version_info__ = (0, 1, 0)
 
 
 def get_version() -> str:
-    """Return version string"""
-    return version("questfoundry-py")
+    """Get the version string.
 
+    Returns:
+        The version string in MAJOR.MINOR.PATCH format.
 
-def get_version_tuple() -> tuple[int, ...]:
-    """Return version as tuple"""
-    ver = get_version()
-    # Handle versions like "0.1.0.dev1" by splitting on "."
-    # and taking only numeric parts
-    parts = []
-    for part in ver.split("."):
-        try:
-            parts.append(int(part))
-        except ValueError:
-            break
-    return tuple(parts)
-
-
-__version__ = get_version()
-__version_tuple__ = get_version_tuple()
+    Example:
+        >>> get_version()
+        '0.1.0'
+    """
+    return __version__

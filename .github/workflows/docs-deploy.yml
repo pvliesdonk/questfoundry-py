@@ -1,0 +1,49 @@
+name: Deploy Docs
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      deploy_branch:
+        description: 'Branch to deploy docs from'
+        required: false
+        default: 'main'
+        type: string
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.deploy_branch || github.ref }}
+          submodules: recursive
+
+      - uses: astral-sh/setup-uv@v3
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Install dependencies
+      - name: Install dependencies
+        run: uv sync --extra docs
+
+      # Build documentation
+      - name: Build docs
+        run: uv run mkdocs build
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          cname: questfoundry.liesdonk.nl
