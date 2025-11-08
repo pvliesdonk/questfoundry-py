@@ -40,9 +40,9 @@ jobs:
       - name: Create release with commitizen
         run: |
           if [ -z "${{ github.event.inputs.version }}" ]; then
-            cz bump --check-dirty --changelog
+            cz bump --changelog
           else
-            cz bump --check-dirty --changelog --bump-message "bump: version {current_version} → {new_version}" ${{ github.event.inputs.version }}
+            cz bump --changelog --bump-message "bump: version {current_version} → {new_version}" ${{ github.event.inputs.version }}
           fi
 
       # Push changes and tags

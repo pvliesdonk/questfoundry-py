@@ -37,7 +37,7 @@ jobs:
 
       # Build documentation
       - name: Build docs
-        run: uv run mkdocs build
+        run: uv run mkdocs build --config-file docs/mkdocs.yml
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
