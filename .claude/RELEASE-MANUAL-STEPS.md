@@ -177,13 +177,14 @@ git pull origin main
 uv tool install commitizen
 
 # Bump version and generate changelog
-cz bump --changelog
+cz bump --changelog --yes
 
 # This will:
 # - Update src/questfoundry/version.py
 # - Update pyproject.toml version
 # - Create/update CHANGELOG.md
 # - Create git tag (v0.1.0)
+# Note: --yes flag auto-confirms prompts (needed for automated environments)
 ```
 
 ### 7b. Push changes and tags
@@ -291,6 +292,14 @@ uv run python -c "from questfoundry import __version__; print(__version__)"
 - Ensure commits follow conventional format
 - Use: `git commit -m "feat: add feature"` or `git commit -m "fix: bug fix"`
 - commitizen can fix them: `commitizen modify COMMIT_HASH`
+
+### Commitizen Interactive Prompt Fails in Workflow
+
+**Error: "EOFError" or "questionary.confirm" fails in GitHub Actions**
+
+- This happens when commitizen tries to ask "Is this the first tag created?" in non-interactive mode
+- The workflow now includes the `--yes` flag to auto-confirm: `cz bump --changelog --yes`
+- This was fixed in the release workflow to handle first release scenarios automatically
 
 ### Version Mismatch
 
