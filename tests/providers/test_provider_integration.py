@@ -1,12 +1,6 @@
 """Tests for Provider integration with caching and rate limiting."""
 
-from unittest.mock import Mock, patch
-
-import pytest
-
-from questfoundry.providers.base import Provider, TextProvider, ImageProvider
-from questfoundry.providers.cache import ResponseCache
-from questfoundry.providers.rate_limiter import RateLimiter
+from questfoundry.providers.base import ImageProvider, TextProvider
 
 
 class MockTextProvider(TextProvider):
@@ -375,8 +369,10 @@ class TestProviderEdgeCases:
 
     def test_multiple_providers_independent_caches(self, tmp_path) -> None:
         """Multiple providers have independent caches."""
-        provider1 = MockTextProvider({"cache": {"cache_dir": str(tmp_path / "cache_p1")}})
-        provider2 = MockTextProvider({"cache": {"cache_dir": str(tmp_path / "cache_p2")}})
+        cache_dir1 = str(tmp_path / "cache_p1")
+        cache_dir2 = str(tmp_path / "cache_p2")
+        provider1 = MockTextProvider({"cache": {"cache_dir": cache_dir1}})
+        provider2 = MockTextProvider({"cache": {"cache_dir": cache_dir2}})
 
         key = "test_key"
         provider1._cache_response(key, "response1")

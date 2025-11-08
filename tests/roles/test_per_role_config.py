@@ -1,7 +1,6 @@
 """Tests for per-role provider configuration."""
 
-from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 
@@ -486,7 +485,8 @@ providers:
 
         registry = Mock(spec=ProviderRegistry)
         registry.config = config
-        registry.get_text_provider.side_effect = ValueError("No default text provider configured")
+        error_msg = "No default text provider configured"
+        registry.get_text_provider.side_effect = ValueError(error_msg)
 
         with pytest.raises(ValueError, match="Failed to initialize"):
             showrunner.initialize_role_with_config(MockRole, registry)

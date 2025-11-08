@@ -1,15 +1,12 @@
 """Tests for rate limiting and cost tracking."""
 
-import time
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
 
 from questfoundry.providers.rate_limiter import (
-    CostLimitExceededError,
     CostTracker,
     RateLimitConfig,
-    RateLimitError,
     RateLimiter,
 )
 
