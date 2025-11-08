@@ -95,8 +95,10 @@ extra:
       link: https://github.com/pvliesdonk/questfoundry-py
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/questfoundry-py/
-  analytics:
-    provider: google
-    property: G-XXXXXXXXXX
+  # Analytics: configure in environment variables
+  # Set GOOGLE_ANALYTICS_ID to your Google Analytics property ID
+  # analytics:
+  #   provider: google
+  #   property: !ENV GOOGLE_ANALYTICS_ID
 
 copyright: Copyright &copy; 2024-2025 QuestFoundry Contributors

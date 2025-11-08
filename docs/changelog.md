@@ -5,23 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [Unreleased]
 
 ### Added
+
 - Epic 15: Advanced Features & Polish
   - Response caching layer with file-based storage
   - Rate limiting with three-layer system (requests, tokens, cost)
   - Per-role provider configuration
   - Advanced state management with bidirectional migrations
   - Cost tracking and budget enforcement
+- Epic 16: Documentation & Release Pipeline
+  - Professional MkDocs documentation site with Material theme
+  - Auto-generated API reference from docstrings
+  - Semantic versioning with commitizen
+  - Automated release pipeline to PyPI
+  - Documentation deployment to GitHub Pages
 
 ### Changed
+
 - Improved configuration merging for nested settings
 - Cache default changed to opt-in (disabled by default)
 
 ### Fixed
+
 - Configuration deep merging preserves nested dictionaries
 - Side effects in cache key generation
+- Code examples in documentation now tested and validated
 
 ## [0.1.0] - 2024-11-08
 

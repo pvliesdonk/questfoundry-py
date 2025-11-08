@@ -64,8 +64,9 @@ orchestrator = Orchestrator(workspace)
 
 # Execute story spark loop
 result = orchestrator.execute_loop(
-    "story_spark",
-    {
+    loop_id="story_spark",
+    project_id="my_project",
+    config={
         "prompt": "A hidden library in the mountains",
         "style": "fantasy adventure"
     }
@@ -108,7 +109,6 @@ print(f"Snapshot contains {len(snapshot_artifacts)} artifacts")
 ```python
 from questfoundry.state.workspace import WorkspaceManager
 from questfoundry.state.types import TUState
-from datetime import datetime
 
 workspace = WorkspaceManager("./my_project")
 
@@ -122,11 +122,11 @@ tu = TUState(
     }
 )
 
-# Save to hot storage
+# Save to hot storage (active/working)
 workspace.save_tu(tu, target="hot")
 
-# Later, move to cold storage
-workspace.demote_to_hot("TU-2024-01-15-INTRO")
+# Later, promote to cold storage (archived)
+workspace.promote_to_cold(tu.tu_id)
 ```
 
 ### Creating Snapshots
@@ -169,23 +169,24 @@ workspace.import_state("export.yaml", merge=True)
 ## Error Handling
 
 ```python
-from questfoundry.exceptions import (
-    ProviderError,
-    StateError,
-    RoleError,
-)
+from questfoundry.orchestrator import Orchestrator
+from questfoundry.state.workspace import WorkspaceManager
+
+workspace = WorkspaceManager("./my_project")
+orchestrator = Orchestrator(workspace)
 
 try:
-    result = orchestrator.execute_loop("story_spark", {})
-except ProviderError as e:
-    print(f"Provider failed: {e}")
-    # Handle provider-specific error
-except StateError as e:
-    print(f"State error: {e}")
-    # Handle state management error
-except RoleError as e:
-    print(f"Role error: {e}")
-    # Handle role-specific error
+    result = orchestrator.execute_loop(
+        loop_id="story_spark",
+        project_id="my_project",
+        config={"prompt": "A story concept"}
+    )
+
+    if not result.success:
+        print(f"Loop failed: {result.error}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+    # Handle unexpected errors
 ```
 
 ## Custom Provider
@@ -221,12 +222,10 @@ class CustomProvider(TextProvider):
         yield "chunk1"
         yield "chunk2"
 
-# Use custom provider
-from questfoundry.providers.registry import ProviderRegistry
-
-registry = ProviderRegistry({"text": {"custom": {...}}})
-provider = CustomProvider({"api_key": "..."})
-text = provider.generate_text("Hello")
+# Use custom provider directly
+provider = CustomProvider({"api_key": "your-api-key"})
+text = provider.generate_text("Hello, world!")
+print(f"Generated: {text}")
 ```
 
 ## Full Example: Mini Project
@@ -243,8 +242,9 @@ def main():
 
     # Generate story concept
     result = orchestrator.execute_loop(
-        "story_spark",
-        {"prompt": "A time traveler arrives in ancient Rome"}
+        loop_id="story_spark",
+        project_id="time_travel_story",
+        config={"prompt": "A time traveler arrives in ancient Rome"}
     )
 
     if not result.success:

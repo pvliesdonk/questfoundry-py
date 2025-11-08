@@ -76,7 +76,6 @@ export OPENAI_API_KEY="sk-..."
 
 ```python
 from questfoundry.state.workspace import WorkspaceManager
-from questfoundry.providers.text.openai import OpenAIProvider
 from questfoundry.orchestrator import Orchestrator
 
 # Initialize workspace
@@ -87,8 +86,9 @@ orchestrator = Orchestrator(workspace)
 
 # Execute a story spark
 result = orchestrator.execute_loop(
-    "story_spark",
-    {
+    loop_id="story_spark",
+    project_id="my_story_project",
+    config={
         "prompt": "A mysterious library hidden in the mountains",
         "style": "fantasy adventure"
     }

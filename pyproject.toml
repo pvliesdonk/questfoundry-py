@@ -57,7 +57,6 @@ docs = [
     "mkdocs>=1.5.0",
     "mkdocs-material>=9.0.0",
     "mkdocstrings[python]>=0.23.0",
-    "mkdocs-awesome-pages-plugin>=2.9.0",
     "pymdown-extensions>=10.0",
     "markdown>=3.4",
 ]
@@ -119,7 +118,6 @@ version_files = [
 ]
 update_changelog_on_bump = true
 changelog_file = "CHANGELOG.md"
-changelog_indent = "  "
 tag_format = "v$version"
 bump_message = "bump: version $current_version → $new_version"
 annotated_tag = true
