@@ -1,0 +1,2435 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Python framework for managing interactive narrative projects with AI integration">
+      
+      
+      
+        <link rel="canonical" href="https://questfoundry.liesdonk.nl/api/providers/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../state/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Providers - QuestFoundry-Py Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#provider-api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="QuestFoundry-Py Documentation" class="md-header__button md-logo" aria-label="QuestFoundry-Py Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuestFoundry-Py Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Providers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pvliesdonk/questfoundry-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    questfoundry-py
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guides/configuration.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples/code-examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="QuestFoundry-Py Documentation" class="md-nav__button md-logo" aria-label="QuestFoundry-Py Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    QuestFoundry-Py Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pvliesdonk/questfoundry-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    questfoundry-py
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Providers
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Providers
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#providerconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      ProviderConfig
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ProviderConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#load" class="md-nav__link">
+    <span class="md-ellipsis">
+      load()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save" class="md-nav__link">
+    <span class="md-ellipsis">
+      save()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_provider_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_provider_config()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_default_provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_default_provider()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_default_provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_default_provider()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      list_providers()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#providerregistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      ProviderRegistry
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ProviderRegistry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provider-access-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provider Access Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Provider Access Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_text_provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_text_provider()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_image_provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_image_provider()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provider-registration-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provider Registration Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Provider Registration Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#register_text_provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      register_text_provider()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#register_image_provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      register_image_provider()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utility Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Utility Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list_text_providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      list_text_providers()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list_image_providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      list_image_providers()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#close_all" class="md-nav__link">
+    <span class="md-ellipsis">
+      close_all()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#base-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Base Classes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Base Classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provider
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Provider">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#__init__config-dictstr-any" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__(config: dict[str, Any])
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate_config-none-abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate_config() -&gt; None (abstract)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#close-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      close() -&gt; None
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textprovider" class="md-nav__link">
+    <span class="md-ellipsis">
+      TextProvider
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TextProvider">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      generate_text()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate_text_streaming" class="md-nav__link">
+    <span class="md-ellipsis">
+      generate_text_streaming()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#imageprovider" class="md-nav__link">
+    <span class="md-ellipsis">
+      ImageProvider
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ImageProvider">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate_image" class="md-nav__link">
+    <span class="md-ellipsis">
+      generate_image()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Built-in Providers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in Providers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#text-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Text Providers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Text Providers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openaiprovider" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenAIProvider
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ollamaprovider" class="md-nav__link">
+    <span class="md-ellipsis">
+      OllamaProvider
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Providers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Providers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dalleprovider" class="md-nav__link">
+    <span class="md-ellipsis">
+      DalleProvider
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic1111provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatic1111Provider
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Patterns
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-text-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Text Generation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streaming-text-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Streaming Text Generation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Image Generation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-provider-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-Provider Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provider-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provider Comparison
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Handling
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context-manager-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Context Manager Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-provider-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Provider Implementation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration Best Practices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See Also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roles.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loops.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Loops
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    State Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guides
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/per-role-config.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Per-Role Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/caching-strategy.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Caching Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/custom-roles.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Roles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/custom-providers.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Providers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/deployment.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Deployment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/code-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="provider-api-reference">Provider API Reference<a class="headerlink" href="#provider-api-reference" title="Permanent link">&para;</a></h1>
+<p>The <code>questfoundry.providers</code> module provides a pluggable architecture for integrating with external AI services (LLMs, image generation, audio generation, etc.). It implements a registry pattern with configuration management and automatic provider discovery.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The provider system consists of:</p>
+<ul>
+<li><strong>Provider Base Classes</strong>: Abstract interfaces for different provider types</li>
+<li><strong>Provider Registry</strong>: Central registry for discovering and instantiating providers</li>
+<li><strong>Provider Config</strong>: Configuration management with environment variable support</li>
+<li><strong>Built-in Providers</strong>: Text (OpenAI, Ollama) and Image (DALL-E, Automatic1111)</li>
+</ul>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProviderRegistry</span><span class="p">,</span> <span class="n">ProviderConfig</span>
+
+<span class="c1"># Load configuration (from .questfoundry/config.yml)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">()</span>
+<span class="n">registry</span> <span class="o">=</span> <span class="n">ProviderRegistry</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Get text provider (default or by name)</span>
+<span class="n">text_provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">()</span>  <span class="c1"># Uses default</span>
+<span class="c1"># text_provider = registry.get_text_provider(&quot;openai&quot;)  # Specific provider</span>
+
+<span class="c1"># Generate text</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">text_provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Write a fantasy hook about a dragon&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="c1"># Get image provider</span>
+<span class="n">image_provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">(</span><span class="s2">&quot;dalle&quot;</span><span class="p">)</span>
+
+<span class="c1"># Generate image</span>
+<span class="n">image_data</span> <span class="o">=</span> <span class="n">image_provider</span><span class="o">.</span><span class="n">generate_image</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;A majestic dragon perched on ancient ruins&quot;</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">1024</span>
+<span class="p">)</span>
+
+<span class="c1"># Save image</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dragon.png&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="providerconfig">ProviderConfig<a class="headerlink" href="#providerconfig" title="Permanent link">&para;</a></h2>
+<p>Manages provider configuration with environment variable substitution.</p>
+<h3 id="constructor">Constructor<a class="headerlink" href="#constructor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">ProviderConfig</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>config_path</code>: Path to config file. If None, looks for <code>.questfoundry/config.yml</code> in current directory.</p>
+<p><strong>Configuration File Format (YAML):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">providers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">text</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openai</span>
+<span class="w">    </span><span class="nt">openai</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPENAI_API_KEY}</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpt-4o</span>
+<span class="w">      </span><span class="nt">organization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org-xxxxx</span><span class="w">  </span><span class="c1"># Optional</span>
+<span class="w">    </span><span class="nt">ollama</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">base_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:11434</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">llama3</span>
+
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">default</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dalle</span>
+<span class="w">    </span><span class="nt">dalle</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPENAI_API_KEY}</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dall-e-3</span>
+<span class="w">    </span><span class="nt">a1111</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">base_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:7860</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sd-xl</span>
+</code></pre></div>
+<p><strong>Environment Variable Substitution:</strong></p>
+<p>The config supports <code>${ENV_VAR}</code> syntax for referencing environment variables:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPENAI_API_KEY}</span>
+</code></pre></div>
+<p>This will be replaced with the value of <code>OPENAI_API_KEY</code> environment variable when the config is loaded.</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProviderConfig</span>
+
+<span class="c1"># Load from default location</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">()</span>
+
+<span class="c1"># Load from custom path</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">(</span><span class="s2">&quot;/path/to/config.yml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Load will raise ValueError if referenced environment variables are not set</span>
+</code></pre></div></p>
+<h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h3>
+<h4 id="load"><code>load()</code><a class="headerlink" href="#load" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Load configuration from file.</p>
+<p><strong>Raises:</strong>
+- <code>FileNotFoundError</code>: If config file doesn't exist
+- <code>ValueError</code>: If config file is invalid YAML or if a referenced environment variable is not set</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">(</span><span class="s2">&quot;./config.yml&quot;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Config file not found&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid config: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="save"><code>save()</code><a class="headerlink" href="#save" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Save configuration to file. Creates parent directories if they don't exist.</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">()</span>
+<span class="n">config</span><span class="o">.</span><span class="n">set_default_provider</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;ollama&quot;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</code></pre></div></p>
+<h4 id="get_provider_config"><code>get_provider_config()</code><a class="headerlink" href="#get_provider_config" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_provider_config</span><span class="p">(</span>
+    <span class="n">provider_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">provider_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</code></pre></div>
+<p>Get configuration for a specific provider.</p>
+<p><strong>Parameters:</strong>
+- <code>provider_type</code>: Type of provider ("text" or "image")
+- <code>provider_name</code>: Name of provider (e.g., "openai", "ollama")</p>
+<p><strong>Returns:</strong> Provider configuration dictionary</p>
+<p><strong>Raises:</strong>
+- <code>KeyError</code>: If provider not found in configuration</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">openai_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_provider_config</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model: </span><span class="si">{</span><span class="n">openai_config</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;API Key: </span><span class="si">{</span><span class="n">openai_config</span><span class="p">[</span><span class="s1">&#39;api_key&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="get_default_provider"><code>get_default_provider()</code><a class="headerlink" href="#get_default_provider" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_default_provider</span><span class="p">(</span><span class="n">provider_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Get default provider name for a type.</p>
+<p><strong>Parameters:</strong>
+- <code>provider_type</code>: Type of provider ("text" or "image")</p>
+<p><strong>Returns:</strong> Default provider name, or None if not configured</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">default_text</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_default_provider</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Default text provider: </span><span class="si">{</span><span class="n">default_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="set_default_provider"><code>set_default_provider()</code><a class="headerlink" href="#set_default_provider" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_default_provider</span><span class="p">(</span>
+    <span class="n">provider_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">provider_name</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Set default provider for a type.</p>
+<p><strong>Parameters:</strong>
+- <code>provider_type</code>: Type of provider ("text" or "image")
+- <code>provider_name</code>: Name of provider</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">config</span><span class="o">.</span><span class="n">set_default_provider</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;ollama&quot;</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>  <span class="c1"># Persist to file</span>
+</code></pre></div></p>
+<h4 id="list_providers"><code>list_providers()</code><a class="headerlink" href="#list_providers" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_providers</span><span class="p">(</span><span class="n">provider_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</code></pre></div>
+<p>List available providers of a given type in configuration.</p>
+<p><strong>Parameters:</strong>
+- <code>provider_type</code>: Type of provider ("text" or "image")</p>
+<p><strong>Returns:</strong> List of provider names</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">text_providers</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">list_providers</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Available text providers: </span><span class="si">{</span><span class="n">text_providers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Output: [&#39;openai&#39;, &#39;ollama&#39;]</span>
+</code></pre></div></p>
+<h2 id="providerregistry">ProviderRegistry<a class="headerlink" href="#providerregistry" title="Permanent link">&para;</a></h2>
+<p>Registry for managing text and image providers. Handles provider instantiation, configuration, and caching.</p>
+<h3 id="constructor_1">Constructor<a class="headerlink" href="#constructor_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">ProviderRegistry</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">ProviderConfig</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>config</code>: Provider configuration</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProviderRegistry</span><span class="p">,</span> <span class="n">ProviderConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">()</span>
+<span class="n">registry</span> <span class="o">=</span> <span class="n">ProviderRegistry</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="provider-access-methods">Provider Access Methods<a class="headerlink" href="#provider-access-methods" title="Permanent link">&para;</a></h3>
+<h4 id="get_text_provider"><code>get_text_provider()</code><a class="headerlink" href="#get_text_provider" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_text_provider</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextProvider</span>
+</code></pre></div>
+<p>Get or create a text provider instance. Instances are cached for reuse.</p>
+<p><strong>Parameters:</strong>
+- <code>name</code>: Provider name. If None, uses default from config.</p>
+<p><strong>Returns:</strong> Text provider instance</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If provider not found or not registered, or if no default configured</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get default text provider</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">()</span>
+
+<span class="c1"># Get specific provider</span>
+<span class="n">openai</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+<span class="n">ollama</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;ollama&quot;</span><span class="p">)</span>
+
+<span class="c1"># Cached - returns same instance</span>
+<span class="n">provider2</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">provider</span> <span class="ow">is</span> <span class="n">provider2</span>
+</code></pre></div></p>
+<h4 id="get_image_provider"><code>get_image_provider()</code><a class="headerlink" href="#get_image_provider" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_image_provider</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageProvider</span>
+</code></pre></div>
+<p>Get or create an image provider instance. Instances are cached for reuse.</p>
+<p><strong>Parameters:</strong>
+- <code>name</code>: Provider name. If None, uses default from config.</p>
+<p><strong>Returns:</strong> Image provider instance</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If provider not found or not registered, or if no default configured</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get default image provider</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">()</span>
+
+<span class="c1"># Get specific provider</span>
+<span class="n">dalle</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">(</span><span class="s2">&quot;dalle&quot;</span><span class="p">)</span>
+<span class="n">sd</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">(</span><span class="s2">&quot;a1111&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="provider-registration-methods">Provider Registration Methods<a class="headerlink" href="#provider-registration-methods" title="Permanent link">&para;</a></h3>
+<h4 id="register_text_provider"><code>register_text_provider()</code><a class="headerlink" href="#register_text_provider" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_text_provider</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">provider_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">TextProvider</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Register a custom text provider class.</p>
+<p><strong>Parameters:</strong>
+- <code>name</code>: Provider name (e.g., "custom", "anthropic")
+- <code>provider_class</code>: Provider class to register (must extend TextProvider)</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextProvider</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomTextProvider</span><span class="p">(</span><span class="n">TextProvider</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Implementation...</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Implementation...</span>
+        <span class="k">return</span> <span class="s2">&quot;generated text&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_text_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Implementation...</span>
+        <span class="k">yield</span> <span class="s2">&quot;chunk1&quot;</span>
+
+<span class="n">registry</span><span class="o">.</span><span class="n">register_text_provider</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="n">CustomTextProvider</span><span class="p">)</span>
+
+<span class="c1"># Now can use it</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="register_image_provider"><code>register_image_provider()</code><a class="headerlink" href="#register_image_provider" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_image_provider</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">provider_class</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ImageProvider</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Register a custom image provider class.</p>
+<p><strong>Parameters:</strong>
+- <code>name</code>: Provider name (e.g., "midjourney", "imagen")
+- <code>provider_class</code>: Provider class to register (must extend ImageProvider)</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageProvider</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomImageProvider</span><span class="p">(</span><span class="n">ImageProvider</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Implementation...</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Implementation...</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s2">&quot;...image bytes...&quot;</span>
+
+<span class="n">registry</span><span class="o">.</span><span class="n">register_image_provider</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="n">CustomImageProvider</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="utility-methods">Utility Methods<a class="headerlink" href="#utility-methods" title="Permanent link">&para;</a></h3>
+<h4 id="list_text_providers"><code>list_text_providers()</code><a class="headerlink" href="#list_text_providers" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_text_providers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</code></pre></div>
+<p>List registered text providers.</p>
+<p><strong>Returns:</strong> List of text provider names</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">providers</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">list_text_providers</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Available: </span><span class="si">{</span><span class="n">providers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Output: [&#39;openai&#39;, &#39;ollama&#39;, &#39;custom&#39;]</span>
+</code></pre></div></p>
+<h4 id="list_image_providers"><code>list_image_providers()</code><a class="headerlink" href="#list_image_providers" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_image_providers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</code></pre></div>
+<p>List registered image providers.</p>
+<p><strong>Returns:</strong> List of image provider names</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">providers</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">list_image_providers</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Available: </span><span class="si">{</span><span class="n">providers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Output: [&#39;dalle&#39;, &#39;a1111&#39;]</span>
+</code></pre></div></p>
+<h4 id="close_all"><code>close_all()</code><a class="headerlink" href="#close_all" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Close all provider instances and release resources. Clears the instance cache.</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use providers...</span>
+<span class="c1"># ...</span>
+
+<span class="c1"># Clean up all resources</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">close_all</span><span class="p">()</span>
+</code></pre></div></p>
+<h2 id="base-classes">Base Classes<a class="headerlink" href="#base-classes" title="Permanent link">&para;</a></h2>
+<h3 id="provider">Provider<a class="headerlink" href="#provider" title="Permanent link">&para;</a></h3>
+<p>Abstract base class for all providers.</p>
+<p><strong>Methods:</strong></p>
+<h4 id="__init__config-dictstr-any"><code>__init__(config: dict[str, Any])</code><a class="headerlink" href="#__init__config-dictstr-any" title="Permanent link">&para;</a></h4>
+<p>Initialize provider with configuration.</p>
+<h4 id="validate_config-none-abstract"><code>validate_config() -&gt; None</code> (abstract)<a class="headerlink" href="#validate_config-none-abstract" title="Permanent link">&para;</a></h4>
+<p>Validate provider configuration. Must be implemented by subclasses.</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If configuration is invalid</p>
+<h4 id="close-none"><code>close() -&gt; None</code><a class="headerlink" href="#close-none" title="Permanent link">&para;</a></h4>
+<p>Close provider and release resources. Default implementation does nothing, but providers can override to cleanup connections.</p>
+<p><strong>Context Manager Support:</strong></p>
+<p>All providers support context manager protocol:</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">provider</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>
+<span class="c1"># Provider automatically closed</span>
+</code></pre></div>
+<h3 id="textprovider">TextProvider<a class="headerlink" href="#textprovider" title="Permanent link">&para;</a></h3>
+<p>Abstract base class for text generation providers. Extends Provider.</p>
+<p><strong>Abstract Methods:</strong></p>
+<h4 id="generate_text"><code>generate_text()</code><a class="headerlink" href="#generate_text" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+<p>Generate text from a prompt.</p>
+<p><strong>Parameters:</strong>
+- <code>prompt</code>: The input prompt
+- <code>model</code>: Model to use (uses default if not specified)
+- <code>max_tokens</code>: Maximum tokens to generate
+- <code>temperature</code>: Sampling temperature (0.0 to 2.0)
+- <code>**kwargs</code>: Additional provider-specific parameters</p>
+<p><strong>Returns:</strong> Generated text</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If parameters are invalid
+- <code>RuntimeError</code>: If generation fails</p>
+<h4 id="generate_text_streaming"><code>generate_text_streaming()</code><a class="headerlink" href="#generate_text_streaming" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_text_streaming</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</code></pre></div>
+<p>Generate text from a prompt with streaming.</p>
+<p><strong>Parameters:</strong> Same as <code>generate_text()</code></p>
+<p><strong>Yields:</strong> Text chunks as they are generated</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If parameters are invalid
+- <code>RuntimeError</code>: If generation fails</p>
+<h3 id="imageprovider">ImageProvider<a class="headerlink" href="#imageprovider" title="Permanent link">&para;</a></h3>
+<p>Abstract base class for image generation providers. Extends Provider.</p>
+<p><strong>Abstract Method:</strong></p>
+<h4 id="generate_image"><code>generate_image()</code><a class="headerlink" href="#generate_image" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_image</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
+</code></pre></div>
+<p>Generate an image from a text prompt.</p>
+<p><strong>Parameters:</strong>
+- <code>prompt</code>: The text prompt describing the image
+- <code>model</code>: Model to use (uses default if not specified)
+- <code>width</code>: Image width in pixels
+- <code>height</code>: Image height in pixels
+- <code>**kwargs</code>: Additional provider-specific parameters</p>
+<p><strong>Returns:</strong> Image data as bytes (typically PNG format)</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If parameters are invalid
+- <code>RuntimeError</code>: If generation fails</p>
+<h2 id="built-in-providers">Built-in Providers<a class="headerlink" href="#built-in-providers" title="Permanent link">&para;</a></h2>
+<h3 id="text-providers">Text Providers<a class="headerlink" href="#text-providers" title="Permanent link">&para;</a></h3>
+<h4 id="openaiprovider">OpenAIProvider<a class="headerlink" href="#openaiprovider" title="Permanent link">&para;</a></h4>
+<p>OpenAI text generation provider using GPT models.</p>
+<p><strong>Configuration:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">providers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">text</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">openai</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPENAI_API_KEY}</span><span class="w">  </span><span class="c1"># Required</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpt-4o</span><span class="w">              </span><span class="c1"># Optional, default: gpt-4o</span>
+<span class="w">      </span><span class="nt">organization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org-xxxxx</span><span class="w">     </span><span class="c1"># Optional</span>
+<span class="w">      </span><span class="nt">base_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://...</span><span class="w">       </span><span class="c1"># Optional (for proxies)</span>
+</code></pre></div></p>
+<p><strong>Installation:</strong>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>questfoundry-py<span class="o">[</span>openai<span class="o">]</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+
+<span class="c1"># Basic generation</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Write a fantasy scene&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="c1"># With OpenAI-specific parameters</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Write a fantasy scene&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">top_p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">frequency_penalty</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">presence_penalty</span><span class="o">=</span><span class="mf">0.5</span>
+<span class="p">)</span>
+
+<span class="c1"># Streaming</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text_streaming</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Write a long story&quot;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span>
+<span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Supported Models:</strong>
+- gpt-4o (default)
+- gpt-4-turbo
+- gpt-4
+- gpt-3.5-turbo
+- All OpenAI chat models</p>
+<h4 id="ollamaprovider">OllamaProvider<a class="headerlink" href="#ollamaprovider" title="Permanent link">&para;</a></h4>
+<p>Local Ollama text generation provider.</p>
+<p><strong>Configuration:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">providers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">text</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ollama</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">base_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:11434</span><span class="w">  </span><span class="c1"># Required</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">llama3</span><span class="w">                     </span><span class="c1"># Optional, default: llama3</span>
+</code></pre></div></p>
+<p><strong>Installation:</strong>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>questfoundry-py<span class="o">[</span>ollama<span class="o">]</span>
+<span class="c1"># Also requires Ollama running locally</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;ollama&quot;</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Write a fantasy hook&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.9</span>
+<span class="p">)</span>
+
+<span class="c1"># Streaming</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text_streaming</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Tell a story&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Supported Models:</strong>
+- llama3 (default)
+- llama2
+- mistral
+- Any model available in your Ollama installation</p>
+<h3 id="image-providers">Image Providers<a class="headerlink" href="#image-providers" title="Permanent link">&para;</a></h3>
+<h4 id="dalleprovider">DalleProvider<a class="headerlink" href="#dalleprovider" title="Permanent link">&para;</a></h4>
+<p>OpenAI DALL-E image generation provider.</p>
+<p><strong>Configuration:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">providers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dalle</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPENAI_API_KEY}</span><span class="w">  </span><span class="c1"># Required</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dall-e-3</span><span class="w">              </span><span class="c1"># Optional, default: dall-e-3</span>
+</code></pre></div></p>
+<p><strong>Installation:</strong>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>questfoundry-py<span class="o">[</span>openai<span class="o">]</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">(</span><span class="s2">&quot;dalle&quot;</span><span class="p">)</span>
+
+<span class="n">image_data</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_image</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;A majestic dragon on a mountain peak&quot;</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+    <span class="c1"># DALL-E specific parameters</span>
+    <span class="n">quality</span><span class="o">=</span><span class="s2">&quot;hd&quot;</span><span class="p">,</span>
+    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;vivid&quot;</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dragon.png&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Supported Models:</strong>
+- dall-e-3 (default) - 1024x1024, 1024x1792, 1792x1024
+- dall-e-2 - 256x256, 512x512, 1024x1024</p>
+<h4 id="automatic1111provider">Automatic1111Provider<a class="headerlink" href="#automatic1111provider" title="Permanent link">&para;</a></h4>
+<p>Stable Diffusion via Automatic1111 Web UI.</p>
+<p><strong>Configuration:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">providers</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a1111</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">base_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:7860</span><span class="w">  </span><span class="c1"># Required</span>
+<span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sd-xl</span><span class="w">                     </span><span class="c1"># Optional, default: sd-xl</span>
+</code></pre></div></p>
+<p><strong>Installation:</strong>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>questfoundry-py<span class="o">[</span>image<span class="o">]</span>
+<span class="c1"># Also requires Automatic1111 Web UI running locally</span>
+</code></pre></div></p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">(</span><span class="s2">&quot;a1111&quot;</span><span class="p">)</span>
+
+<span class="n">image_data</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_image</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;fantasy dragon, highly detailed, 4k&quot;</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+    <span class="c1"># A1111 specific parameters</span>
+    <span class="n">negative_prompt</span><span class="o">=</span><span class="s2">&quot;blurry, low quality&quot;</span><span class="p">,</span>
+    <span class="n">steps</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">cfg_scale</span><span class="o">=</span><span class="mf">7.5</span><span class="p">,</span>
+    <span class="n">sampler_name</span><span class="o">=</span><span class="s2">&quot;Euler a&quot;</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;dragon.png&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Supported Parameters:</strong>
+- <code>negative_prompt</code>: What to avoid in generation
+- <code>steps</code>: Number of inference steps (default: 20)
+- <code>cfg_scale</code>: Classifier-free guidance scale (default: 7.0)
+- <code>sampler_name</code>: Sampler algorithm (e.g., "Euler a", "DPM++ 2M")
+- <code>seed</code>: Random seed for reproducibility</p>
+<h2 id="usage-patterns">Usage Patterns<a class="headerlink" href="#usage-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="basic-text-generation">Basic Text Generation<a class="headerlink" href="#basic-text-generation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProviderRegistry</span><span class="p">,</span> <span class="n">ProviderConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">()</span>
+<span class="n">registry</span> <span class="o">=</span> <span class="n">ProviderRegistry</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Get provider</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">()</span>
+
+<span class="c1"># Generate text</span>
+<span class="n">scene</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Write a fantasy scene where the protagonist discovers</span>
+<span class="s2">an ancient artifact in a forgotten temple.</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="streaming-text-generation">Streaming Text Generation<a class="headerlink" href="#streaming-text-generation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating story...&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text_streaming</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Write a long adventure story&quot;</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.9</span>
+<span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Done!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="image-generation">Image Generation<a class="headerlink" href="#image-generation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">(</span><span class="s2">&quot;dalle&quot;</span><span class="p">)</span>
+
+<span class="c1"># Generate image</span>
+<span class="n">image_data</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_image</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;A mystical forest with glowing mushrooms&quot;</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">1024</span>
+<span class="p">)</span>
+
+<span class="c1"># Save to file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;generated_images&quot;</span><span class="p">)</span>
+<span class="n">output</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">(</span><span class="n">output</span> <span class="o">/</span> <span class="s2">&quot;forest.png&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="multi-provider-setup">Multi-Provider Setup<a class="headerlink" href="#multi-provider-setup" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Use different providers for different tasks</span>
+<span class="n">openai</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+<span class="n">ollama</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;ollama&quot;</span><span class="p">)</span>
+<span class="n">dalle</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_image_provider</span><span class="p">(</span><span class="s2">&quot;dalle&quot;</span><span class="p">)</span>
+
+<span class="c1"># Use OpenAI for creative writing</span>
+<span class="n">story</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Write a dramatic scene&quot;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.9</span>
+<span class="p">)</span>
+
+<span class="c1"># Use Ollama for structured output (faster, cheaper)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">ollama</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Summarize this scene in 3 bullet points:</span><span class="se">\n\n</span><span class="si">{</span><span class="n">story</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span>
+<span class="p">)</span>
+
+<span class="c1"># Generate illustration</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">dalle</span><span class="o">.</span><span class="n">generate_image</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="n">summary</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mi">1024</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="provider-comparison">Provider Comparison<a class="headerlink" href="#provider-comparison" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">providers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;openai&quot;</span><span class="p">,</span> <span class="s2">&quot;ollama&quot;</span><span class="p">]</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Write a short fantasy hook about a dragon&quot;</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">provider_name</span> <span class="ow">in</span> <span class="n">providers</span><span class="p">:</span>
+    <span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="n">provider_name</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="n">provider_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProviderRegistry</span><span class="p">,</span> <span class="n">ProviderConfig</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">()</span>
+    <span class="n">registry</span> <span class="o">=</span> <span class="n">ProviderRegistry</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span><span class="s2">&quot;Write a scene&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Configuration or parameter errors</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configuration error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># API call failures</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Missing dependencies</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Install required package: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="context-manager-pattern">Context Manager Pattern<a class="headerlink" href="#context-manager-pattern" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="n">ProviderConfig</span><span class="p">()</span>
+<span class="n">registry</span> <span class="o">=</span> <span class="n">ProviderRegistry</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Automatic cleanup</span>
+<span class="k">with</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">provider</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span><span class="s2">&quot;Hello world&quot;</span><span class="p">)</span>
+<span class="c1"># Provider closed automatically</span>
+
+<span class="c1"># Or manually</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;openai&quot;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span><span class="s2">&quot;Hello world&quot;</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">provider</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="custom-provider-implementation">Custom Provider Implementation<a class="headerlink" href="#custom-provider-implementation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.providers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCustomProvider</span><span class="p">(</span><span class="n">TextProvider</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom text provider implementation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate configuration.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;api_key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;api_key required&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_text</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate text.&quot;&quot;&quot;</span>
+        <span class="c1"># Your implementation here</span>
+        <span class="n">api_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;api_key&quot;</span><span class="p">]</span>
+        <span class="c1"># ... call your API ...</span>
+        <span class="k">return</span> <span class="s2">&quot;generated text&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_text_streaming</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate text with streaming.&quot;&quot;&quot;</span>
+        <span class="c1"># Your implementation here</span>
+        <span class="k">yield</span> <span class="s2">&quot;chunk 1&quot;</span>
+        <span class="k">yield</span> <span class="s2">&quot;chunk 2&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cleanup resources.&quot;&quot;&quot;</span>
+        <span class="c1"># Close connections, etc.</span>
+        <span class="k">pass</span>
+
+<span class="c1"># Register and use</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register_text_provider</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">,</span> <span class="n">MyCustomProvider</span><span class="p">)</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">(</span><span class="s2">&quot;custom&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="configuration-best-practices">Configuration Best Practices<a class="headerlink" href="#configuration-best-practices" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Use environment variables</strong> for sensitive data:
+   <div class="highlight"><pre><span></span><code><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPENAI_API_KEY}</span><span class="w">  </span><span class="c1"># Good</span>
+<span class="c1"># api_key: sk-xxxxx  # Bad - don&#39;t commit secrets</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Set reasonable defaults</strong>:
+   <div class="highlight"><pre><span></span><code><span class="nt">openai</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">api_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${OPENAI_API_KEY}</span>
+<span class="w">  </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpt-4o</span>
+<span class="w">  </span><span class="nt">max_tokens</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000</span><span class="w">  </span><span class="c1"># Reasonable default</span>
+<span class="w">  </span><span class="nt">temperature</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Use different providers</strong> for different tasks:</p>
+</li>
+<li>OpenAI GPT-4: Creative writing, complex reasoning</li>
+<li>Ollama (local): Fast iterations, structured output, development</li>
+<li>DALL-E: High-quality illustrations</li>
+<li>
+<p>Stable Diffusion: Rapid prototyping, style exploration</p>
+</li>
+<li>
+<p><strong>Cache provider instances</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Good - reuses instance</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">()</span>
+
+<span class="c1"># Avoid - creates new instances</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">()</span>  <span class="c1"># Wasteful</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Clean up resources</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Always cleanup when done</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">close_all</span><span class="p">()</span>
+
+<span class="c1"># Or use context managers</span>
+<span class="k">with</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_text_provider</span><span class="p">()</span> <span class="k">as</span> <span class="n">provider</span><span class="p">:</span>
+    <span class="c1"># Use provider</span>
+    <span class="k">pass</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../protocol/">Protocol API</a> - Message passing with envelopes</li>
+<li><a href="../state/">State Management API</a> - Project storage</li>
+<li><a href="roles.md">Roles API</a> - Role execution with providers</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024-2025 QuestFoundry Contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/pvliesdonk/questfoundry-py" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/questfoundry-py/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.indexes", "toc.integrate", "content.code.copy", "content.code.select", "search.suggest", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

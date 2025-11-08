@@ -1,0 +1,2099 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Python framework for managing interactive narrative projects with AI integration">
+      
+      
+      
+        <link rel="canonical" href="https://questfoundry.liesdonk.nl/api/protocol/">
+      
+      
+        <link rel="prev" href="../state/">
+      
+      
+        <link rel="next" href="../validation/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Protocol - QuestFoundry-Py Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#protocol-api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="QuestFoundry-Py Documentation" class="md-header__button md-logo" aria-label="QuestFoundry-Py Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuestFoundry-Py Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Protocol
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pvliesdonk/questfoundry-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    questfoundry-py
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guides/configuration.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples/code-examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="QuestFoundry-Py Documentation" class="md-nav__button md-logo" aria-label="QuestFoundry-Py Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    QuestFoundry-Py Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pvliesdonk/questfoundry-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    questfoundry-py
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Providers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roles.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loops.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Loops
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    State Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Protocol
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Protocol
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protocolclient" class="md-nav__link">
+    <span class="md-ellipsis">
+      ProtocolClient
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ProtocolClient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#factory-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Factory Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Factory Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from_workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_workspace()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create_envelope" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_envelope()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send" class="md-nav__link">
+    <span class="md-ellipsis">
+      send()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#receive" class="md-nav__link">
+    <span class="md-ellipsis">
+      receive()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send_and_wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      send_and_wait()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      subscribe()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsubscribe_all" class="md-nav__link">
+    <span class="md-ellipsis">
+      unsubscribe_all()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context-manager-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Context Manager Support
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#envelope-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Envelope Models
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Envelope Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#envelope" class="md-nav__link">
+    <span class="md-ellipsis">
+      Envelope
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#envelopebuilder" class="md-nav__link">
+    <span class="md-ellipsis">
+      EnvelopeBuilder
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      Protocol
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sender" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sender
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#receiver" class="md-nav__link">
+    <span class="md-ellipsis">
+      Receiver
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Context
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      Safety
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payload" class="md-nav__link">
+    <span class="md-ellipsis">
+      Payload
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-enums" class="md-nav__link">
+    <span class="md-ellipsis">
+      Type Enums
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Type Enums">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hotcold" class="md-nav__link">
+    <span class="md-ellipsis">
+      HotCold
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spoilerpolicy" class="md-nav__link">
+    <span class="md-ellipsis">
+      SpoilerPolicy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rolename" class="md-nav__link">
+    <span class="md-ellipsis">
+      RoleName
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conformance-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conformance Validation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conformance Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate_envelope_conformance" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate_envelope_conformance()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conformanceresult" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConformanceResult
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conformanceviolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConformanceViolation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transport-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transport Layer
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Transport Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transport-abstract-base-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transport (Abstract Base Class)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filetransport" class="md-nav__link">
+    <span class="md-ellipsis">
+      FileTransport
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Patterns
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#request-response-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request-Response Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#event-broadcasting-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Event Broadcasting Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subscription-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subscription Pattern
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-message-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Message Processing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error Handling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See Also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guides
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/per-role-config.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Per-Role Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/caching-strategy.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Caching Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/custom-roles.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Roles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/custom-providers.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Providers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/deployment.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Deployment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/code-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="protocol-api-reference">Protocol API Reference<a class="headerlink" href="#protocol-api-reference" title="Permanent link">&para;</a></h1>
+<p>The <code>questfoundry.protocol</code> module provides the Layer 4 protocol implementation for QuestFoundry agent communication. It implements envelope-based message passing with validation and transport abstraction.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The protocol module consists of:</p>
+<ul>
+<li><strong>Envelope Models</strong>: Pydantic models for protocol messages</li>
+<li><strong>Protocol Client</strong>: High-level API for sending/receiving messages</li>
+<li><strong>Transport Layer</strong>: Abstraction for message delivery (file-based, HTTP, etc.)</li>
+<li><strong>Conformance Validation</strong>: Protocol specification compliance checking</li>
+</ul>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProtocolClient</span><span class="p">,</span> <span class="n">HotCold</span><span class="p">,</span> <span class="n">SpoilerPolicy</span>
+
+<span class="c1"># Create a client for the Showrunner role</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./my-project&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create and send a message</span>
+<span class="n">envelope</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_envelope</span><span class="p">(</span>
+    <span class="n">receiver</span><span class="o">=</span><span class="s2">&quot;LW&quot;</span><span class="p">,</span>  <span class="c1"># Lore Weaver</span>
+    <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;canon.create&quot;</span><span class="p">,</span>
+    <span class="n">payload_type</span><span class="o">=</span><span class="s2">&quot;canon_pack&quot;</span><span class="p">,</span>
+    <span class="n">payload_data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;pack_id&quot;</span><span class="p">:</span> <span class="s2">&quot;PACK-001&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;World Fundamentals&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;entries&quot;</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">},</span>
+    <span class="n">hot_cold</span><span class="o">=</span><span class="n">HotCold</span><span class="o">.</span><span class="n">HOT</span><span class="p">,</span>
+    <span class="n">player_safe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">spoilers</span><span class="o">=</span><span class="n">SpoilerPolicy</span><span class="o">.</span><span class="n">ALLOWED</span>
+<span class="p">)</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">envelope</span><span class="p">)</span>
+
+<span class="c1"># Send and wait for response</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send_and_wait</span><span class="p">(</span><span class="n">envelope</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">response</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received response: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">intent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="protocolclient">ProtocolClient<a class="headerlink" href="#protocolclient" title="Permanent link">&para;</a></h2>
+<p>The main interface for protocol communication.</p>
+<h3 id="constructor">Constructor<a class="headerlink" href="#constructor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">ProtocolClient</span><span class="p">(</span><span class="n">transport</span><span class="p">:</span> <span class="n">Transport</span><span class="p">,</span> <span class="n">sender_role</span><span class="p">:</span> <span class="n">RoleName</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>transport</code> (Transport): Transport implementation to use
+- <code>sender_role</code> (RoleName): Role name for this client (e.g., "SR", "GK", "LW")</p>
+<h3 id="factory-methods">Factory Methods<a class="headerlink" href="#factory-methods" title="Permanent link">&para;</a></h3>
+<h4 id="from_workspace"><code>from_workspace()</code><a class="headerlink" href="#from_workspace" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_workspace</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">workspace_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sender_role</span><span class="p">:</span> <span class="n">RoleName</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProtocolClient</span>
+</code></pre></div>
+<p>Create a client using file-based transport in a workspace directory.</p>
+<p><strong>Parameters:</strong>
+- <code>workspace_dir</code>: Path to workspace directory (creates <code>.questfoundry/hot/</code> subdirs)
+- <code>sender_role</code>: Role name for this client</p>
+<p><strong>Returns:</strong> ProtocolClient instance</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./my-adventure&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="core-methods">Core Methods<a class="headerlink" href="#core-methods" title="Permanent link">&para;</a></h3>
+<h4 id="create_envelope"><code>create_envelope()</code><a class="headerlink" href="#create_envelope" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_envelope</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">receiver</span><span class="p">:</span> <span class="n">RoleName</span><span class="p">,</span>
+    <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">payload_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">payload_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">hot_cold</span><span class="p">:</span> <span class="n">HotCold</span> <span class="o">=</span> <span class="n">HotCold</span><span class="o">.</span><span class="n">HOT</span><span class="p">,</span>
+    <span class="n">player_safe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">spoilers</span><span class="p">:</span> <span class="n">SpoilerPolicy</span> <span class="o">=</span> <span class="n">SpoilerPolicy</span><span class="o">.</span><span class="n">FORBIDDEN</span><span class="p">,</span>
+    <span class="n">correlation_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">reply_to</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tu</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">snapshot</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">refs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Envelope</span>
+</code></pre></div>
+<p>Create an envelope with sensible defaults. Automatically sets protocol version, message ID, timestamp, and sender.</p>
+<p><strong>Parameters:</strong>
+- <code>receiver</code>: Receiving role (e.g., "GK", "LW", "SS")
+- <code>intent</code>: Intent verb (e.g., "scene.write", "hook.create")
+- <code>payload_type</code>: Artifact type for payload (e.g., "hook_card", "tu_brief")
+- <code>payload_data</code>: Payload data dictionary
+- <code>hot_cold</code>: Workspace designation (default: HOT)
+- <code>player_safe</code>: Whether safe for Player Narrator (default: True)
+- <code>spoilers</code>: Spoiler policy (default: FORBIDDEN)
+- <code>correlation_id</code>: Optional correlation ID for request/response
+- <code>reply_to</code>: Optional message ID this replies to
+- <code>tu</code>: Optional TU ID (e.g., "TU-2025-11-07-SR01")
+- <code>snapshot</code>: Optional snapshot reference
+- <code>refs</code>: Optional list of referenced artifact IDs</p>
+<p><strong>Returns:</strong> Constructed Envelope</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">envelope</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_envelope</span><span class="p">(</span>
+    <span class="n">receiver</span><span class="o">=</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span>
+    <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;scene.write&quot;</span><span class="p">,</span>
+    <span class="n">payload_type</span><span class="o">=</span><span class="s2">&quot;tu_brief&quot;</span><span class="p">,</span>
+    <span class="n">payload_data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;brief_id&quot;</span><span class="p">:</span> <span class="s2">&quot;BRIEF-001&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Opening scene&quot;</span>
+    <span class="p">},</span>
+    <span class="n">tu</span><span class="o">=</span><span class="s2">&quot;TU-2025-11-07-SR01&quot;</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h4 id="send"><code>send()</code><a class="headerlink" href="#send" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">envelope</span><span class="p">:</span> <span class="n">Envelope</span><span class="p">,</span> <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Send an envelope through the transport.</p>
+<p><strong>Parameters:</strong>
+- <code>envelope</code>: The envelope to send
+- <code>validate</code>: Whether to validate conformance (default: True)</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If envelope fails conformance validation
+- <code>IOError</code>: If sending fails</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">envelope</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="receive"><code>receive()</code><a class="headerlink" href="#receive" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Envelope</span><span class="p">]</span>
+</code></pre></div>
+<p>Receive envelopes from the transport. Returns an iterator that yields envelopes as they are received.</p>
+<p><strong>Parameters:</strong>
+- <code>validate</code>: Whether to validate conformance (default: True)</p>
+<p><strong>Yields:</strong> Envelope objects</p>
+<p><strong>Raises:</strong>
+- <code>IOError</code>: If receiving fails</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">envelope</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">receive</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received </span><span class="si">{</span><span class="n">envelope</span><span class="o">.</span><span class="n">intent</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">envelope</span><span class="o">.</span><span class="n">sender</span><span class="o">.</span><span class="n">role</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">envelope</span><span class="o">.</span><span class="n">intent</span> <span class="o">==</span> <span class="s2">&quot;scene.complete&quot;</span><span class="p">:</span>
+        <span class="k">break</span>
+</code></pre></div></p>
+<h4 id="send_and_wait"><code>send_and_wait()</code><a class="headerlink" href="#send_and_wait" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send_and_wait</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">envelope</span><span class="p">:</span> <span class="n">Envelope</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Envelope</span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Send an envelope and wait for a correlated response. Automatically adds a correlation_id if not present.</p>
+<p><strong>Parameters:</strong>
+- <code>envelope</code>: The envelope to send
+- <code>timeout</code>: Timeout in seconds (default: 10.0)
+- <code>validate</code>: Whether to validate conformance (default: True)</p>
+<p><strong>Returns:</strong> Response envelope if received, None if timeout</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If envelope fails conformance validation
+- <code>IOError</code>: If sending/receiving fails</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send_and_wait</span><span class="p">(</span><span class="n">envelope</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">response</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">data</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Request timed out&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="subscribe"><code>subscribe()</code><a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">subscribe</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">intent_pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Envelope</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Subscribe to messages matching an intent pattern. The callback will be invoked for each matching message during <code>receive()</code>.</p>
+<p><strong>Parameters:</strong>
+- <code>intent_pattern</code>: Regex pattern to match intents (e.g., <code>"scene\..*"</code>, <code>"hook\.(create|update)"</code>)
+- <code>callback</code>: Function to call with matching envelopes</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">handle_scene_messages</span><span class="p">(</span><span class="n">envelope</span><span class="p">:</span> <span class="n">Envelope</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scene message: </span><span class="si">{</span><span class="n">envelope</span><span class="o">.</span><span class="n">intent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;scene\..*&quot;</span><span class="p">,</span> <span class="n">handle_scene_messages</span><span class="p">)</span>
+
+<span class="c1"># Now when you receive, callbacks are automatically invoked</span>
+<span class="k">for</span> <span class="n">envelope</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">receive</span><span class="p">():</span>
+    <span class="c1"># Callbacks already called for matching envelopes</span>
+    <span class="k">pass</span>
+</code></pre></div></p>
+<h4 id="unsubscribe_all"><code>unsubscribe_all()</code><a class="headerlink" href="#unsubscribe_all" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unsubscribe_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Remove all subscriptions.</p>
+<h3 id="context-manager-support">Context Manager Support<a class="headerlink" href="#context-manager-support" title="Permanent link">&para;</a></h3>
+<p>ProtocolClient supports Python's context manager protocol:</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./my-project&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+    <span class="n">envelope</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_envelope</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">envelope</span><span class="p">)</span>
+<span class="c1"># Transport is automatically closed when exiting the context</span>
+</code></pre></div>
+<h2 id="envelope-models">Envelope Models<a class="headerlink" href="#envelope-models" title="Permanent link">&para;</a></h2>
+<h3 id="envelope">Envelope<a class="headerlink" href="#envelope" title="Permanent link">&para;</a></h3>
+<p>The main protocol envelope wrapping all messages.</p>
+<p><strong>Fields:</strong>
+- <code>protocol</code> (Protocol): Protocol metadata with name and version
+- <code>id</code> (str): Unique message ID (typically URN format)
+- <code>time</code> (datetime): Message creation timestamp
+- <code>sender</code> (Sender): Message sender information
+- <code>receiver</code> (Receiver): Message receiver information
+- <code>intent</code> (str): Intent verb (e.g., "scene.write", "hook.create")
+- <code>correlation_id</code> (str | None): Correlation identifier for request/response
+- <code>reply_to</code> (str | None): Message ID this is replying to
+- <code>context</code> (Context): Message context and traceability
+- <code>safety</code> (Safety): Safety and spoiler policies
+- <code>payload</code> (Payload): Message payload with type and data
+- <code>refs</code> (list[str]): Referenced artifact IDs</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Envelope</span>
+
+<span class="c1"># Typically created via EnvelopeBuilder or ProtocolClient.create_envelope()</span>
+<span class="n">envelope</span> <span class="o">=</span> <span class="n">Envelope</span><span class="p">(</span>
+    <span class="n">protocol</span><span class="o">=</span><span class="n">Protocol</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;qf-protocol&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;1.0.0&quot;</span><span class="p">),</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;urn:uuid:550e8400-e29b-41d4-a716-446655440000&quot;</span><span class="p">,</span>
+    <span class="n">time</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+    <span class="n">sender</span><span class="o">=</span><span class="n">Sender</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="s2">&quot;SR&quot;</span><span class="p">),</span>
+    <span class="n">receiver</span><span class="o">=</span><span class="n">Receiver</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="s2">&quot;LW&quot;</span><span class="p">),</span>
+    <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;canon.create&quot;</span><span class="p">,</span>
+    <span class="n">context</span><span class="o">=</span><span class="n">Context</span><span class="p">(</span><span class="n">hot_cold</span><span class="o">=</span><span class="n">HotCold</span><span class="o">.</span><span class="n">HOT</span><span class="p">,</span> <span class="n">tu</span><span class="o">=</span><span class="s2">&quot;TU-2025-11-07-SR01&quot;</span><span class="p">),</span>
+    <span class="n">safety</span><span class="o">=</span><span class="n">Safety</span><span class="p">(</span><span class="n">player_safe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">spoilers</span><span class="o">=</span><span class="n">SpoilerPolicy</span><span class="o">.</span><span class="n">ALLOWED</span><span class="p">),</span>
+    <span class="n">payload</span><span class="o">=</span><span class="n">Payload</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;canon_pack&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pack_id&quot;</span><span class="p">:</span> <span class="s2">&quot;PACK-001&quot;</span><span class="p">})</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h3 id="envelopebuilder">EnvelopeBuilder<a class="headerlink" href="#envelopebuilder" title="Permanent link">&para;</a></h3>
+<p>Fluent builder for constructing envelopes. Provides a chainable interface for setting all envelope fields.</p>
+<p><strong>Methods:</strong>
+- <code>with_protocol(version: str)</code> - Set protocol version
+- <code>with_id(message_id: str)</code> - Set message ID
+- <code>with_time(time: datetime)</code> - Set message time
+- <code>with_sender(role: RoleName, agent: str | None = None)</code> - Set sender
+- <code>with_receiver(role: RoleName)</code> - Set receiver
+- <code>with_intent(intent: str)</code> - Set intent
+- <code>with_correlation_id(correlation_id: str)</code> - Set correlation ID
+- <code>with_reply_to(reply_to: str)</code> - Set reply_to
+- <code>with_context(hot_cold, tu, snapshot, loop)</code> - Set context
+- <code>with_safety(player_safe, spoilers)</code> - Set safety
+- <code>with_payload(artifact_type, data)</code> - Set payload
+- <code>with_refs(refs: list[str])</code> - Set references
+- <code>build()</code> - Build and validate the envelope</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvelopeBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+
+<span class="n">envelope</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">EnvelopeBuilder</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">with_protocol</span><span class="p">(</span><span class="s2">&quot;1.0.0&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_id</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;urn:uuid:</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_time</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+    <span class="o">.</span><span class="n">with_sender</span><span class="p">(</span><span class="s2">&quot;SR&quot;</span><span class="p">,</span> <span class="n">agent</span><span class="o">=</span><span class="s2">&quot;human:author1&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_receiver</span><span class="p">(</span><span class="s2">&quot;GK&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_intent</span><span class="p">(</span><span class="s2">&quot;hook.validate&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_context</span><span class="p">(</span><span class="n">HotCold</span><span class="o">.</span><span class="n">HOT</span><span class="p">,</span> <span class="n">tu</span><span class="o">=</span><span class="s2">&quot;TU-2025-11-07-SR01&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_safety</span><span class="p">(</span><span class="n">player_safe</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">spoilers</span><span class="o">=</span><span class="n">SpoilerPolicy</span><span class="o">.</span><span class="n">FORBIDDEN</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_payload</span><span class="p">(</span><span class="s2">&quot;hook_card&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;hook_id&quot;</span><span class="p">:</span> <span class="s2">&quot;HOOK-001&quot;</span><span class="p">})</span>
+    <span class="o">.</span><span class="n">with_refs</span><span class="p">([</span><span class="s2">&quot;CANON-001&quot;</span><span class="p">,</span> <span class="s2">&quot;STYLE-001&quot;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h3 id="protocol">Protocol<a class="headerlink" href="#protocol" title="Permanent link">&para;</a></h3>
+<p>Protocol version information.</p>
+<p><strong>Fields:</strong>
+- <code>name</code> (str): Protocol name (always "qf-protocol")
+- <code>version</code> (str): Semantic version string (e.g., "1.0.0")</p>
+<h3 id="sender">Sender<a class="headerlink" href="#sender" title="Permanent link">&para;</a></h3>
+<p>Message sender information.</p>
+<p><strong>Fields:</strong>
+- <code>role</code> (RoleName): Sending role (e.g., "SR", "GK", "LW")
+- <code>agent</code> (str | None): Optional human/agent identifier (e.g., "human:alice")</p>
+<h3 id="receiver">Receiver<a class="headerlink" href="#receiver" title="Permanent link">&para;</a></h3>
+<p>Message receiver information.</p>
+<p><strong>Fields:</strong>
+- <code>role</code> (RoleName): Receiving role (e.g., "SR", "GK", "LW")</p>
+<h3 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h3>
+<p>Message context and traceability.</p>
+<p><strong>Fields:</strong>
+- <code>hot_cold</code> (HotCold): Workspace designation ("hot" or "cold")
+- <code>tu</code> (str | None): Thematic Unit ID (format: "TU-YYYY-MM-DD-ROLEXX")
+- <code>snapshot</code> (str | None): Cold snapshot reference (format: "Cold @ YYYY-MM-DD")
+- <code>loop</code> (str | None): Loop/playbook context</p>
+<h3 id="safety">Safety<a class="headerlink" href="#safety" title="Permanent link">&para;</a></h3>
+<p>Safety and spoiler policies.</p>
+<p><strong>Fields:</strong>
+- <code>player_safe</code> (bool): Whether content is safe for Player Narrator (PN boundary)
+- <code>spoilers</code> (SpoilerPolicy): Spoiler content policy ("forbidden", "allowed", "redacted")</p>
+<h3 id="payload">Payload<a class="headerlink" href="#payload" title="Permanent link">&para;</a></h3>
+<p>Message payload with type and data.</p>
+<p><strong>Fields:</strong>
+- <code>type</code> (str): Payload artifact type (e.g., "hook_card", "tu_brief")
+- <code>data</code> (dict[str, Any]): Payload data dictionary</p>
+<h2 id="type-enums">Type Enums<a class="headerlink" href="#type-enums" title="Permanent link">&para;</a></h2>
+<h3 id="hotcold">HotCold<a class="headerlink" href="#hotcold" title="Permanent link">&para;</a></h3>
+<p>Workspace designation.</p>
+<p><strong>Values:</strong>
+- <code>HotCold.HOT</code> - "hot" - Work in progress
+- <code>HotCold.COLD</code> - "cold" - Curated, stable</p>
+<h3 id="spoilerpolicy">SpoilerPolicy<a class="headerlink" href="#spoilerpolicy" title="Permanent link">&para;</a></h3>
+<p>Spoiler content policy.</p>
+<p><strong>Values:</strong>
+- <code>SpoilerPolicy.FORBIDDEN</code> - "forbidden" - No spoilers allowed
+- <code>SpoilerPolicy.ALLOWED</code> - "allowed" - Spoilers permitted
+- <code>SpoilerPolicy.REDACTED</code> - "redacted" - Spoilers removed/masked</p>
+<h3 id="rolename">RoleName<a class="headerlink" href="#rolename" title="Permanent link">&para;</a></h3>
+<p>Role identifiers (strings). Common roles:</p>
+<ul>
+<li><code>"SR"</code> - Showrunner (orchestrator)</li>
+<li><code>"GK"</code> - Gatekeeper (quality validation)</li>
+<li><code>"LW"</code> - Lore Weaver (canon management)</li>
+<li><code>"SS"</code> - Scene Smith (scene writing)</li>
+<li><code>"PW"</code> - Plotwright (plot development)</li>
+<li><code>"CC"</code> - Codex Curator (codex management)</li>
+<li><code>"SL"</code> - Style Lead (style management)</li>
+<li><code>"AD"</code> - Art Director (art direction)</li>
+<li><code>"IL"</code> - Illustrator (image generation)</li>
+<li><code>"AUD"</code> - Audio Director (audio direction)</li>
+<li><code>"AP"</code> - Audio Producer (audio generation)</li>
+<li><code>"PN"</code> - Player Narrator (player interface)</li>
+<li><code>"BB"</code> - Book Binder (export/rendering)</li>
+<li><code>"RS"</code> - Researcher (research tasks)</li>
+<li><code>"TR"</code> - Translator (translation tasks)</li>
+</ul>
+<h2 id="conformance-validation">Conformance Validation<a class="headerlink" href="#conformance-validation" title="Permanent link">&para;</a></h2>
+<h3 id="validate_envelope_conformance"><code>validate_envelope_conformance()</code><a class="headerlink" href="#validate_envelope_conformance" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_envelope_conformance</span><span class="p">(</span><span class="n">envelope</span><span class="p">:</span> <span class="n">Envelope</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConformanceResult</span>
+</code></pre></div>
+<p>Validate envelope against protocol conformance rules.</p>
+<p><strong>Parameters:</strong>
+- <code>envelope</code>: Envelope to validate</p>
+<p><strong>Returns:</strong> ConformanceResult with conformance status and any violations</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_envelope_conformance</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">validate_envelope_conformance</span><span class="p">(</span><span class="n">envelope</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">conformant</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Envelope is conformant&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">violation</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">violations</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Violation: </span><span class="si">{</span><span class="n">violation</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Rule: </span><span class="si">{</span><span class="n">violation</span><span class="o">.</span><span class="n">rule</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Severity: </span><span class="si">{</span><span class="n">violation</span><span class="o">.</span><span class="n">severity</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="conformanceresult">ConformanceResult<a class="headerlink" href="#conformanceresult" title="Permanent link">&para;</a></h3>
+<p>Result of conformance validation.</p>
+<p><strong>Fields:</strong>
+- <code>conformant</code> (bool): Whether envelope is conformant
+- <code>violations</code> (list[ConformanceViolation]): List of violations found</p>
+<h3 id="conformanceviolation">ConformanceViolation<a class="headerlink" href="#conformanceviolation" title="Permanent link">&para;</a></h3>
+<p>A single conformance violation.</p>
+<p><strong>Fields:</strong>
+- <code>rule</code> (str): Rule identifier (e.g., "PN_BOUNDARY")
+- <code>message</code> (str): Human-readable violation message
+- <code>severity</code> (str): "error" or "warning"
+- <code>field</code> (str | None): Field path where violation occurred</p>
+<h2 id="transport-layer">Transport Layer<a class="headerlink" href="#transport-layer" title="Permanent link">&para;</a></h2>
+<h3 id="transport-abstract-base-class">Transport (Abstract Base Class)<a class="headerlink" href="#transport-abstract-base-class" title="Permanent link">&para;</a></h3>
+<p>Abstract interface for message delivery.</p>
+<p><strong>Methods:</strong>
+- <code>send(envelope: Envelope) -&gt; None</code> - Send an envelope
+- <code>receive() -&gt; Iterator[Envelope]</code> - Receive envelopes
+- <code>close() -&gt; None</code> - Close transport and release resources</p>
+<h3 id="filetransport">FileTransport<a class="headerlink" href="#filetransport" title="Permanent link">&para;</a></h3>
+<p>File-based transport implementation using workspace directories.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileTransport</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">transport</span> <span class="o">=</span> <span class="n">FileTransport</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./my-project&quot;</span><span class="p">))</span>
+
+<span class="c1"># Send envelope</span>
+<span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">envelope</span><span class="p">)</span>
+
+<span class="c1"># Receive envelopes</span>
+<span class="k">for</span> <span class="n">envelope</span> <span class="ow">in</span> <span class="n">transport</span><span class="o">.</span><span class="n">receive</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received: </span><span class="si">{</span><span class="n">envelope</span><span class="o">.</span><span class="n">intent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Directory Structure:</strong>
+<div class="highlight"><pre><span></span><code>my-project/
+  .questfoundry/
+    hot/
+      envelopes/
+        inbound/
+          &lt;role&gt;/
+            &lt;timestamp&gt;-&lt;uuid&gt;.json
+        outbound/
+          &lt;role&gt;/
+            &lt;timestamp&gt;-&lt;uuid&gt;.json
+</code></pre></div></p>
+<h2 id="usage-patterns">Usage Patterns<a class="headerlink" href="#usage-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="request-response-pattern">Request-Response Pattern<a class="headerlink" href="#request-response-pattern" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./project&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create request</span>
+<span class="n">request</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_envelope</span><span class="p">(</span>
+    <span class="n">receiver</span><span class="o">=</span><span class="s2">&quot;GK&quot;</span><span class="p">,</span>
+    <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;hook.validate&quot;</span><span class="p">,</span>
+    <span class="n">payload_type</span><span class="o">=</span><span class="s2">&quot;hook_card&quot;</span><span class="p">,</span>
+    <span class="n">payload_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;hook_id&quot;</span><span class="p">:</span> <span class="s2">&quot;HOOK-001&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Dragon&#39;s Lair&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Send and wait for response</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send_and_wait</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">response</span><span class="p">:</span>
+    <span class="n">validation_result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">if</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;valid&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hook is valid!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation errors: </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;errors&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="event-broadcasting-pattern">Event Broadcasting Pattern<a class="headerlink" href="#event-broadcasting-pattern" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Broadcaster</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./project&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span>
+
+<span class="n">event</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_envelope</span><span class="p">(</span>
+    <span class="n">receiver</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>  <span class="c1"># Broadcast to all roles</span>
+    <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;loop.started&quot;</span><span class="p">,</span>
+    <span class="n">payload_type</span><span class="o">=</span><span class="s2">&quot;loop_event&quot;</span><span class="p">,</span>
+    <span class="n">payload_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loop&quot;</span><span class="p">:</span> <span class="s2">&quot;hook_harvest&quot;</span><span class="p">,</span> <span class="s2">&quot;tu&quot;</span><span class="p">:</span> <span class="s2">&quot;TU-2025-11-07-SR01&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="subscription-pattern">Subscription Pattern<a class="headerlink" href="#subscription-pattern" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./project&quot;</span><span class="p">,</span> <span class="s2">&quot;GK&quot;</span><span class="p">)</span>
+
+<span class="c1"># Set up handlers for different intent patterns</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_hook_validation</span><span class="p">(</span><span class="n">envelope</span><span class="p">:</span> <span class="n">Envelope</span><span class="p">):</span>
+    <span class="n">hook_data</span> <span class="o">=</span> <span class="n">envelope</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Validate hook...</span>
+    <span class="c1"># Send response...</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_scene_validation</span><span class="p">(</span><span class="n">envelope</span><span class="p">:</span> <span class="n">Envelope</span><span class="p">):</span>
+    <span class="n">scene_data</span> <span class="o">=</span> <span class="n">envelope</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Validate scene...</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;hook\.(validate|check)&quot;</span><span class="p">,</span> <span class="n">handle_hook_validation</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;scene\.validate&quot;</span><span class="p">,</span> <span class="n">handle_scene_validation</span><span class="p">)</span>
+
+<span class="c1"># Process messages</span>
+<span class="k">for</span> <span class="n">envelope</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">receive</span><span class="p">():</span>
+    <span class="c1"># Subscribed handlers are automatically invoked</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<h3 id="async-message-processing">Async Message Processing<a class="headerlink" href="#async-message-processing" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">queue</span>
+
+<span class="n">message_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">receive_loop</span><span class="p">(</span><span class="n">client</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Background thread for receiving messages&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">envelope</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">receive</span><span class="p">():</span>
+        <span class="n">message_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">envelope</span><span class="p">)</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./project&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span>
+
+<span class="c1"># Start receiving in background</span>
+<span class="n">receiver_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">receive_loop</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">client</span><span class="p">,))</span>
+<span class="n">receiver_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">receiver_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="c1"># Process messages from queue</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">envelope</span> <span class="o">=</span> <span class="n">message_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing: </span><span class="si">{</span><span class="n">envelope</span><span class="o">.</span><span class="n">intent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+        <span class="k">continue</span>
+</code></pre></div>
+<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.protocol</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProtocolClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./project&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">envelope</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_envelope</span><span class="p">(</span>
+        <span class="n">receiver</span><span class="o">=</span><span class="s2">&quot;INVALID&quot;</span><span class="p">,</span>  <span class="c1"># Invalid role</span>
+        <span class="n">intent</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+        <span class="n">payload_type</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+        <span class="n">payload_data</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">)</span>
+<span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">envelope</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Conformance error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transport error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Always use context managers</strong> when possible to ensure resources are cleaned up:
+   <div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">ProtocolClient</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="s2">&quot;./project&quot;</span><span class="p">,</span> <span class="s2">&quot;SR&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+    <span class="c1"># Use client...</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Enable validation by default</strong> - Only disable for performance-critical code paths:
+   <div class="highlight"><pre><span></span><code><span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">envelope</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Default</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Use correlation IDs</strong> for request-response patterns:
+   <div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send_and_wait</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Set appropriate timeouts</strong> for send_and_wait:
+   <div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send_and_wait</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Timeout - no response received&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Use subscriptions</strong> for event-driven architectures:
+   <div class="highlight"><pre><span></span><code><span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;hook\..*&quot;</span><span class="p">,</span> <span class="n">handler</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Set player_safe carefully</strong> to enforce PN boundaries:
+   <div class="highlight"><pre><span></span><code><span class="n">envelope</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_envelope</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">player_safe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Contains GM-only information</span>
+    <span class="n">spoilers</span><span class="o">=</span><span class="n">SpoilerPolicy</span><span class="o">.</span><span class="n">ALLOWED</span>
+<span class="p">)</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../state/">State Management API</a> - SQLite and file-based state management</li>
+<li><a href="../validation/">Validation API</a> - Schema and conformance validation</li>
+<li><a href="../export/">Export API</a> - View generation and export</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024-2025 QuestFoundry Contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/pvliesdonk/questfoundry-py" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/questfoundry-py/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.indexes", "toc.integrate", "content.code.copy", "content.code.select", "search.suggest", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

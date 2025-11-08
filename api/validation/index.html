@@ -1,0 +1,2180 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Python framework for managing interactive narrative projects with AI integration">
+      
+      
+      
+        <link rel="canonical" href="https://questfoundry.liesdonk.nl/api/validation/">
+      
+      
+        <link rel="prev" href="../protocol/">
+      
+      
+        <link rel="next" href="../../examples/code-examples/">
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Validation - QuestFoundry-Py Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#validation-api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="QuestFoundry-Py Documentation" class="md-header__button md-logo" aria-label="QuestFoundry-Py Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuestFoundry-Py Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Validation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pvliesdonk/questfoundry-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    questfoundry-py
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Installation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guides/configuration.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples/code-examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../changelog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="QuestFoundry-Py Documentation" class="md-nav__button md-logo" aria-label="QuestFoundry-Py Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    QuestFoundry-Py Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pvliesdonk/questfoundry-py" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    questfoundry-py
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Providers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roles.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../loops.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Loops
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    State Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Protocol
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Validation
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validation
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gatekeeper" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gatekeeper
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gatekeeper">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run_gatecheck" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_gatecheck()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gatecheckreport" class="md-nav__link">
+    <span class="md-ellipsis">
+      GatecheckReport
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="GatecheckReport">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#all_issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      all_issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blockers" class="md-nav__link">
+    <span class="md-ellipsis">
+      blockers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warnings" class="md-nav__link">
+    <span class="md-ellipsis">
+      warnings
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#to_artifact" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_artifact()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quality-bar-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quality Bar Types
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quality Bar Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#qualitybar-abstract-base-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      QualityBar (Abstract Base Class)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="QualityBar (Abstract Base Class)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      validate()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-quality-bars" class="md-nav__link">
+    <span class="md-ellipsis">
+      Available Quality Bars
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Quality Bars">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#integritybar" class="md-nav__link">
+    <span class="md-ellipsis">
+      IntegrityBar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reachabilitybar" class="md-nav__link">
+    <span class="md-ellipsis">
+      ReachabilityBar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stylebar" class="md-nav__link">
+    <span class="md-ellipsis">
+      StyleBar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gatewaysbar" class="md-nav__link">
+    <span class="md-ellipsis">
+      GatewaysBar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nonlinearitybar" class="md-nav__link">
+    <span class="md-ellipsis">
+      NonlinearityBar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#determinismbar" class="md-nav__link">
+    <span class="md-ellipsis">
+      DeterminismBar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presentationbar" class="md-nav__link">
+    <span class="md-ellipsis">
+      PresentationBar
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spoilerhygienebar" class="md-nav__link">
+    <span class="md-ellipsis">
+      SpoilerHygieneBar
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qualitybarresult" class="md-nav__link">
+    <span class="md-ellipsis">
+      QualityBarResult
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="QualityBarResult">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Properties
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#blockers_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      blockers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#warnings_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      warnings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#info" class="md-nav__link">
+    <span class="md-ellipsis">
+      info
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qualityissue" class="md-nav__link">
+    <span class="md-ellipsis">
+      QualityIssue
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="QualityIssue">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#attributes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Attributes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utility-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utility Functions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Utility Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_quality_bar" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_quality_bar()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality_bars" class="md-nav__link">
+    <span class="md-ellipsis">
+      QUALITY_BARS
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Patterns
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-gatecheck-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Gatecheck Workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selective-bar-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selective Bar Validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detailed-issue-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Detailed Issue Reporting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-validation-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Validation Pipeline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-with-roles" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration with Roles
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation Reporting
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See Also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guides
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/configuration.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/per-role-config.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Per-Role Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/caching-strategy.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Caching Strategy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/custom-roles.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Roles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/custom-providers.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Providers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/deployment.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Deployment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/code-examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="validation-api-reference">Validation API Reference<a class="headerlink" href="#validation-api-reference" title="Permanent link">&para;</a></h1>
+<p>The <code>questfoundry.validation</code> module provides quality assurance through quality bars and the Gatekeeper system. Quality bars are validation checks that content must pass before being promoted from hot workspace to cold storage.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The validation module implements the <strong>8 Quality Bars</strong> framework:</p>
+<ol>
+<li><strong>Integrity</strong> - References resolve, no dead ends</li>
+<li><strong>Reachability</strong> - Keystones and goals are reachable</li>
+<li><strong>Style</strong> - Voice and register are consistent</li>
+<li><strong>Gateways</strong> - Conditions are diegetic (in-world)</li>
+<li><strong>Nonlinearity</strong> - Hubs and loops are meaningful</li>
+<li><strong>Determinism</strong> - Assets are reproducible</li>
+<li><strong>Presentation</strong> - No spoilers/internals on player surfaces</li>
+<li><strong>Spoiler Hygiene</strong> - PN (Player Narrator) boundaries maintained</li>
+</ol>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gatekeeper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Artifact</span>
+
+<span class="c1"># Create artifacts to validate</span>
+<span class="n">hooks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Artifact</span><span class="p">(</span>
+        <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;hook_card&quot;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;hook_id&quot;</span><span class="p">:</span> <span class="s2">&quot;HOOK-001&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Dragon&#39;s Awakening&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;concept&quot;</span><span class="p">:</span> <span class="s2">&quot;Ancient dragon stirs&quot;</span>
+        <span class="p">}</span>
+    <span class="p">),</span>
+    <span class="c1"># ... more artifacts</span>
+<span class="p">]</span>
+
+<span class="c1"># Run gatecheck</span>
+<span class="n">gatekeeper</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">()</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">gatekeeper</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">hooks</span><span class="p">)</span>
+
+<span class="c1"># Check results</span>
+<span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ All quality bars passed - safe to promote to cold&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✗ </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">)</span><span class="si">}</span><span class="s2"> blockers found&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Generate artifact for audit trail</span>
+<span class="n">gatecheck_artifact</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">to_artifact</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="gatekeeper">Gatekeeper<a class="headerlink" href="#gatekeeper" title="Permanent link">&para;</a></h2>
+<p>Main interface for running quality bar validation.</p>
+<h3 id="constructor">Constructor<a class="headerlink" href="#constructor" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">Gatekeeper</span><span class="p">(</span>
+    <span class="n">bars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Parameters:</strong>
+- <code>bars</code>: List of bar names to run (default: all 8 bars)
+- <code>strict</code>: If True, warnings also block merge (default: True)</p>
+<p><strong>Available Bar Names:</strong>
+- <code>"integrity"</code> - Integrity Bar
+- <code>"reachability"</code> - Reachability Bar
+- <code>"style"</code> - Style Bar
+- <code>"gateways"</code> - Gateways Bar
+- <code>"nonlinearity"</code> - Nonlinearity Bar
+- <code>"determinism"</code> - Determinism Bar
+- <code>"presentation"</code> - Presentation Bar
+- <code>"spoiler_hygiene"</code> - Spoiler Hygiene Bar</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Run all bars (default)</span>
+<span class="n">gk</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">()</span>
+
+<span class="c1"># Run specific bars only</span>
+<span class="n">gk</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">(</span><span class="n">bars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;integrity&quot;</span><span class="p">,</span> <span class="s2">&quot;reachability&quot;</span><span class="p">,</span> <span class="s2">&quot;style&quot;</span><span class="p">])</span>
+
+<span class="c1"># Allow warnings (non-strict mode)</span>
+<span class="n">gk</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h3>
+<h4 id="run_gatecheck"><code>run_gatecheck()</code><a class="headerlink" href="#run_gatecheck" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_gatecheck</span><span class="p">(</span>
+    <span class="n">artifacts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Artifact</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GatecheckReport</span>
+</code></pre></div>
+<p>Run full gatecheck on artifacts.</p>
+<p><strong>Parameters:</strong>
+- <code>artifacts</code>: List of artifacts to validate
+- <code>**metadata</code>: Additional metadata to include in report (e.g., <code>tu_id</code>, <code>snapshot_id</code>)</p>
+<p><strong>Returns:</strong> GatecheckReport with results from all bars</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">artifacts</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>  <span class="c1"># Your artifacts</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">gk</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span>
+    <span class="n">artifacts</span><span class="p">,</span>
+    <span class="n">tu_id</span><span class="o">=</span><span class="s2">&quot;TU-2025-11-07-SR01&quot;</span><span class="p">,</span>
+    <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Passed: </span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">passed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merge Safe: </span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">merge_safe</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Blockers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warnings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h2 id="gatecheckreport">GatecheckReport<a class="headerlink" href="#gatecheckreport" title="Permanent link">&para;</a></h2>
+<p>Complete gatecheck report with results from all quality bars.</p>
+<h3 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>passed</code> (bool): Whether all bars passed (no blockers)</li>
+<li><code>merge_safe</code> (bool): Whether content can be merged to Cold</li>
+<li><code>bar_results</code> (dict[str, QualityBarResult]): Results from each quality bar</li>
+<li><code>summary</code> (str): Human-readable summary</li>
+<li><code>metadata</code> (dict[str, Any]): Additional context</li>
+</ul>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">&para;</a></h3>
+<h4 id="all_issues"><code>all_issues</code><a class="headerlink" href="#all_issues" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_issues</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QualityIssue</span><span class="p">]]</span>
+</code></pre></div>
+<p>Get all issues across all bars.</p>
+<p><strong>Returns:</strong> List of (bar_name, issue) tuples</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">all_issues</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">severity</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="blockers"><code>blockers</code><a class="headerlink" href="#blockers" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">blockers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QualityIssue</span><span class="p">]]</span>
+</code></pre></div>
+<p>Get all blocker issues (must fix before merge).</p>
+<p><strong>Returns:</strong> List of (bar_name, issue) tuples</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Blockers that must be fixed:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Fix: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="warnings"><code>warnings</code><a class="headerlink" href="#warnings" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">warnings</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">QualityIssue</span><span class="p">]]</span>
+</code></pre></div>
+<p>Get all warning issues (should review).</p>
+<p><strong>Returns:</strong> List of (bar_name, issue) tuples</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warnings for review:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="methods_1">Methods<a class="headerlink" href="#methods_1" title="Permanent link">&para;</a></h3>
+<h4 id="to_artifact"><code>to_artifact()</code><a class="headerlink" href="#to_artifact" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_artifact</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Artifact</span>
+</code></pre></div>
+<p>Convert report to gatecheck_report artifact for storage.</p>
+<p><strong>Returns:</strong> Artifact of type "gatecheck_report"</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Store gatecheck report in project</span>
+<span class="n">report_artifact</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">to_artifact</span><span class="p">()</span>
+<span class="n">workspace</span><span class="o">.</span><span class="n">save_hot_artifact</span><span class="p">(</span><span class="n">report_artifact</span><span class="p">)</span>
+</code></pre></div></p>
+<h2 id="quality-bar-types">Quality Bar Types<a class="headerlink" href="#quality-bar-types" title="Permanent link">&para;</a></h2>
+<p>All quality bars implement the <code>QualityBar</code> interface.</p>
+<h3 id="qualitybar-abstract-base-class">QualityBar (Abstract Base Class)<a class="headerlink" href="#qualitybar-abstract-base-class" title="Permanent link">&para;</a></h3>
+<p>Base class for all quality bar validators.</p>
+<p><strong>Abstract Properties:</strong>
+- <code>name</code> (str): Unique name of this quality bar
+- <code>description</code> (str): Short description of what this bar validates</p>
+<p><strong>Abstract Method:</strong></p>
+<h4 id="validate"><code>validate()</code><a class="headerlink" href="#validate" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">artifacts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Artifact</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">QualityBarResult</span>
+</code></pre></div>
+<p>Validate artifacts against this quality bar.</p>
+<p><strong>Parameters:</strong>
+- <code>artifacts</code>: List of artifacts to validate</p>
+<p><strong>Returns:</strong> QualityBarResult with pass/fail and issues found</p>
+<h3 id="available-quality-bars">Available Quality Bars<a class="headerlink" href="#available-quality-bars" title="Permanent link">&para;</a></h3>
+<h4 id="integritybar">IntegrityBar<a class="headerlink" href="#integritybar" title="Permanent link">&para;</a></h4>
+<p>Validates that references resolve correctly and there are no dead ends.</p>
+<p><strong>Checks:</strong>
+- All referenced artifact IDs exist
+- No dangling references
+- Cross-references are valid
+- Required fields are present</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegrityBar</span>
+
+<span class="n">bar</span> <span class="o">=</span> <span class="n">IntegrityBar</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integrity issue: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h4 id="reachabilitybar">ReachabilityBar<a class="headerlink" href="#reachabilitybar" title="Permanent link">&para;</a></h4>
+<p>Validates that keystones and goals are reachable through the narrative.</p>
+<p><strong>Checks:</strong>
+- All keystones can be reached
+- No unreachable content branches
+- Paths to goals exist
+- No orphaned scenes</p>
+<h4 id="stylebar">StyleBar<a class="headerlink" href="#stylebar" title="Permanent link">&para;</a></h4>
+<p>Validates voice and register consistency.</p>
+<p><strong>Checks:</strong>
+- Consistent tone across content
+- Register (formal/informal) matches guidelines
+- Style guide adherence
+- Voice consistency</p>
+<h4 id="gatewaysbar">GatewaysBar<a class="headerlink" href="#gatewaysbar" title="Permanent link">&para;</a></h4>
+<p>Validates that conditions and gates are diegetic (in-world).</p>
+<p><strong>Checks:</strong>
+- Branching conditions make narrative sense
+- No metagaming requirements
+- Conditions are player-understandable
+- Gates feel natural</p>
+<h4 id="nonlinearitybar">NonlinearityBar<a class="headerlink" href="#nonlinearitybar" title="Permanent link">&para;</a></h4>
+<p>Validates that hubs and loops are meaningful.</p>
+<p><strong>Checks:</strong>
+- Non-linear sections add value
+- Loops have purpose (not just filler)
+- Hubs provide meaningful choices
+- Paths converge sensibly</p>
+<h4 id="determinismbar">DeterminismBar<a class="headerlink" href="#determinismbar" title="Permanent link">&para;</a></h4>
+<p>Validates that assets are reproducible.</p>
+<p><strong>Checks:</strong>
+- Generation parameters are captured
+- Assets can be regenerated
+- Seeds/prompts are stored
+- Dependencies are documented</p>
+<h4 id="presentationbar">PresentationBar<a class="headerlink" href="#presentationbar" title="Permanent link">&para;</a></h4>
+<p>Validates that no spoilers or internals leak to player surfaces.</p>
+<p><strong>Checks:</strong>
+- No GM-only information visible
+- No internal IDs exposed
+- No development notes in output
+- Clean player-facing content</p>
+<h4 id="spoilerhygienebar">SpoilerHygieneBar<a class="headerlink" href="#spoilerhygienebar" title="Permanent link">&para;</a></h4>
+<p>Validates PN (Player Narrator) boundaries are maintained.</p>
+<p><strong>Checks:</strong>
+- Player-safe flag correctly set
+- Spoiler policy enforced
+- PN boundary not violated
+- Safe content properly marked</p>
+<h2 id="qualitybarresult">QualityBarResult<a class="headerlink" href="#qualitybarresult" title="Permanent link">&para;</a></h2>
+<p>Result of a quality bar check.</p>
+<h3 id="attributes_1">Attributes<a class="headerlink" href="#attributes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>bar_name</code> (str): Name of the quality bar</li>
+<li><code>passed</code> (bool): Whether the bar passed (no blockers)</li>
+<li><code>issues</code> (list[QualityIssue]): List of issues found</li>
+<li><code>metadata</code> (dict[str, Any]): Additional context about the check</li>
+</ul>
+<h3 id="properties_1">Properties<a class="headerlink" href="#properties_1" title="Permanent link">&para;</a></h3>
+<h4 id="blockers_1"><code>blockers</code><a class="headerlink" href="#blockers_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">blockers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">QualityIssue</span><span class="p">]</span>
+</code></pre></div>
+<p>Get only blocker issues.</p>
+<h4 id="warnings_1"><code>warnings</code><a class="headerlink" href="#warnings_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">warnings</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">QualityIssue</span><span class="p">]</span>
+</code></pre></div>
+<p>Get only warning issues.</p>
+<h4 id="info"><code>info</code><a class="headerlink" href="#info" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@property</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">QualityIssue</span><span class="p">]</span>
+</code></pre></div>
+<p>Get only info issues.</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Blockers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">blockers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warnings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Info: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BLOCKER: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h2 id="qualityissue">QualityIssue<a class="headerlink" href="#qualityissue" title="Permanent link">&para;</a></h2>
+<p>An issue found during quality bar validation.</p>
+<h3 id="attributes_2">Attributes<a class="headerlink" href="#attributes_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>severity</code> (str): "blocker", "warning", or "info"</li>
+<li><code>message</code> (str): Human-readable description</li>
+<li><code>location</code> (str): Where the issue was found (artifact_id, field, section, etc.)</li>
+<li><code>fix</code> (str): Suggested remediation (optional)</li>
+</ul>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">issue</span> <span class="o">=</span> <span class="n">QualityIssue</span><span class="p">(</span>
+    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;blocker&quot;</span><span class="p">,</span>
+    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Referenced artifact HOOK-002 not found&quot;</span><span class="p">,</span>
+    <span class="n">location</span><span class="o">=</span><span class="s2">&quot;SCENE-001.prerequisites&quot;</span><span class="p">,</span>
+    <span class="n">fix</span><span class="o">=</span><span class="s2">&quot;Add HOOK-002 or remove reference&quot;</span>
+<span class="p">)</span>
+</code></pre></div></p>
+<h2 id="utility-functions">Utility Functions<a class="headerlink" href="#utility-functions" title="Permanent link">&para;</a></h2>
+<h3 id="get_quality_bar"><code>get_quality_bar()</code><a class="headerlink" href="#get_quality_bar" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_quality_bar</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">QualityBar</span><span class="p">]</span>
+</code></pre></div>
+<p>Get a quality bar class by name.</p>
+<p><strong>Parameters:</strong>
+- <code>name</code>: Quality bar name (e.g., "integrity", "reachability")</p>
+<p><strong>Returns:</strong> Quality bar class</p>
+<p><strong>Raises:</strong>
+- <code>ValueError</code>: If bar name is unknown</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_quality_bar</span>
+
+<span class="n">IntegrityBarClass</span> <span class="o">=</span> <span class="n">get_quality_bar</span><span class="p">(</span><span class="s2">&quot;integrity&quot;</span><span class="p">)</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="n">IntegrityBarClass</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+</code></pre></div></p>
+<h3 id="quality_bars"><code>QUALITY_BARS</code><a class="headerlink" href="#quality_bars" title="Permanent link">&para;</a></h3>
+<p>Dictionary mapping bar names to bar classes.</p>
+<div class="highlight"><pre><span></span><code><span class="n">QUALITY_BARS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;integrity&quot;</span><span class="p">:</span> <span class="n">IntegrityBar</span><span class="p">,</span>
+    <span class="s2">&quot;reachability&quot;</span><span class="p">:</span> <span class="n">ReachabilityBar</span><span class="p">,</span>
+    <span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="n">StyleBar</span><span class="p">,</span>
+    <span class="s2">&quot;gateways&quot;</span><span class="p">:</span> <span class="n">GatewaysBar</span><span class="p">,</span>
+    <span class="s2">&quot;nonlinearity&quot;</span><span class="p">:</span> <span class="n">NonlinearityBar</span><span class="p">,</span>
+    <span class="s2">&quot;determinism&quot;</span><span class="p">:</span> <span class="n">DeterminismBar</span><span class="p">,</span>
+    <span class="s2">&quot;presentation&quot;</span><span class="p">:</span> <span class="n">PresentationBar</span><span class="p">,</span>
+    <span class="s2">&quot;spoiler_hygiene&quot;</span><span class="p">:</span> <span class="n">SpoilerHygieneBar</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">QUALITY_BARS</span>
+
+<span class="c1"># List all available bars</span>
+<span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">bar_class</span> <span class="ow">in</span> <span class="n">QUALITY_BARS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="n">bar_class</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">bar</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+<h2 id="usage-patterns">Usage Patterns<a class="headerlink" href="#usage-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="basic-gatecheck-workflow">Basic Gatecheck Workflow<a class="headerlink" href="#basic-gatecheck-workflow" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gatekeeper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorkspaceManager</span>
+
+<span class="c1"># Initialize</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="n">WorkspaceManager</span><span class="p">(</span><span class="s2">&quot;./project&quot;</span><span class="p">)</span>
+<span class="n">gk</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">()</span>
+
+<span class="c1"># Get artifacts from hot workspace</span>
+<span class="n">artifacts</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">list_hot_artifacts</span><span class="p">()</span>
+
+<span class="c1"># Run gatecheck</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">gk</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span>
+    <span class="n">artifacts</span><span class="p">,</span>
+    <span class="n">tu_id</span><span class="o">=</span><span class="s2">&quot;TU-2025-11-07-SR01&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Process results</span>
+<span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">merge_safe</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Safe to promote to cold&quot;</span><span class="p">)</span>
+    <span class="c1"># Promote artifacts</span>
+    <span class="k">for</span> <span class="n">artifact</span> <span class="ow">in</span> <span class="n">artifacts</span><span class="p">:</span>
+        <span class="n">artifact_id</span> <span class="o">=</span> <span class="n">artifact</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">artifact_id</span><span class="p">:</span>
+            <span class="n">ws</span><span class="o">.</span><span class="n">promote_to_cold</span><span class="p">(</span><span class="n">artifact_id</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✗ Cannot merge - </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">)</span><span class="si">}</span><span class="s2"> blockers&quot;</span><span class="p">)</span>
+    <span class="c1"># Store report for review</span>
+    <span class="n">ws</span><span class="o">.</span><span class="n">save_hot_artifact</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">to_artifact</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="selective-bar-validation">Selective Bar Validation<a class="headerlink" href="#selective-bar-validation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Only run critical bars</span>
+<span class="n">gk</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">(</span><span class="n">bars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;integrity&quot;</span><span class="p">,</span> <span class="s2">&quot;reachability&quot;</span><span class="p">,</span> <span class="s2">&quot;spoiler_hygiene&quot;</span><span class="p">])</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">gk</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+
+<span class="c1"># Check specific bar results</span>
+<span class="n">integrity_result</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">bar_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;integrity&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">integrity_result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">integrity_result</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Integrity check failed:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">integrity_result</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="detailed-issue-reporting">Detailed Issue Reporting<a class="headerlink" href="#detailed-issue-reporting" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">report</span> <span class="o">=</span> <span class="n">gk</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+
+<span class="c1"># Group issues by severity</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== BLOCKERS ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Problem: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Fix: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== WARNINGS ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== SUMMARY ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total issues: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">all_issues</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Blockers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warnings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="custom-validation-pipeline">Custom Validation Pipeline<a class="headerlink" href="#custom-validation-pipeline" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_quality_bar</span>
+
+<span class="c1"># Create custom validation pipeline</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">&quot;Pre-merge&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;integrity&quot;</span><span class="p">,</span> <span class="s2">&quot;reachability&quot;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="s2">&quot;Content Quality&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;style&quot;</span><span class="p">,</span> <span class="s2">&quot;gateways&quot;</span><span class="p">,</span> <span class="s2">&quot;nonlinearity&quot;</span><span class="p">]),</span>
+    <span class="p">(</span><span class="s2">&quot;Player Safety&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;presentation&quot;</span><span class="p">,</span> <span class="s2">&quot;spoiler_hygiene&quot;</span><span class="p">]),</span>
+<span class="p">]</span>
+
+<span class="n">all_passed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">for</span> <span class="n">stage_name</span><span class="p">,</span> <span class="n">bar_names</span> <span class="ow">in</span> <span class="n">pipeline</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="n">stage_passed</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">for</span> <span class="n">bar_name</span> <span class="ow">in</span> <span class="n">bar_names</span><span class="p">:</span>
+        <span class="n">bar_class</span> <span class="o">=</span> <span class="n">get_quality_bar</span><span class="p">(</span><span class="n">bar_name</span><span class="p">)</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">bar_class</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓ </span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✗ </span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">blockers</span><span class="p">)</span><span class="si">}</span><span class="s2"> blockers&quot;</span><span class="p">)</span>
+            <span class="n">stage_passed</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stage_passed</span><span class="p">:</span>
+        <span class="n">all_passed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Stage failed - fix issues before continuing&quot;</span><span class="p">)</span>
+        <span class="k">break</span>
+
+<span class="k">if</span> <span class="n">all_passed</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✓ All validation stages passed!&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="integration-with-roles">Integration with Roles<a class="headerlink" href="#integration-with-roles" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">questfoundry.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gatekeeper</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GatekeeperRole</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gatekeeper role that validates content.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gatekeeper</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run gatecheck and return report.&quot;&quot;&quot;</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gatekeeper</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">report</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+            <span class="c1"># Generate feedback for other roles</span>
+            <span class="n">feedback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_feedback</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;approved&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;feedback&quot;</span><span class="p">:</span> <span class="n">feedback</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;approved&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;report_id&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert issues to actionable feedback.&quot;&quot;&quot;</span>
+        <span class="n">feedback</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+            <span class="n">feedback</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="n">bar_name</span><span class="p">,</span>
+                <span class="s2">&quot;severity&quot;</span><span class="p">:</span> <span class="n">issue</span><span class="o">.</span><span class="n">severity</span><span class="p">,</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
+                <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">issue</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+                <span class="s2">&quot;fix&quot;</span><span class="p">:</span> <span class="n">issue</span><span class="o">.</span><span class="n">fix</span>
+            <span class="p">})</span>
+        <span class="k">return</span> <span class="n">feedback</span>
+</code></pre></div>
+<h3 id="validation-reporting">Validation Reporting<a class="headerlink" href="#validation-reporting" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Generate detailed report</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">gk</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">artifacts</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Alice&quot;</span><span class="p">)</span>
+
+<span class="c1"># Convert to artifact for storage</span>
+<span class="n">report_artifact</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">to_artifact</span><span class="p">()</span>
+
+<span class="c1"># Save to workspace</span>
+<span class="n">ws</span><span class="o">.</span><span class="n">save_hot_artifact</span><span class="p">(</span><span class="n">report_artifact</span><span class="p">)</span>
+
+<span class="c1"># Also save as markdown</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_to_markdown</span><span class="p">(</span><span class="n">report</span><span class="p">):</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">&quot;# Gatecheck Report&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;**Status:** </span><span class="si">{</span><span class="s1">&#39;✓ PASSED&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">report</span><span class="o">.</span><span class="n">passed</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;✗ FAILED&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;**Merge Safe:** </span><span class="si">{</span><span class="s1">&#39;Yes&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">report</span><span class="o">.</span><span class="n">merge_safe</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;No&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;**Blockers:** </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;**Warnings:** </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Blockers&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;### [</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- **Problem:** </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- **Fix:** </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Warnings&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- **[</span><span class="si">{</span><span class="n">bar_name</span><span class="si">}</span><span class="s2">]** </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+<span class="n">markdown</span> <span class="o">=</span> <span class="n">report_to_markdown</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">&quot;gatecheck_report.md&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">markdown</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p><strong>Run gatechecks before promotion</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Always validate before promoting to cold</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">gk</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">hot_artifacts</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">merge_safe</span><span class="p">:</span>
+    <span class="n">promote_to_cold</span><span class="p">(</span><span class="n">hot_artifacts</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Store gatecheck reports</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Keep audit trail of all gatechecks</span>
+<span class="n">report_artifact</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">to_artifact</span><span class="p">()</span>
+<span class="n">ws</span><span class="o">.</span><span class="n">save_hot_artifact</span><span class="p">(</span><span class="n">report_artifact</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Use strict mode for production</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Strict mode treats warnings as blockers</span>
+<span class="n">gk</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Run incrementally</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Run critical bars first, then full check</span>
+<span class="n">critical</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">(</span><span class="n">bars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;integrity&quot;</span><span class="p">,</span> <span class="s2">&quot;spoiler_hygiene&quot;</span><span class="p">])</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">critical</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span><span class="o">.</span><span class="n">passed</span><span class="p">:</span>
+    <span class="k">return</span>  <span class="c1"># Fix critical issues first</span>
+
+<span class="n">full</span> <span class="o">=</span> <span class="n">Gatekeeper</span><span class="p">()</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">run_gatecheck</span><span class="p">(</span><span class="n">artifacts</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Provide actionable feedback</strong>:
+   <div class="highlight"><pre><span></span><code><span class="c1"># Always include location and fix suggestions</span>
+<span class="k">for</span> <span class="n">bar_name</span><span class="p">,</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">blockers</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Location: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;How to fix: </span><span class="si">{</span><span class="n">issue</span><span class="o">.</span><span class="n">fix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../state/">State Management API</a> - Hot/cold promotion</li>
+<li><a href="../export/">Export API</a> - View generation with safety checks</li>
+<li><a href="models.md">Models API</a> - Artifact types</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024-2025 QuestFoundry Contributors
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/pvliesdonk/questfoundry-py" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://pypi.org/project/questfoundry-py/" target="_blank" rel="noopener" title="pypi.org" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.tracking", "navigation.tabs", "navigation.indexes", "toc.integrate", "content.code.copy", "content.code.select", "search.suggest", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
