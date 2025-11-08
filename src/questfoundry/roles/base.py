@@ -4,10 +4,15 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..models.artifact import Artifact
 from ..providers.base import TextProvider
+
+# Avoid circular imports
+if TYPE_CHECKING:
+    from .human_callback import HumanCallback
+    from .session import RoleSession
 
 # Maximum length for artifact value strings in formatted output
 MAX_ARTIFACT_VALUE_LENGTH = 500
@@ -81,6 +86,8 @@ class Role(ABC):
         provider: TextProvider,
         spec_path: Path | None = None,
         config: dict[str, Any] | None = None,
+        session: "RoleSession | None" = None,
+        human_callback: "HumanCallback | None" = None,
     ):
         """
         Initialize role with provider and configuration.
@@ -89,9 +96,13 @@ class Role(ABC):
             provider: Text provider for LLM interactions
             spec_path: Path to spec directory (default: ./spec)
             config: Role-specific configuration
+            session: Optional session for conversation history tracking
+            human_callback: Optional callback for agent-to-human questions
         """
         self.provider = provider
         self.config = config or {}
+        self.session = session
+        self.human_callback = human_callback
 
         # Determine spec path
         if spec_path is None:
@@ -403,6 +414,144 @@ class Role(ABC):
         result: dict[str, Any] = json.loads(json_match.strip())
         return result
 
+    def ask_human(
+        self,
+        question: str,
+        context: dict[str, Any] | None = None,
+        suggestions: list[str] | None = None,
+        artifacts: list[Artifact] | None = None,
+    ) -> str:
+        """
+        Ask human a question (interactive mode).
+
+        If no human_callback is configured, returns empty string or first
+        suggestion (batch mode).
+
+        Args:
+            question: Question to ask
+            context: Optional domain-specific context
+            suggestions: Optional list of suggested answers
+            artifacts: Optional list of relevant artifacts
+
+        Returns:
+            Human's response or default answer
+
+        Example:
+            >>> answer = role.ask_human(
+            ...     "What tone should this scene have?",
+            ...     suggestions=["dark", "lighthearted", "neutral"]
+            ... )
+        """
+        # Import here to avoid circular dependency
+        from .human_callback import batch_mode_callback
+
+        callback = self.human_callback or batch_mode_callback
+
+        # Build callback context
+        callback_context: dict[str, Any] = {
+            "question": question,
+            "context": context or {},
+            "suggestions": suggestions or [],
+            "artifacts": artifacts or [],
+            "role": self.role_name,
+        }
+
+        return callback(question, callback_context)
+
+    def ask_yes_no(
+        self,
+        question: str,
+        default: bool = True,
+        context: dict[str, Any] | None = None,
+    ) -> bool:
+        """
+        Ask a yes/no question.
+
+        Args:
+            question: Question to ask
+            default: Default answer if in batch mode or unclear response
+            context: Optional context
+
+        Returns:
+            True for yes, False for no
+
+        Example:
+            >>> if role.ask_yes_no("Generate images for this scene?"):
+            ...     generate_images()
+        """
+        response = self.ask_human(
+            question,
+            context=context,
+            suggestions=["yes", "no"],
+        )
+
+        # Parse response
+        response_lower = response.lower().strip()
+
+        if response_lower in ["yes", "y", "true", "1"]:
+            return True
+        elif response_lower in ["no", "n", "false", "0"]:
+            return False
+        else:
+            # If unclear, use default
+            return default
+
+    def ask_choice(
+        self,
+        question: str,
+        choices: list[str],
+        default: int = 0,
+        context: dict[str, Any] | None = None,
+    ) -> str:
+        """
+        Ask human to choose from a list of options.
+
+        Args:
+            question: Question to ask
+            choices: List of choices
+            default: Index of default choice (0-based)
+            context: Optional context
+
+        Returns:
+            Selected choice
+
+        Example:
+            >>> tone = role.ask_choice(
+            ...     "Select scene tone:",
+            ...     ["dark", "lighthearted", "neutral"]
+            ... )
+        """
+        response = self.ask_human(
+            question,
+            context=context,
+            suggestions=choices,
+        )
+
+        # If response matches a choice, return it
+        if response in choices:
+            return response
+
+        # Try to parse as number (1-indexed)
+        try:
+            index = int(response) - 1
+            if 0 <= index < len(choices):
+                return choices[index]
+        except ValueError:
+            pass
+
+        # Fall back to default
+        return choices[default] if choices else ""
+
     def __repr__(self) -> str:
         """String representation of the role."""
-        return f"{self.__class__.__name__}(role_name='{self.role_name}')"
+        session_info = f", session={bool(self.session)}" if self.session else ""
+        callback_info = (
+            f", interactive={bool(self.human_callback)}"
+            if self.human_callback
+            else ""
+        )
+        return (
+            f"{self.__class__.__name__}("
+            f"role_name='{self.role_name}'"
+            f"{session_info}{callback_info})"
+        )
