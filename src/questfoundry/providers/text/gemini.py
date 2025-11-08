@@ -31,6 +31,7 @@ class GeminiProvider(TextProvider):
 
         Raises:
             ValueError: If api_key is missing
+            RuntimeError: If google-generativeai library not installed
         """
         super().__init__(config)
 
@@ -48,6 +49,18 @@ class GeminiProvider(TextProvider):
         self.top_p = config.get("top_p", 0.95)
         self.top_k = config.get("top_k", 40)
         self.max_output_tokens = config.get("max_output_tokens")
+
+        # Import and configure genai once during initialization
+        try:
+            import google.generativeai as genai  # type: ignore
+
+            self._genai = genai
+            self._genai.configure(api_key=self.api_key)
+        except ImportError:
+            raise RuntimeError(
+                "google-generativeai library required for Gemini provider. "
+                "Install with: pip install google-generativeai"
+            )
 
     def generate_text(
         self,
@@ -71,20 +84,9 @@ class GeminiProvider(TextProvider):
         Raises:
             RuntimeError: If API call fails
         """
-        try:
-            import google.generativeai as genai  # type: ignore
-        except ImportError:
-            raise RuntimeError(
-                "google-generativeai library required for Gemini provider. "
-                "Install with: pip install google-generativeai"
-            )
-
-        # Configure API
-        genai.configure(api_key=self.api_key)
-
         # Create model (use provided model or default)
         model_name = model if model is not None else self.model
-        gen_model = genai.GenerativeModel(model_name)
+        gen_model = self._genai.GenerativeModel(model_name)
 
         # Build generation config
         generation_config = {
@@ -113,8 +115,12 @@ class GeminiProvider(TextProvider):
             else:
                 raise RuntimeError("Unexpected response format from Gemini API")
 
+        except RuntimeError:
+            # Re-raise our own RuntimeErrors
+            raise
         except Exception as e:
-            raise RuntimeError(f"Gemini API call failed: {e}")
+            # Wrap API-specific errors (InvalidArgument, PermissionDenied, etc.)
+            raise RuntimeError(f"Gemini API call failed: {e}") from e
 
     def generate_text_streaming(
         self,
@@ -146,21 +152,12 @@ class GeminiProvider(TextProvider):
         Raises:
             ValueError: If configuration is invalid
         """
+        # genai already configured in __init__, just test the connection
         try:
-            import google.generativeai as genai  # type: ignore
-        except ImportError:
-            raise ValueError(
-                "google-generativeai library required for Gemini provider. "
-                "Install with: pip install google-generativeai"
-            )
-
-        # Configure and test
-        try:
-            genai.configure(api_key=self.api_key)
             # Try to list models to validate API key
-            list(genai.list_models())
+            list(self._genai.list_models())
         except Exception as e:
-            raise ValueError(f"Invalid Gemini configuration: {e}")
+            raise ValueError(f"Invalid Gemini configuration: {e}") from e
 
     def __repr__(self) -> str:
         """String representation."""

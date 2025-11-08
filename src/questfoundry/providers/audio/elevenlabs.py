@@ -107,7 +107,7 @@ class ElevenLabsProvider(AudioProvider):
 
         # Make API request
         try:
-            import requests
+            import requests  # type: ignore[import-untyped]
 
             response = requests.post(url, json=payload, headers=headers, timeout=60)
             response.raise_for_status()
@@ -163,12 +163,9 @@ class ElevenLabsProvider(AudioProvider):
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"ElevenLabs API call failed: {e}")
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate configuration by testing API key.
-
-        Returns:
-            True if API key is valid
 
         Raises:
             ValueError: If API key is invalid
@@ -176,9 +173,8 @@ class ElevenLabsProvider(AudioProvider):
         try:
             # Test API key by listing voices
             self.list_voices()
-            return True
         except RuntimeError as e:
-            raise ValueError(f"Invalid configuration: {e}")
+            raise ValueError(f"Invalid configuration: {e}") from e
 
     def get_supported_formats(self) -> list[str]:
         """

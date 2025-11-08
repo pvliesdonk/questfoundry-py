@@ -33,6 +33,7 @@ class BedrockProvider(TextProvider):
 
         Raises:
             ValueError: If AWS credentials are missing
+            RuntimeError: If boto3 library not installed
         """
         super().__init__(config)
 
@@ -60,6 +61,22 @@ class BedrockProvider(TextProvider):
         self.max_tokens = config.get("max_tokens", 4096)
         self.top_p = config.get("top_p", 0.9)
 
+        # Initialize boto3 client once during initialization
+        try:
+            import boto3  # type: ignore
+
+            self._client = boto3.client(
+                "bedrock-runtime",
+                aws_access_key_id=self.aws_access_key_id,
+                aws_secret_access_key=self.aws_secret_access_key,
+                region_name=self.aws_region,
+            )
+        except ImportError:
+            raise RuntimeError(
+                "boto3 library required for Bedrock provider. "
+                "Install with: pip install boto3"
+            )
+
     def generate_text(
         self,
         prompt: str,
@@ -82,22 +99,6 @@ class BedrockProvider(TextProvider):
         Raises:
             RuntimeError: If API call fails
         """
-        try:
-            import boto3  # type: ignore
-        except ImportError:
-            raise RuntimeError(
-                "boto3 library required for Bedrock provider. "
-                "Install with: pip install boto3"
-            )
-
-        # Create Bedrock Runtime client
-        client = boto3.client(
-            "bedrock-runtime",
-            aws_access_key_id=self.aws_access_key_id,
-            aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.aws_region,
-        )
-
         # Use provided model or default
         model_id = model if model is not None else self.model
 
@@ -128,7 +129,7 @@ class BedrockProvider(TextProvider):
 
         # Invoke model
         try:
-            response = client.invoke_model(
+            response = self._client.invoke_model(
                 modelId=model_id,
                 body=json.dumps(request_body),
             )
@@ -150,8 +151,12 @@ class BedrockProvider(TextProvider):
                 else:
                     raise RuntimeError("Unexpected response format from Bedrock API")
 
+        except RuntimeError:
+            # Re-raise our own RuntimeErrors
+            raise
         except Exception as e:
-            raise RuntimeError(f"Bedrock API call failed: {e}")
+            # Wrap boto3/botocore exceptions (ClientError, ParamValidationError, etc.)
+            raise RuntimeError(f"Bedrock API call failed: {e}") from e
 
     def generate_text_streaming(
         self,
@@ -183,26 +188,26 @@ class BedrockProvider(TextProvider):
         Raises:
             ValueError: If configuration is invalid
         """
+        # Client already initialized in __init__, test by making a simple API call
         try:
-            import boto3  # type: ignore
-        except ImportError:
-            raise ValueError(
-                "boto3 library required for Bedrock provider. "
-                "Install with: pip install boto3"
-            )
+            import boto3
 
-        # Test credentials by listing foundation models
-        try:
-            client = boto3.client(
+            # Create a Bedrock control plane client (different from runtime)
+            bedrock_client = boto3.client(
                 "bedrock",
                 aws_access_key_id=self.aws_access_key_id,
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
             )
             # Try to list models to validate credentials
-            client.list_foundation_models(byOutputModality="TEXT")
+            bedrock_client.list_foundation_models(byOutputModality="TEXT")
+        except ImportError:
+            raise ValueError(
+                "boto3 library required for Bedrock provider. "
+                "Install with: pip install boto3"
+            )
         except Exception as e:
-            raise ValueError(f"Invalid Bedrock configuration: {e}")
+            raise ValueError(f"Invalid Bedrock configuration: {e}") from e
 
     def __repr__(self) -> str:
         """String representation."""

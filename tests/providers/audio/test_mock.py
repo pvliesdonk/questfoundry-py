@@ -18,7 +18,7 @@ def test_provider_initialization():
     """Test provider initializes correctly."""
     provider = MockAudioProvider()
     assert provider.generate_count == 0
-    assert provider.validate_config()
+    provider.validate_config()  # Should not raise
 
 
 def test_provider_initialization_with_config():
@@ -130,7 +130,7 @@ def test_list_voices_returns_expected_voices(provider):
 
 def test_validate_config(provider):
     """Test configuration validation."""
-    assert provider.validate_config() is True
+    provider.validate_config()  # Should not raise
 
 
 def test_get_supported_formats(provider):

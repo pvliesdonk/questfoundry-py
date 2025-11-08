@@ -31,6 +31,7 @@ class ImagenProvider(ImageProvider):
 
         Raises:
             ValueError: If project_id or API key is missing
+            RuntimeError: If google-cloud-aiplatform library not installed
         """
         super().__init__(config)
 
@@ -56,6 +57,24 @@ class ImagenProvider(ImageProvider):
         self.aspect_ratio = config.get("aspect_ratio", "1:1")
         self.safety_filter_level = config.get("safety_filter_level", "BLOCK_SOME")
 
+        # Import and initialize Vertex AI once during initialization
+        try:
+            from google.cloud import aiplatform  # type: ignore[import-not-found]
+            from vertexai.preview.vision_models import (  # type: ignore[import-not-found]
+                ImageGenerationModel,
+            )
+
+            self._aiplatform = aiplatform
+            self._ImageGenerationModel = ImageGenerationModel
+
+            # Initialize Vertex AI with project and location
+            self._aiplatform.init(project=self.project_id, location=self.location)
+        except ImportError:
+            raise RuntimeError(
+                "google-cloud-aiplatform library required for Imagen provider. "
+                "Install with: pip install google-cloud-aiplatform"
+            )
+
     def generate_image(
         self,
         prompt: str,
@@ -79,42 +98,27 @@ class ImagenProvider(ImageProvider):
         Raises:
             RuntimeError: If API call fails
         """
-        try:
-            from google.cloud import aiplatform  # type: ignore
-            from vertexai.preview.vision_models import (
-                ImageGenerationModel,  # type: ignore
-            )
-        except ImportError:
-            raise RuntimeError(
-                "google-cloud-aiplatform library required for Imagen provider. "
-                "Install with: pip install google-cloud-aiplatform"
-            )
-
-        # Initialize Vertex AI
-        aiplatform.init(project=self.project_id, location=self.location)
-
         # Use provided model or default
         model_name = model if model is not None else self.model
 
-        # Load model
+        # Determine aspect ratio from width/height if provided
+        aspect_ratio = self.aspect_ratio
+        if width and height:
+            if width == height:
+                aspect_ratio = "1:1"
+            elif width > height:
+                aspect_ratio = "16:9" if width / height > 1.5 else "4:3"
+            else:
+                aspect_ratio = "9:16" if height / width > 1.5 else "3:4"
+
+        # Load model (uses cached ImageGenerationModel class)
         try:
-            gen_model = ImageGenerationModel.from_pretrained(model_name)
+            gen_model = self._ImageGenerationModel.from_pretrained(model_name)
         except Exception as e:
-            raise RuntimeError(f"Failed to load Imagen model: {e}")
+            raise RuntimeError(f"Failed to load Imagen model: {e}") from e
 
         # Generate image
         try:
-            # Determine aspect ratio from width/height if provided
-            aspect_ratio = self.aspect_ratio
-            if width and height:
-                if width == height:
-                    aspect_ratio = "1:1"
-                elif width > height:
-                    aspect_ratio = "16:9" if width / height > 1.5 else "4:3"
-                else:
-                    aspect_ratio = "9:16" if height / width > 1.5 else "3:4"
-
-            # Generate
             response = gen_model.generate_images(
                 prompt=prompt,
                 number_of_images=1,
@@ -150,8 +154,12 @@ class ImagenProvider(ImageProvider):
             else:
                 raise RuntimeError("No images returned from Imagen API")
 
+        except RuntimeError:
+            # Re-raise our own RuntimeErrors
+            raise
         except Exception as e:
-            raise RuntimeError(f"Imagen API call failed: {e}")
+            # Wrap Google Cloud API exceptions
+            raise RuntimeError(f"Imagen API call failed: {e}") from e
 
     def validate_config(self) -> None:
         """
@@ -160,19 +168,10 @@ class ImagenProvider(ImageProvider):
         Raises:
             ValueError: If configuration is invalid
         """
-        try:
-            from google.cloud import aiplatform  # type: ignore
-        except ImportError:
-            raise ValueError(
-                "google-cloud-aiplatform library required for Imagen provider. "
-                "Install with: pip install google-cloud-aiplatform"
-            )
-
-        # Test credentials by initializing Vertex AI
-        try:
-            aiplatform.init(project=self.project_id, location=self.location)
-        except Exception as e:
-            raise ValueError(f"Invalid Imagen configuration: {e}")
+        # Vertex AI already initialized in __init__
+        # If we got this far, the library is available and init succeeded
+        # We could test by listing models or making a test API call, but that
+        # would require actual API access. The initialization in __init__ is sufficient.
 
     def __repr__(self) -> str:
         """String representation."""

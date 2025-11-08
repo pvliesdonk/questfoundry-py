@@ -1,25 +1,18 @@
 """Base class for audio generation providers."""
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any
 
+from ..base import Provider
 
-class AudioProvider(ABC):
+
+class AudioProvider(Provider):
     """
     Base class for audio generation providers.
 
     Audio providers generate speech/audio from text using text-to-speech (TTS)
     or other audio generation models.
     """
-
-    def __init__(self, config: dict[str, Any]):
-        """
-        Initialize the audio provider.
-
-        Args:
-            config: Provider-specific configuration
-        """
-        self.config = config
 
     @abstractmethod
     def generate_audio(
@@ -73,15 +66,12 @@ class AudioProvider(ABC):
         pass
 
     @abstractmethod
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate that the provider is properly configured.
 
-        Returns:
-            True if configuration is valid, False otherwise
-
         Raises:
-            ValueError: If required configuration is missing
+            ValueError: If configuration is invalid
         """
         pass
 

@@ -147,7 +147,8 @@ def test_imagen_provider_e2e():
 
 
 # Note: Mock image provider not included in Epic 14
-# Available image providers: A1111 (requires local server), DALL-E (requires OpenAI key), Imagen (requires Google Cloud)
+# Available image providers: A1111 (requires local server),
+# DALL-E (requires OpenAI key), Imagen (requires Google Cloud)
 
 
 # ============================================================================
@@ -190,7 +191,7 @@ def test_mock_audio_provider_e2e():
     provider = MockAudioProvider()
 
     # Validate config
-    assert provider.validate_config()
+    provider.validate_config()  # Should not raise
 
     # List voices
     voices = provider.list_voices()
@@ -233,12 +234,16 @@ def test_all_available_text_providers_consistency():
     # Test OpenAI if available
     if OPENAI_API_KEY:
         provider = OpenAIProvider({"api_key": OPENAI_API_KEY})
-        results["openai"] = provider.generate_text(prompt, max_tokens=5, temperature=0.0)
+        results["openai"] = provider.generate_text(
+            prompt, max_tokens=5, temperature=0.0
+        )
 
     # Test Gemini if available
     if GOOGLE_AI_API_KEY:
         provider = GeminiProvider({"api_key": GOOGLE_AI_API_KEY})
-        results["gemini"] = provider.generate_text(prompt, max_tokens=5, temperature=0.0)
+        results["gemini"] = provider.generate_text(
+            prompt, max_tokens=5, temperature=0.0
+        )
 
     # Print results for manual verification
     if results:
