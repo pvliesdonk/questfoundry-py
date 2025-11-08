@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import pytest
 from conftest import MockTextProvider
 
-from questfoundry.loops.base import LoopContext, LoopStep, StepStatus
+from questfoundry.loops.base import LoopContext, StepStatus
 from questfoundry.loops.hook_harvest import HookHarvestLoop
 from questfoundry.models.artifact import Artifact
 from questfoundry.roles.showrunner import Showrunner
@@ -254,7 +254,8 @@ def test_hook_harvest_failed_step(loop_context):
     )
 
     # Create a showrunner that will fail
-    showrunner = Showrunner(provider=bad_provider, spec_path=loop_context.role_instances["showrunner"].spec_path)
+    spec_path = loop_context.role_instances["showrunner"].spec_path
+    showrunner = Showrunner(provider=bad_provider, spec_path=spec_path)
     loop_context.role_instances["showrunner"] = showrunner
 
     loop = HookHarvestLoop(loop_context)

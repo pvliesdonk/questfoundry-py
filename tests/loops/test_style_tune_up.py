@@ -255,9 +255,8 @@ def test_style_tune_up_failed_step(loop_context):
     bad_provider = MockTextProvider(responses={"diagnose_drift": ""})
 
     # Create a style_lead that will fail
-    style_lead = StyleLead(
-        provider=bad_provider, spec_path=loop_context.role_instances["style_lead"].spec_path
-    )
+    spec_path = loop_context.role_instances["style_lead"].spec_path
+    style_lead = StyleLead(provider=bad_provider, spec_path=spec_path)
     loop_context.role_instances["style_lead"] = style_lead
 
     loop = StyleTuneUpLoop(loop_context)

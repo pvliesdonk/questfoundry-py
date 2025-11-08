@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import pytest
 from conftest import MockTextProvider
 
-from questfoundry.loops.base import LoopContext, LoopStep, StepStatus
+from questfoundry.loops.base import LoopContext, StepStatus
 from questfoundry.loops.gatecheck import GatecheckLoop
 from questfoundry.models.artifact import Artifact
 from questfoundry.roles.gatekeeper import Gatekeeper

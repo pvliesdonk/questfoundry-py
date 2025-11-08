@@ -1,5 +1,6 @@
 """Archive Snapshot loop implementation."""
 
+from datetime import datetime, timezone
 from typing import Any
 
 from ..models.artifact import Artifact
@@ -254,8 +255,6 @@ class ArchiveSnapshotLoop(Loop):
 
         if result.success:
             # Create snapshot ID
-            from datetime import datetime, timezone
-
             now = datetime.now(timezone.utc)
             self.snapshot_id = f"SNAPSHOT-{now.strftime('%Y%m%d-%H%M%S')}"
 
@@ -326,8 +325,6 @@ class ArchiveSnapshotLoop(Loop):
 
     def _promote_to_cold(self, roles: dict[str, Role]) -> dict[str, Any]:
         """Promote snapshot to cold storage."""
-        showrunner = roles["showrunner"]
-
         # Use workspace to promote artifacts
         workspace = self.context.workspace
         promoted_count = 0

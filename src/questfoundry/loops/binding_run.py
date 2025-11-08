@@ -1,5 +1,6 @@
 """Binding Run loop implementation."""
 
+from datetime import datetime, timezone
 from typing import Any
 
 from ..export.binder import BookBinder
@@ -259,13 +260,15 @@ class BindingRunLoop(Loop):
 
         if result.success:
             # Create view artifact (using export module)
-            from datetime import datetime, timezone
+            # Try to get snapshot_id from context artifacts, or generate one
+            snapshot_id = self._get_snapshot_id()
+            now = datetime.now(timezone.utc)
 
             self.view_artifact = ViewArtifact(
-                view_id="view-001",
-                snapshot_id="cold-snapshot-001",
+                view_id=f"view-{now.strftime('%Y%m%d-%H%M%S')}",
+                snapshot_id=snapshot_id,
                 artifacts=self.context.artifacts,
-                created=datetime.now(timezone.utc),
+                created=now,
             )
 
             # Create view artifact reference
@@ -377,12 +380,15 @@ class BindingRunLoop(Loop):
 
         if result.success:
             # Create export bundle
+            view_id = (
+                self.view_artifact.view_id if self.view_artifact else "unknown"
+            )
             bundle_data = {
-                "view_id": self.view_artifact.view_id if self.view_artifact else "unknown",
+                "view_id": view_id,
                 "formats": self.export_formats,
-                "snapshot_id": "cold-snapshot-001",
+                "snapshot_id": self._get_snapshot_id(),
                 "view_log": {
-                    "created": "2025-11-07",
+                    "created": datetime.now(timezone.utc).isoformat(),
                     "formats": self.export_formats,
                     "coverage": "complete",
                 },
@@ -402,6 +408,24 @@ class BindingRunLoop(Loop):
             }
         else:
             raise RuntimeError(f"Bundle packaging failed: {result.error}")
+
+    def _get_snapshot_id(self) -> str:
+        """
+        Get snapshot ID from context artifacts, or generate a default one.
+
+        Returns:
+            Snapshot ID from artifacts or generated default
+        """
+        # Look for snapshot artifacts in context
+        for artifact in self.context.artifacts:
+            if artifact.type in ["snapshot_data", "cold_snapshot"]:
+                snapshot_id = artifact.data.get("snapshot_id")
+                if snapshot_id:
+                    return snapshot_id
+
+        # If no snapshot found, generate a default one
+        now = datetime.now(timezone.utc)
+        return f"snapshot-{now.strftime('%Y%m%d-%H%M%S')}"
 
     def validate_step(self, step: LoopStep, result: Any) -> bool:
         """

@@ -322,8 +322,6 @@ class CodexExpansionLoop(Loop):
 
     def _spoiler_sweep(self, roles: dict[str, Role]) -> dict[str, Any]:
         """Ensure no spoilers or twists leak."""
-        codex_curator = roles["codex_curator"]
-
         # Check each entry for spoilers
         # In real implementation, would validate against canon
         for entry in self.codex_entries:
@@ -420,8 +418,6 @@ class CodexExpansionLoop(Loop):
 
     def _package_codex(self, roles: dict[str, Role]) -> dict[str, Any]:
         """Package entries and coverage report."""
-        codex_curator = roles["codex_curator"]
-
         # Create final codex package
         codex_package = {
             "date": "2025-11-07",

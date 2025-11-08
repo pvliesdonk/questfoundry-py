@@ -35,7 +35,9 @@ class MockTextProvider(TextProvider):
         self.response = response
         self.responses = responses or {}
         # Use a flexible default response that works for most tasks
-        self.default_response = '{"status": "success", "result": "Mock response", "data": {}}'
+        self.default_response = (
+            '{"status": "success", "result": "Mock response", "data": {}}'
+        )
         self.last_prompt = None
 
     def validate_config(self) -> None:
@@ -67,7 +69,6 @@ class MockTextProvider(TextProvider):
         Returns:
             Mock response text
         """
-        import json
 
         self.last_prompt = prompt
 

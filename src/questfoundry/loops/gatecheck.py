@@ -482,8 +482,10 @@ class GatecheckLoop(Loop):
         handoffs = []
         for finding in self.findings:
             if finding["status"] == "yellow":
+                fix = finding.get("smallest_viable_fix", "TBD")
+                owner = finding.get("owner", "TBD")
                 handoffs.append(
-                    f"Bar: {finding['bar']}; Fix: {finding.get('smallest_viable_fix', 'TBD')}; Owner: {finding.get('owner', 'TBD')}"
+                    f"Bar: {finding['bar']}; Fix: {fix}; Owner: {owner}"
                 )
         return handoffs
 

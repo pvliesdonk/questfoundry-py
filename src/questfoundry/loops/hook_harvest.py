@@ -305,7 +305,7 @@ class HookHarvestLoop(Loop):
         if result.success:
             # Create simple clusters based on hook types
             # In real implementation, would use LLM to create thematic clusters
-            clusters = {
+            clusters: dict[str, list[dict[str, Any]]] = {
                 "narrative": [],
                 "scene": [],
                 "factual": [],

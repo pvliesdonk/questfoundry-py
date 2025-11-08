@@ -336,10 +336,8 @@ class LoreDeepeningLoop(Loop):
 
     def _create_impact_notes(self, roles: dict[str, Role]) -> dict[str, Any]:
         """Document topology and prose implications."""
-        lore_weaver = roles["lore_weaver"]
-
         # Generate impact notes for each entry
-        impact_notes = {
+        impact_notes: dict[str, list[dict[str, str]]] = {
             "plotwright": [],
             "scene_smith": [],
             "style_lead": [],

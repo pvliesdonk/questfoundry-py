@@ -78,7 +78,8 @@ class StyleTuneUpLoop(Loop):
         LoopStep(
             step_id="apply_revisions",
             description="Scene Smith applies minimal changes to hit style",
-            assigned_roles=["showrunner"],  # Showrunner coordinates, scene_smith consulted
+            # Showrunner coordinates, scene_smith consulted
+            assigned_roles=["showrunner"],
             consulted_roles=["scene_smith", "style_lead"],
             artifacts_input=["edit_notes"],
             artifacts_output=["manuscript_section"],
@@ -453,7 +454,8 @@ class StyleTuneUpLoop(Loop):
         if not result.get("success", False):
             return False
 
-        # Check if artifacts were created (except for apply_revisions which may not create artifacts)
+        # Check if artifacts were created
+        # (except for apply_revisions which may not create artifacts)
         if step.step_id != "apply_revisions" and "artifacts" in result:
             return len(result["artifacts"]) > 0
 

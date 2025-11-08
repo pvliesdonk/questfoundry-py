@@ -351,8 +351,6 @@ class SceneForgeLoop(Loop):
 
     def _package_scenes(self, roles: dict[str, Role]) -> dict[str, Any]:
         """Package scene drafts for review."""
-        scene_smith = roles["scene_smith"]
-
         # Create final scene package
         scene_package = {
             "date": "2025-11-07",
