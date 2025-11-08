@@ -28,7 +28,7 @@ jobs:
           python-version: "3.11"
 
       # Install commitizen
-      - run: uv pip install --system commitizen
+      - run: uv tool install commitizen
 
       # Configure git
       - name: Configure git

@@ -20,8 +20,11 @@ Before doing anything on GitHub, test the entire release process locally:
 # This will show what would happen without actually doing it
 cd /home/user/questfoundry-py
 
+# Install commitizen as a tool
+uv tool install commitizen
+
 # Dry run to see what commitizen would do
-commitizen bump --dry-run --changelog
+cz bump --dry-run --changelog
 ```
 
 This shows:
@@ -104,11 +107,13 @@ python -m twine upload \
 
 ### 4c. Test install from Test PyPI
 ```bash
-# In a new virtual environment
-pip install --index-url https://test.pypi.org/simple/ questfoundry-py==0.1.0
+# Using uv
+uv pip install \
+  --index-url https://test.pypi.org/simple/ \
+  questfoundry-py==0.1.0
 
 # Verify it works
-python -c "from questfoundry import __version__; print(__version__)"
+uv run python -c "from questfoundry import __version__; print(__version__)"
 ```
 
 ## Step 5: Enable GitHub Pages
@@ -169,8 +174,11 @@ If the automated workflow fails, you can release manually:
 git checkout main
 git pull origin main
 
+# Install commitizen if not already installed
+uv tool install commitizen
+
 # Bump version and generate changelog
-commitizen bump --changelog
+cz bump --changelog
 
 # This will:
 # - Update src/questfoundry/version.py
@@ -192,12 +200,15 @@ uv build
 
 ### 7d. Publish to PyPI
 ```bash
-# Using twine
-python -m pip install twine
-python -m twine upload dist/* --skip-existing
+# Ensure package is built
+uv build
 
-# Or using uv
-uv build --publish
+# Publish using uv (requires PYPI_API_TOKEN or .pypirc configured)
+uv publish --skip-existing
+
+# Or use twine if you prefer
+uv tool install twine
+twine upload dist/* --skip-existing
 ```
 
 ### 7e. Create GitHub Release manually
@@ -218,9 +229,9 @@ gh release create v0.1.0 \
 
 ### 7f. Deploy docs manually
 ```bash
-# Build docs
-pip install -e ".[docs]"
-mkdocs build
+# Sync dependencies and build docs
+uv sync --extra docs
+uv run mkdocs build
 
 # Deploy to GitHub Pages
 # Either:
@@ -233,11 +244,11 @@ git subtree push --prefix site origin gh-pages
 
 ### 8a. Verify PyPI publication
 ```bash
-# Check PyPI
-pip install --upgrade questfoundry-py
+# Check PyPI (using uv)
+uv pip install --upgrade questfoundry-py
 
 # Verify version
-python -c "from questfoundry import __version__; print(__version__)"
+uv run python -c "from questfoundry import __version__; print(__version__)"
 # Should print: 0.1.0
 ```
 
