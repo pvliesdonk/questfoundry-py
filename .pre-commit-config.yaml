@@ -10,4 +10,8 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [pydantic>=2.0, jsonschema>=4.0]
-        
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.27.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
