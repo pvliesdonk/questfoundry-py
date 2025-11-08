@@ -1,0 +1,104 @@
+site_name: QuestFoundry-Py Documentation
+site_description: A Python framework for managing interactive narrative projects with AI integration
+site_url: https://questfoundry.liesdonk.nl/
+repo_url: https://github.com/pvliesdonk/questfoundry-py
+repo_name: questfoundry-py
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.indexes
+    - toc.integrate
+    - content.code.copy
+    - content.code.select
+    - search.suggest
+    - search.highlight
+    - search.share
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          import_options:
+            docstring_style: google
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_members: true
+            members_order: alphabetical
+            docstring_options:
+              ignore_init_summary: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Installation: installation.md
+  - API Reference:
+    - Overview: api/index.md
+    - Providers: api/providers.md
+    - Roles: api/roles.md
+    - Loops: api/loops.md
+    - State Management: api/state.md
+    - Protocol: api/protocol.md
+    - Validation: api/validation.md
+  - Guides:
+    - Configuration: guides/configuration.md
+    - Per-Role Configuration: guides/per-role-config.md
+    - Caching Strategy: guides/caching-strategy.md
+    - Custom Roles: guides/custom-roles.md
+    - Custom Providers: guides/custom-providers.md
+    - Deployment: guides/deployment.md
+  - Examples: examples/code-examples.md
+  - Changelog: changelog.md
+  - Contributing: contributing.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/pvliesdonk/questfoundry-py
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/questfoundry-py/
+  # Analytics: configure in environment variables
+  # Set GOOGLE_ANALYTICS_ID to your Google Analytics property ID
+  # analytics:
+  #   provider: google
+  #   property: !ENV GOOGLE_ANALYTICS_ID
+
+copyright: Copyright &copy; 2024-2025 QuestFoundry Contributors
