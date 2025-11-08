@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING, Any
 from .base import Role, RoleContext, RoleResult
 
 if TYPE_CHECKING:
-    from questfoundry.providers.base import TextProvider
-    from questfoundry.providers.config import ProviderConfig
+    from questfoundry.providers.base import ImageProvider, TextProvider
     from questfoundry.providers.registry import ProviderRegistry
 
 
@@ -366,7 +365,7 @@ Be concise and action-oriented.
         self,
         registry: "ProviderRegistry",
         provider_type: str = "text",
-    ) -> "TextProvider":
+    ) -> "TextProvider | ImageProvider":
         """
         Get the appropriate provider for this role based on configuration.
 
@@ -408,6 +407,7 @@ Be concise and action-oriented.
         config: dict[str, Any] | None = None,
         session: Any | None = None,
         human_callback: Any | None = None,
+        role_name: str | None = None,
     ) -> Role:
         """
         Initialize a role with provider configuration from global config.
@@ -425,6 +425,8 @@ Be concise and action-oriented.
             config: Task-specific configuration (optional)
             session: RoleSession for conversation tracking (optional)
             human_callback: Callback for human interaction (optional)
+            role_name: Role name for config lookup (optional, auto-derived if not
+                provided)
 
         Returns:
             Initialized role instance ready for use
@@ -442,13 +444,14 @@ Be concise and action-oriented.
             )
         """
         try:
-            # We need to know the role_name to get its config
-            # Create temporary role instance to get role_name
-            temp_provider = registry.get_text_provider()  # Uses default
-            temp_role = role_class(provider=temp_provider)
-            role_name = temp_role.role_name
+            # Get role_name - either from parameter or derive from class
+            if role_name is None:
+                # Create minimal instance with default provider to get role_name
+                default_provider = registry.get_text_provider()
+                temp_role = role_class(provider=default_provider)
+                role_name = temp_role.role_name
 
-            # Now get the actual provider for this role
+            # Get the actual provider for this role
             provider_name = registry.config.get_role_provider(role_name, "text")
             provider = registry.get_text_provider(provider_name)
 

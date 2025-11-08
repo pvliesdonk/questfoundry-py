@@ -241,30 +241,55 @@ class ProviderConfig:
         try:
             provider_config = self.get_provider_config(provider_type, provider_name)
         except KeyError:
-            provider_config = {}
+            # Provider not found in configuration
+            return {}
 
         # Get role-specific config
         role_config = self.get_role_config(role_name)
 
-        # Merge configurations (role config takes precedence)
-        # Combine base provider config with role overrides
-        merged_config = {**provider_config}
-
-        # Apply role-specific cache configuration if present
-        if "cache" in role_config:
-            merged_config["cache"] = role_config["cache"]
-
-        # Apply role-specific rate limiting if present
-        if "rate_limit" in role_config:
-            merged_config["rate_limit"] = role_config["rate_limit"]
-
-        # Apply any other role-specific overrides
-        for key, value in role_config.items():
-            if key not in ("text_provider", "image_provider"):
-                if key not in ("cache", "rate_limit"):
-                    merged_config[key] = value
+        # Deep merge configurations (role config takes precedence)
+        merged_config = self._deep_merge(provider_config, role_config)
 
         return merged_config
+
+    def _deep_merge(
+        self, base: dict[str, Any], overrides: dict[str, Any]
+    ) -> dict[str, Any]:
+        """
+        Deep merge overrides into base dictionary.
+
+        Nested dictionaries are merged rather than replaced, allowing
+        role-specific overrides to only change specific keys while
+        preserving base configuration values.
+
+        Args:
+            base: Base configuration dictionary
+            overrides: Override configuration dictionary
+
+        Returns:
+            Merged configuration with overrides applied
+
+        Example:
+            base = {"cache": {"ttl": 3600}, "model": "gpt-4"}
+            overrides = {"cache": {"enabled": True}}
+            result = _deep_merge(base, overrides)
+            # Returns: {"cache": {"ttl": 3600, "enabled": True}, "model": "gpt-4"}
+        """
+        result = {**base}
+
+        for key, value in overrides.items():
+            if (
+                key in result
+                and isinstance(result[key], dict)
+                and isinstance(value, dict)
+            ):
+                # Deep merge for nested dictionaries
+                result[key] = self._deep_merge(result[key], value)
+            else:
+                # Replace for non-dict values or new keys
+                result[key] = value
+
+        return result
 
     def list_roles(self) -> list[str]:
         """

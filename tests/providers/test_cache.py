@@ -67,7 +67,7 @@ class TestCacheConfig:
     def test_cache_config_defaults(self) -> None:
         """CacheConfig has reasonable defaults."""
         config = CacheConfig()
-        assert config.enabled is True
+        assert config.enabled is False  # Opt-in by default
         assert config.backend == "file"
         assert config.ttl_seconds == 86400  # 24 hours
         assert config.max_cache_size_mb == 500

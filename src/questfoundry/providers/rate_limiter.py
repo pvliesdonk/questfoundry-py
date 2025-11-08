@@ -116,7 +116,10 @@ class RateLimiter:
         # Refill cost bucket (per day)
         if self.cost_tokens is not None:
             days_elapsed = (now - self.last_cost_refill) / 86400.0
-            max_cost_tokens = self.config.cost_per_day * 100.0 if self.config.cost_per_day else 0
+            if self.config.cost_per_day:
+                max_cost_tokens = self.config.cost_per_day * 100.0
+            else:
+                max_cost_tokens = 0
             self.cost_tokens = min(
                 max_cost_tokens,
                 self.cost_tokens + max_cost_tokens * days_elapsed,
@@ -156,8 +159,13 @@ class RateLimiter:
                 return False
 
             # Check cost limit (approximate, in cents)
-            estimated_cost_cents = self._estimate_cost(input_tokens, output_tokens) * 100
-            if self.cost_tokens is not None and self.cost_tokens < estimated_cost_cents:
+            estimated_cost_cents = (
+                self._estimate_cost(input_tokens, output_tokens) * 100
+            )
+            if (
+                self.cost_tokens is not None
+                and self.cost_tokens < estimated_cost_cents
+            ):
                 return False
 
             # All checks passed, consume tokens
@@ -198,8 +206,13 @@ class RateLimiter:
             if self.token_tokens < total_tokens:
                 return False
 
-            estimated_cost_cents = self._estimate_cost(input_tokens, output_tokens) * 100
-            if self.cost_tokens is not None and self.cost_tokens < estimated_cost_cents:
+            estimated_cost_cents = (
+                self._estimate_cost(input_tokens, output_tokens) * 100
+            )
+            if (
+                self.cost_tokens is not None
+                and self.cost_tokens < estimated_cost_cents
+            ):
                 return False
 
             return True
@@ -417,11 +430,14 @@ class CostTracker:
                 if k.startswith(current_month)
             )
 
+            providers_summary = {
+                k: round(v, 4) for k, v in self.costs_by_provider.items()
+            }
             return {
                 "total_cost": round(total, 4),
                 "cost_today": round(self.costs_by_date.get(today, 0.0), 4),
                 "cost_this_month": round(month_cost, 4),
-                "by_provider": {k: round(v, 4) for k, v in self.costs_by_provider.items()},
+                "by_provider": providers_summary,
             }
 
 

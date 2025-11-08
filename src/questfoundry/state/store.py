@@ -1,6 +1,7 @@
 """Abstract state store interface"""
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -257,9 +258,9 @@ class StateStore(ABC):
             "project": {
                 "name": project_info.name,
                 "description": project_info.description,
-                "created_at": project_info.created_at.isoformat()
-                if hasattr(project_info.created_at, "isoformat")
-                else str(project_info.created_at),
+                "created": project_info.created.isoformat()
+                if hasattr(project_info.created, "isoformat")
+                else str(project_info.created),
             },
             "artifacts": [
                 {"id": a.artifact_id, "type": a.type, "data": a.data}
@@ -277,9 +278,9 @@ class StateStore(ABC):
                 {
                     "id": snap.snapshot_id,
                     "tu_id": snap.tu_id,
-                    "timestamp": snap.timestamp.isoformat()
-                    if hasattr(snap.timestamp, "isoformat")
-                    else str(snap.timestamp),
+                    "created": snap.created.isoformat()
+                    if hasattr(snap.created, "isoformat")
+                    else str(snap.created),
                 }
                 for snap in snapshots
             ],
@@ -288,7 +289,7 @@ class StateStore(ABC):
         if include_history:
             export_data["metadata"] = {
                 "exported_with_history": True,
-                "export_timestamp": __import__("datetime").datetime.now().isoformat(),
+                "export_timestamp": datetime.now().isoformat(),
             }
 
         # Write to file
@@ -358,12 +359,15 @@ class StateStore(ABC):
 
             # Import artifacts
             for artifact_data in import_data.get("artifacts", []):
+                artifact_id = artifact_data.get("id")
                 artifact = Artifact(
-                    artifact_id=artifact_data.get("id"),
                     type=artifact_data.get("type"),
                     data=artifact_data.get("data", {}),
+                    metadata={"id": artifact_id} if artifact_id else {},
                 )
-                if not merge or self.get_artifact(artifact.artifact_id) is None:
+                if not merge or artifact_id is None or self.get_artifact(
+                    artifact_id
+                ) is None:
                     self.save_artifact(artifact)
 
             # Import TUs
@@ -378,12 +382,13 @@ class StateStore(ABC):
 
             # Import snapshots
             for snap_data in import_data.get("snapshots", []):
+                timestamp_str = snap_data.get(
+                    "created", datetime.now().isoformat()
+                )
                 snapshot = SnapshotInfo(
                     snapshot_id=snap_data.get("id"),
                     tu_id=snap_data.get("tu_id"),
-                    timestamp=__import__("datetime").datetime.fromisoformat(
-                        snap_data.get("timestamp", __import__("datetime").datetime.now().isoformat())
-                    ),
+                    created=datetime.fromisoformat(timestamp_str),
                 )
                 if not merge or self.get_snapshot(snapshot.snapshot_id) is None:
                     self.save_snapshot(snapshot)

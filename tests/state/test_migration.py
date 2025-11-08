@@ -74,7 +74,7 @@ class TestMigration:
         migration = Migration_001_Initial()
         assert migration.version == 1
 
-    def test_migration_upgrade_dowgrade_symmetry(self) -> None:
+    def test_migration_upgrade_downgrade_symmetry(self) -> None:
         """Upgrade followed by downgrade should be reversible."""
         migration = Migration_001_Initial()
         state = {"data": "test"}

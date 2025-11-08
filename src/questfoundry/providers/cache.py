@@ -62,7 +62,7 @@ class CacheConfig:
     size limits, and per-provider overrides.
 
     Attributes:
-        enabled: Whether caching is enabled globally
+        enabled: Whether caching is enabled globally (default: False for opt-in)
         backend: Storage backend ('file' or 'memory')
         cache_dir: Directory for file-based cache
         ttl_seconds: Default TTL for cached responses (seconds)
@@ -71,7 +71,7 @@ class CacheConfig:
         per_provider: Per-provider override configurations
     """
 
-    enabled: bool = True
+    enabled: bool = False
     backend: str = "file"  # 'file', 'memory', or 'redis' (future)
     cache_dir: Optional[Path] = None
     ttl_seconds: int = 86400  # 24 hours

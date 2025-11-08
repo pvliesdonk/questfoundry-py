@@ -2,11 +2,18 @@
 
 import types
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import Any, Iterator, Optional
 
-from questfoundry.providers.cache import CacheConfig, ResponseCache, generate_cache_key
-from questfoundry.providers.rate_limiter import CostTracker, RateLimitConfig, RateLimiter
+from questfoundry.providers.cache import (
+    CacheConfig,
+    ResponseCache,
+    generate_cache_key,
+)
+from questfoundry.providers.rate_limiter import (
+    CostTracker,
+    RateLimitConfig,
+    RateLimiter,
+)
 
 
 class Provider(ABC):
@@ -18,6 +25,11 @@ class Provider(ABC):
 
     Supports optional response caching and rate limiting.
     """
+
+    cache: Optional[ResponseCache]
+    cache_config: Optional[CacheConfig]
+    rate_limiter: Optional[RateLimiter]
+    cost_tracker: Optional[CostTracker]
 
     def __init__(self, config: dict[str, Any]):
         """
@@ -106,13 +118,15 @@ class Provider(ABC):
         Returns:
             Cache key string
         """
-        # Extract model from params to avoid passing it twice
-        model = params.pop("model", "default")
+        # Extract model without modifying params dictionary
+        model = params.get("model", "default")
+        # Create a copy excluding model to avoid duplication
+        cache_params = {k: v for k, v in params.items() if k != "model"}
         return generate_cache_key(
             provider=self.__class__.__name__,
             model=model,
             prompt=prompt,
-            **params,
+            **cache_params,
         )
 
     def _get_cached_response(self, key: str) -> Optional[str]:
