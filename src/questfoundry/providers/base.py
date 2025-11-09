@@ -71,12 +71,15 @@ class Provider(ABC):
             self.cost_tracker = None
 
     @abstractmethod
-    def validate_config(self) -> None:
+    def validate_config(self) -> bool:
         """
         Validate provider configuration.
 
         Raises:
             ValueError: If configuration is invalid
+
+        Returns:
+            True if configuration is valid
         """
         pass
 

@@ -161,17 +161,21 @@ class ImagenProvider(ImageProvider):
             # Wrap Google Cloud API exceptions
             raise RuntimeError(f"Imagen API call failed: {e}") from e
 
-    def validate_config(self) -> None:
+    def validate_config(self) -> bool:
         """
         Validate configuration.
 
         Raises:
             ValueError: If configuration is invalid
+
+        Returns:
+            True if configuration is valid
         """
         # Vertex AI already initialized in __init__
         # If we got this far, the library is available and init succeeded
         # We could test by listing models or making a test API call, but that
         # would require actual API access. The initialization in __init__ is sufficient.
+        return True
 
     def __repr__(self) -> str:
         """String representation."""

@@ -234,6 +234,7 @@ def test_all_available_text_providers_consistency():
     # Test OpenAI if available
     if OPENAI_API_KEY:
         provider = OpenAIProvider({"api_key": OPENAI_API_KEY})
+        provider.validate_config()
         results["openai"] = provider.generate_text(
             prompt, max_tokens=5, temperature=0.0
         )
@@ -241,6 +242,7 @@ def test_all_available_text_providers_consistency():
     # Test Gemini if available
     if GOOGLE_AI_API_KEY:
         provider = GeminiProvider({"api_key": GOOGLE_AI_API_KEY})
+        provider.validate_config()
         results["gemini"] = provider.generate_text(
             prompt, max_tokens=5, temperature=0.0
         )

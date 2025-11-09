@@ -54,12 +54,15 @@ class DalleProvider(ImageProvider):
         # Create client (will be set in validate_config)
         self._client: Any = None
 
-    def validate_config(self) -> None:
+    def validate_config(self) -> bool:
         """
         Validate DALL-E configuration.
 
         Raises:
             ValueError: If configuration is invalid
+
+        Returns:
+            True if configuration is valid
         """
         if not self.api_key:
             raise ValueError("DALL-E provider requires 'api_key' in configuration")
@@ -72,6 +75,8 @@ class DalleProvider(ImageProvider):
             api_key=self.api_key,
             organization=self.organization,
         )
+
+        return True
 
     def generate_image(
         self,
