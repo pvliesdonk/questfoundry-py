@@ -46,7 +46,7 @@ def test_openai_provider_e2e():
     provider = OpenAIProvider({"api_key": OPENAI_API_KEY, "model": "gpt-4o-mini"})
 
     # Validate config
-    assert provider.validate_config()
+    provider.validate_config()
 
     # Generate text
     response = provider.generate_text(
@@ -71,7 +71,7 @@ def test_gemini_provider_e2e():
     )
 
     # Validate config
-    assert provider.validate_config()
+    provider.validate_config()
 
     # Generate text
     response = provider.generate_text(
@@ -101,7 +101,7 @@ def test_bedrock_provider_e2e():
     )
 
     # Validate config
-    assert provider.validate_config()
+    provider.validate_config()
 
     # Generate text
     response = provider.generate_text(
@@ -136,7 +136,7 @@ def test_imagen_provider_e2e():
     )
 
     # Validate config
-    assert provider.validate_config()
+    provider.validate_config()
 
     # Generate image
     image_data = provider.generate_image("A simple red circle on white background")
@@ -167,7 +167,7 @@ def test_elevenlabs_provider_e2e():
     provider = ElevenLabsProvider({"api_key": ELEVENLABS_API_KEY})
 
     # Validate config
-    assert provider.validate_config()
+    provider.validate_config()
 
     # List voices
     voices = provider.list_voices()
@@ -234,6 +234,7 @@ def test_all_available_text_providers_consistency():
     # Test OpenAI if available
     if OPENAI_API_KEY:
         provider = OpenAIProvider({"api_key": OPENAI_API_KEY})
+        provider.validate_config()
         results["openai"] = provider.generate_text(
             prompt, max_tokens=5, temperature=0.0
         )
@@ -241,6 +242,7 @@ def test_all_available_text_providers_consistency():
     # Test Gemini if available
     if GOOGLE_AI_API_KEY:
         provider = GeminiProvider({"api_key": GOOGLE_AI_API_KEY})
+        provider.validate_config()
         results["gemini"] = provider.generate_text(
             prompt, max_tokens=5, temperature=0.0
         )
