@@ -52,16 +52,13 @@ class OllamaProvider(TextProvider):
         # Create client (will be set in validate_config)
         self._client: Any = None
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate Ollama configuration.
 
         Raises:
             ValueError: If configuration is invalid
             RuntimeError: If cannot connect to Ollama server
-
-        Returns:
-            True if configuration is valid
         """
         # Import here to avoid dependency at module level
         from ollama import Client
@@ -75,8 +72,6 @@ class OllamaProvider(TextProvider):
                 f"Cannot connect to Ollama server at {self.base_url}. "
                 f"Make sure Ollama is running. Error: {e}"
             ) from e
-
-        return True
 
     def generate_text(
         self,

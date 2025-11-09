@@ -51,15 +51,12 @@ class OpenAIProvider(TextProvider):
         # Create client (will be set in validate_config)
         self._client: OpenAI | None = None
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate OpenAI configuration.
 
         Raises:
             ValueError: If configuration is invalid
-
-        Returns:
-            True if configuration is valid
         """
         if not self.api_key:
             raise ValueError("OpenAI provider requires 'api_key' in configuration")
@@ -73,8 +70,6 @@ class OpenAIProvider(TextProvider):
             organization=self.organization,
             base_url=self.base_url,
         )
-
-        return True
 
     def generate_text(
         self,

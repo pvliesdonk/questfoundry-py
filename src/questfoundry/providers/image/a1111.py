@@ -55,16 +55,13 @@ class Automatic1111Provider(ImageProvider):
         # Create HTTP client (will be set in validate_config)
         self._client: httpx.Client | None = None
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate A1111 configuration.
 
         Raises:
             ValueError: If configuration is invalid
             RuntimeError: If cannot connect to A1111 server
-
-        Returns:
-            True if configuration is valid
         """
         try:
             self._client = httpx.Client(
@@ -85,8 +82,6 @@ class Automatic1111Provider(ImageProvider):
             raise RuntimeError(
                 f"Failed to validate A1111 configuration: {e}"
             ) from e
-
-        return True
 
     def generate_image(
         self,

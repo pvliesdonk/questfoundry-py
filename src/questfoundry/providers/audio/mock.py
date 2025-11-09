@@ -90,17 +90,14 @@ class MockAudioProvider(AudioProvider):
             },
         ]
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate configuration (always valid for mock).
 
         Raises:
             ValueError: Never raises for mock provider
-
-        Returns:
-            True (always valid for mock provider)
         """
-        return True
+        pass
 
     def get_supported_formats(self) -> list[str]:
         """

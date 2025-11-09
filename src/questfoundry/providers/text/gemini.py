@@ -145,15 +145,12 @@ class GeminiProvider(TextProvider):
             "Streaming not yet implemented for Gemini provider"
         )
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate configuration by testing API key.
 
         Raises:
             ValueError: If configuration is invalid
-
-        Returns:
-            True if configuration is valid
         """
         # genai already configured in __init__, just test the connection
         try:
@@ -161,8 +158,6 @@ class GeminiProvider(TextProvider):
             list(self._genai.list_models())
         except Exception as e:
             raise ValueError(f"Invalid Gemini configuration: {e}") from e
-
-        return True
 
     def __repr__(self) -> str:
         """String representation."""

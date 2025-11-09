@@ -66,15 +66,12 @@ class AudioProvider(Provider):
         pass
 
     @abstractmethod
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate that the provider is properly configured.
 
         Raises:
             ValueError: If configuration is invalid
-
-        Returns:
-            True if configuration is valid
         """
         pass
 

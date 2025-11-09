@@ -181,15 +181,12 @@ class BedrockProvider(TextProvider):
             "Streaming not yet implemented for Bedrock provider"
         )
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate configuration by testing AWS credentials.
 
         Raises:
             ValueError: If configuration is invalid
-
-        Returns:
-            True if configuration is valid
         """
         # Client already initialized in __init__, test by making a simple API call
         try:
@@ -211,8 +208,6 @@ class BedrockProvider(TextProvider):
             )
         except Exception as e:
             raise ValueError(f"Invalid Bedrock configuration: {e}") from e
-
-        return True
 
     def __repr__(self) -> str:
         """String representation."""

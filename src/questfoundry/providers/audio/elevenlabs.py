@@ -163,23 +163,18 @@ class ElevenLabsProvider(AudioProvider):
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"ElevenLabs API call failed: {e}")
 
-    def validate_config(self) -> bool:
+    def validate_config(self) -> None:
         """
         Validate configuration by testing API key.
 
         Raises:
             ValueError: If API key is invalid
-
-        Returns:
-            True if configuration is valid
         """
         try:
             # Test API key by listing voices
             self.list_voices()
         except RuntimeError as e:
             raise ValueError(f"Invalid configuration: {e}") from e
-
-        return True
 
     def get_supported_formats(self) -> list[str]:
         """
