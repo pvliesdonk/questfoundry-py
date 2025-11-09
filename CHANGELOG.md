@@ -1,3 +1,10 @@
+## v0.2.1 (2025-11-09)
+
+### Fix
+
+- revert validate_config to return None for cleaner validation semantics
+- make validate_config return bool across all providers
+
 ## v0.2.0 (2025-11-09)
 
 ### Feat
