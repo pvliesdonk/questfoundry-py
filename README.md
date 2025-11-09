@@ -4,7 +4,8 @@
 
 QuestFoundry is a system for creating rich, interactive narratives using LLM-powered agents and structured workflows. This library provides the core implementation of state management, protocol communication, provider integration, and quality assurance.
 
-[![Tests](https://img.shields.io/badge/tests-374%20passed-success)](https://github.com/pvliesdonk/questfoundry-py)
+[![Tests](https://img.shields.io/badge/tests-819%20passed-success)](https://github.com/pvliesdonk/questfoundry-py)
+[![Coverage](https://codecov.io/gh/pvliesdonk/questfoundry-py/branch/main/graph/badge.svg)](https://codecov.io/gh/pvliesdonk/questfoundry-py)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
@@ -178,7 +179,18 @@ uv sync
 
 ```bash
 uv run pytest tests/
-# 374 tests, all passing ✓
+# 819 tests, all passing ✓
+```
+
+### Generate Coverage Report
+
+```bash
+uv run pytest --cov=src tests/
+# Generates coverage report (submitted to codecov on CI)
+
+# View HTML report
+uv run pytest --cov=src --cov-report=html tests/
+# Open htmlcov/index.html in your browser
 ```
 
 ### Type Checking

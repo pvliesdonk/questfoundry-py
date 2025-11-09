@@ -1,0 +1,25 @@
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+ignore:
+  - "tests"
+  - "spec"
+  - ".venv"
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+  delete_outdated: false
+  hide_project_coverage: false
+
+flags:
+  unittests:
+    carryforward: true
+
+codecov:
+  require_ci_to_pass: yes
