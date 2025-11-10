@@ -1,8 +1,12 @@
 """Audio Producer role implementation."""
 
+import logging
 from typing import Any
 
+from ..utils.media import MediaWorkspace
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class AudioProducer(Role):
@@ -70,25 +74,34 @@ class AudioProducer(Role):
 
     def _create_asset(self, context: RoleContext) -> RoleResult:
         """Produce audio from plan."""
+        # Check if audio provider is available
+        if not self.has_audio_provider:
+            logger.warning("No audio provider available - generating specification only")
+            return self._create_asset_spec_only(context)
+
+        # Audio provider available - generate actual audio
+        return self._create_asset_with_audio(context)
+
+    def _create_asset_spec_only(self, context: RoleContext) -> RoleResult:
+        """Generate audio specification when no audio provider available."""
         system_prompt = self.build_system_prompt(context)
 
         audio_plan = context.additional_context.get("audio_plan", {})
 
-        user_prompt = f"""# Task: Create Audio Asset
+        user_prompt = f"""# Task: Create Audio Asset Specification
 
 {self.format_artifacts(context.artifacts)}
 
 ## Audio Plan
 {self._format_dict(audio_plan)}
 
-Create audio asset following the plan's:
+Create audio asset specification following the plan's:
 - Type (ambience, foley, stinger, VO)
 - Intensity curve and placement
 - Motif ties
 - Safety requirements (no sudden peaks)
 
-Note: In a real implementation, this would interface with audio generation/DAW.
-For now, provide a detailed production specification.
+Note: Audio generation not available - provide specification only.
 
 Respond in JSON format:
 ```json
@@ -121,9 +134,10 @@ Respond in JSON format:
                 success=True,
                 output=response,
                 metadata={
-                    "content_type": "audio_asset",
+                    "content_type": "audio_asset_spec",
                     "asset_spec": data.get("asset_spec", {}),
                     "text_equivalent": data.get("text_equivalent", ""),
+                    "mode": "specification_only",
                 },
             )
 
@@ -131,7 +145,125 @@ Respond in JSON format:
             return RoleResult(
                 success=False,
                 output="",
-                error=f"Error creating asset: {e}",
+                error=f"Error creating asset specification: {e}",
+            )
+
+    def _create_asset_with_audio(self, context: RoleContext) -> RoleResult:
+        """Generate actual audio using audio provider."""
+        system_prompt = self.build_system_prompt(context)
+
+        audio_plan = context.additional_context.get("audio_plan", {})
+        audio_type = audio_plan.get("type", "narration")
+
+        # First, use LLM to generate text for TTS or audio description
+        user_prompt = f"""# Task: Create Audio Generation Specification
+
+{self.format_artifacts(context.artifacts)}
+
+## Audio Plan
+{self._format_dict(audio_plan)}
+
+Create specification for audio generation:
+- For VO/narration: provide the text script to be spoken
+- For other types: describe the audio characteristics
+- Specify voice characteristics (tone, pace, emotion)
+- Provide accessibility caption
+
+Respond in JSON format:
+```json
+{{
+  "audio_text": "Text to be spoken (for TTS) or audio description",
+  "voice_characteristics": {{
+    "tone": "professional|casual|dramatic",
+    "pace": "slow|medium|fast",
+    "emotion": "neutral|happy|serious"
+  }},
+  "text_equivalent": "[accessibility caption]",
+  "voice_preference": "voice ID or name if applicable"
+}}
+```
+"""
+
+        try:
+            # Get audio specification from LLM
+            response = self._call_llm(
+                system_prompt, user_prompt, max_tokens=1000
+            )
+
+            data = self._parse_json_from_response(response)
+            audio_text = data.get("audio_text", "")
+            voice_chars = data.get("voice_characteristics", {})
+            voice_pref = data.get("voice_preference")
+
+            if not audio_text:
+                raise ValueError("Failed to generate audio text")
+
+            # Generate audio using audio provider
+            logger.info(f"Generating audio: {audio_text[:100]}...")
+
+            assert self.audio_provider is not None  # Type narrowing
+            audio_bytes = self.audio_provider.generate_audio(
+                text=audio_text,
+                voice=voice_pref,
+            )
+
+            # Save audio to workspace if available
+            artifacts = []
+            if context.workspace_path:
+                workspace = MediaWorkspace(context.workspace_path)
+
+                # Generate artifact ID
+                artifact_id = workspace.generate_artifact_id(
+                    audio_text, prefix="audio"
+                )
+
+                # Save audio
+                audio_path = workspace.save_audio(
+                    audio_data=audio_bytes,
+                    artifact_id=artifact_id,
+                    metadata={
+                        "text": audio_text,
+                        "audio_plan": audio_plan,
+                        "text_equivalent": data.get("text_equivalent", ""),
+                        "voice_characteristics": voice_chars,
+                    },
+                    format="mp3",
+                )
+
+                # Create artifact
+                artifact = workspace.create_artifact_for_audio(
+                    artifact_id=artifact_id,
+                    audio_path=audio_path,
+                    artifact_type="audio_asset",
+                    metadata={
+                        "text": audio_text,
+                        "text_equivalent": data.get("text_equivalent", ""),
+                        **voice_chars,
+                    },
+                )
+                artifacts.append(artifact)
+
+                logger.info(f"Audio saved to {audio_path}")
+
+            return RoleResult(
+                success=True,
+                output=f"Generated audio from text: {audio_text}",
+                artifacts=artifacts,
+                metadata={
+                    "content_type": "audio_asset",
+                    "text": audio_text,
+                    "text_equivalent": data.get("text_equivalent", ""),
+                    "mode": "audio_generated",
+                    **voice_chars,
+                },
+            )
+
+        except Exception as e:
+            logger.error(f"Error generating audio: {e}")
+            return RoleResult(
+                success=False,
+                output="",
+                error=f"Error creating asset with audio: {e}",
             )
 
     def _mix_stems(self, context: RoleContext) -> RoleResult:
