@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from ..models.artifact import Artifact
-from ..providers.base import TextProvider
+from ..providers.base import ImageProvider, TextProvider
+from ..providers.audio import AudioProvider
 from .human_callback import batch_mode_callback
 
 # Avoid circular imports
@@ -90,6 +91,8 @@ class Role(ABC):
         session: "RoleSession | None" = None,
         human_callback: "HumanCallback | None" = None,
         role_config: dict[str, Any] | None = None,
+        image_provider: ImageProvider | None = None,
+        audio_provider: AudioProvider | None = None,
     ):
         """
         Initialize role with provider and configuration.
@@ -102,6 +105,8 @@ class Role(ABC):
             human_callback: Optional callback for agent-to-human questions
             role_config: Role-level configuration from global config file
                         (provider selection, cache settings, rate limits)
+            image_provider: Optional image generation provider (for roles like Illustrator)
+            audio_provider: Optional audio generation provider (for roles like AudioProducer)
 
         Note:
             The `role_config` parameter contains settings from the global
@@ -131,6 +136,8 @@ class Role(ABC):
         self.role_config = role_config or {}
         self.session = session
         self.human_callback = human_callback
+        self.image_provider = image_provider
+        self.audio_provider = audio_provider
 
         # Determine spec path
         if spec_path is None:
@@ -144,6 +151,16 @@ class Role(ABC):
 
         self.spec_path = spec_path
         self._prompt_cache: dict[str, str] = {}
+
+    @property
+    def has_image_provider(self) -> bool:
+        """Check if image generation is available."""
+        return self.image_provider is not None
+
+    @property
+    def has_audio_provider(self) -> bool:
+        """Check if audio generation is available."""
+        return self.audio_provider is not None
 
     @property
     @abstractmethod

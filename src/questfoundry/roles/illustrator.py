@@ -1,8 +1,12 @@
 """Illustrator role implementation."""
 
+import logging
 from typing import Any
 
+from ..utils.media import MediaWorkspace
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class Illustrator(Role):
@@ -70,24 +74,33 @@ class Illustrator(Role):
 
     def _create_render(self, context: RoleContext) -> RoleResult:
         """Produce illustration from art plan."""
+        # Check if image provider is available
+        if not self.has_image_provider:
+            logger.warning("No image provider available - generating specification only")
+            return self._create_render_spec_only(context)
+
+        # Image provider available - generate actual image
+        return self._create_render_with_image(context)
+
+    def _create_render_spec_only(self, context: RoleContext) -> RoleResult:
+        """Generate render specification when no image provider available."""
         system_prompt = self.build_system_prompt(context)
 
         art_plan = context.additional_context.get("art_plan", {})
 
-        user_prompt = f"""# Task: Create Render
+        user_prompt = f"""# Task: Create Render Specification
 
 {self.format_artifacts(context.artifacts)}
 
 ## Art Plan
 {self._format_dict(art_plan)}
 
-Produce a candidate render following the art plan's:
+Produce a detailed rendering specification following the art plan's:
 - Composition intent (framing, focal points, motion)
 - Constraints (aspect, palette, negative constraints)
 - Style alignment with house motifs
 
-Note: In a real implementation, this would interface with image generation.
-For now, provide a detailed rendering specification.
+Note: Image generation not available - provide specification only.
 
 Respond in JSON format:
 ```json
@@ -118,9 +131,10 @@ Respond in JSON format:
                 success=True,
                 output=response,
                 metadata={
-                    "content_type": "render",
+                    "content_type": "render_spec",
                     "render_spec": data.get("render_spec", {}),
                     "alt_text": data.get("alt_text", ""),
+                    "mode": "specification_only",
                 },
             )
 
@@ -128,7 +142,121 @@ Respond in JSON format:
             return RoleResult(
                 success=False,
                 output="",
-                error=f"Error creating render: {e}",
+                error=f"Error creating render specification: {e}",
+            )
+
+    def _create_render_with_image(self, context: RoleContext) -> RoleResult:
+        """Generate actual image using image provider."""
+        system_prompt = self.build_system_prompt(context)
+
+        art_plan = context.additional_context.get("art_plan", {})
+
+        # First, use LLM to refine the prompt for image generation
+        user_prompt = f"""# Task: Create Image Generation Prompt
+
+{self.format_artifacts(context.artifacts)}
+
+## Art Plan
+{self._format_dict(art_plan)}
+
+Create a detailed, optimized prompt for image generation that captures:
+- Composition intent (framing, focal points, motion)
+- Constraints (aspect, palette, negative constraints)
+- Style alignment with house motifs
+
+Respond in JSON format:
+```json
+{{
+  "image_prompt": "Detailed prompt for image generation model",
+  "negative_prompt": "Elements to avoid",
+  "alt_text": "Accessibility description",
+  "technical_params": {{
+    "width": 1024,
+    "height": 1024
+  }}
+}}
+```
+"""
+
+        try:
+            # Get optimized prompt from LLM
+            response = self._call_llm(
+                system_prompt, user_prompt, max_tokens=1000
+            )
+
+            data = self._parse_json_from_response(response)
+            image_prompt = data.get("image_prompt", "")
+            technical_params = data.get("technical_params", {})
+
+            if not image_prompt:
+                raise ValueError("Failed to generate image prompt")
+
+            # Generate image using image provider
+            logger.info(f"Generating image with prompt: {image_prompt[:100]}...")
+
+            assert self.image_provider is not None  # Type narrowing
+            image_bytes = self.image_provider.generate_image(
+                prompt=image_prompt,
+                width=technical_params.get("width", 1024),
+                height=technical_params.get("height", 1024),
+            )
+
+            # Save image to workspace if available
+            artifacts = []
+            if context.workspace_path:
+                workspace = MediaWorkspace(context.workspace_path)
+
+                # Generate artifact ID
+                artifact_id = workspace.generate_artifact_id(
+                    image_prompt, prefix="render"
+                )
+
+                # Save image
+                image_path = workspace.save_image(
+                    image_data=image_bytes,
+                    artifact_id=artifact_id,
+                    metadata={
+                        "prompt": image_prompt,
+                        "art_plan": art_plan,
+                        "alt_text": data.get("alt_text", ""),
+                    },
+                    format="png",
+                )
+
+                # Create artifact
+                artifact = workspace.create_artifact_for_image(
+                    artifact_id=artifact_id,
+                    image_path=image_path,
+                    artifact_type="render",
+                    metadata={
+                        "prompt": image_prompt,
+                        "alt_text": data.get("alt_text", ""),
+                        **technical_params,
+                    },
+                )
+                artifacts.append(artifact)
+
+                logger.info(f"Image saved to {image_path}")
+
+            return RoleResult(
+                success=True,
+                output=f"Generated image from prompt: {image_prompt}",
+                artifacts=artifacts,
+                metadata={
+                    "content_type": "render",
+                    "prompt": image_prompt,
+                    "alt_text": data.get("alt_text", ""),
+                    "mode": "image_generated",
+                    **technical_params,
+                },
+            )
+
+        except Exception as e:
+            logger.error(f"Error generating image: {e}")
+            return RoleResult(
+                success=False,
+                output="",
+                error=f"Error creating render with image: {e}",
             )
 
     def _iterate_render(self, context: RoleContext) -> RoleResult:

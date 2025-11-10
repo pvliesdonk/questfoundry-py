@@ -75,6 +75,11 @@ default-version = "0.0.0"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/questfoundry"]
+include = [
+    "src/questfoundry/resources/prompts/**/*.md",
+    "src/questfoundry/resources/prompts/**/*.json",
+    "src/questfoundry/resources/schemas/*.json",
+]
 
 [tool.hatch.build.targets.sdist]
 include = [

@@ -1,6 +1,7 @@
 """Provider registry for discovering and instantiating providers"""
 
 
+from .audio import AudioProvider
 from .base import ImageProvider, TextProvider
 from .config import ProviderConfig
 
@@ -29,8 +30,10 @@ class ProviderRegistry:
         self.config = config
         self._text_providers: dict[str, type[TextProvider]] = {}
         self._image_providers: dict[str, type[ImageProvider]] = {}
+        self._audio_providers: dict[str, type[AudioProvider]] = {}
         self._text_instances: dict[str, TextProvider] = {}
         self._image_instances: dict[str, ImageProvider] = {}
+        self._audio_instances: dict[str, AudioProvider] = {}
 
         # Register built-in providers
         self._register_builtin_providers()
@@ -58,6 +61,18 @@ class ProviderRegistry:
             provider_class: Provider class to register
         """
         self._image_providers[name] = provider_class
+
+    def register_audio_provider(
+        self, name: str, provider_class: type[AudioProvider]
+    ) -> None:
+        """
+        Register an audio provider class.
+
+        Args:
+            name: Provider name (e.g., 'elevenlabs', 'google-tts')
+            provider_class: Provider class to register
+        """
+        self._audio_providers[name] = provider_class
 
     def get_text_provider(self, name: str | None = None) -> TextProvider:
         """
@@ -141,6 +156,47 @@ class ProviderRegistry:
 
         return instance
 
+    def get_audio_provider(self, name: str | None = None) -> AudioProvider:
+        """
+        Get or create an audio provider instance.
+
+        Args:
+            name: Provider name. If None, uses default from config.
+
+        Returns:
+            Audio provider instance
+
+        Raises:
+            ValueError: If provider not found or not registered
+        """
+        if name is None:
+            name = self.config.get_default_provider("audio")
+            if name is None:
+                raise ValueError("No default audio provider configured")
+
+        # Return cached instance if available
+        if name in self._audio_instances:
+            return self._audio_instances[name]
+
+        # Get provider class
+        if name not in self._audio_providers:
+            raise ValueError(f"Audio provider '{name}' not registered")
+
+        provider_class = self._audio_providers[name]
+
+        # Get configuration
+        try:
+            provider_config = self.config.get_provider_config("audio", name)
+        except KeyError:
+            provider_config = {}
+
+        # Create and cache instance
+        instance = provider_class(provider_config)
+        instance.validate_config()
+        self._audio_instances[name] = instance
+
+        return instance
+
     def list_text_providers(self) -> list[str]:
         """
         List registered text providers.
@@ -159,15 +215,27 @@ class ProviderRegistry:
         """
         return list(self._image_providers.keys())
 
+    def list_audio_providers(self) -> list[str]:
+        """
+        List registered audio providers.
+
+        Returns:
+            List of audio provider names
+        """
+        return list(self._audio_providers.keys())
+
     def close_all(self) -> None:
         """Close all provider instances and release resources."""
         for text_provider in self._text_instances.values():
             text_provider.close()
         for image_provider in self._image_instances.values():
             image_provider.close()
+        for audio_provider in self._audio_instances.values():
+            audio_provider.close()
 
         self._text_instances.clear()
         self._image_instances.clear()
+        self._audio_instances.clear()
 
     def _register_builtin_providers(self) -> None:
         """Register built-in providers."""
@@ -202,3 +270,18 @@ class ProviderRegistry:
             self.register_image_provider("a1111", Automatic1111Provider)
         except ImportError:
             pass  # A1111 provider not available
+
+        # Register audio providers
+        try:
+            from .audio.elevenlabs import ElevenLabsProvider
+
+            self.register_audio_provider("elevenlabs", ElevenLabsProvider)
+        except ImportError:
+            pass  # ElevenLabs provider not available
+
+        try:
+            from .audio.mock import MockAudioProvider
+
+            self.register_audio_provider("mock", MockAudioProvider)
+        except ImportError:
+            pass  # Mock audio provider not available

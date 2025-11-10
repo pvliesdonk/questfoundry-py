@@ -141,6 +141,8 @@ class RoleRegistry:
         name: str,
         provider: TextProvider | None = None,
         provider_name: str | None = None,
+        image_provider_name: str | None = None,
+        audio_provider_name: str | None = None,
     ) -> Role:
         """
         Get a role instance.
@@ -152,6 +154,8 @@ class RoleRegistry:
             name: Role identifier
             provider: Text provider to use (or None to get from registry)
             provider_name: Name of provider in registry (if provider not specified)
+            image_provider_name: Optional name of image provider for roles that need it
+            audio_provider_name: Optional name of audio provider for roles that need it
 
         Returns:
             Role instance
@@ -167,13 +171,35 @@ class RoleRegistry:
         if name in self._instances:
             return self._instances[name]
 
-        # Get provider
+        # Get text provider
         if provider is None:
             if provider_name is None:
                 # Try to get default text provider
                 provider = self.provider_registry.get_text_provider()
             else:
                 provider = self.provider_registry.get_text_provider(provider_name)
+
+        # Get optional image provider (gracefully handle missing providers)
+        image_provider = None
+        if image_provider_name:
+            try:
+                image_provider = self.provider_registry.get_image_provider(
+                    image_provider_name
+                )
+            except (ValueError, KeyError):
+                # Image provider not available - role will need to handle gracefully
+                pass
+
+        # Get optional audio provider (gracefully handle missing providers)
+        audio_provider = None
+        if audio_provider_name:
+            try:
+                audio_provider = self.provider_registry.get_audio_provider(
+                    audio_provider_name
+                )
+            except (ValueError, KeyError):
+                # Audio provider not available - role will need to handle gracefully
+                pass
 
         # Create instance
         role_class = self._roles[name]
@@ -183,6 +209,8 @@ class RoleRegistry:
             provider=provider,
             spec_path=self.spec_path,
             config=config,
+            image_provider=image_provider,
+            audio_provider=audio_provider,
         )
 
         # Cache instance
