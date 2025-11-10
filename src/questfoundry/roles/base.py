@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from ..models.artifact import Artifact
-from ..providers.base import ImageProvider, TextProvider
 from ..providers.audio import AudioProvider
+from ..providers.base import ImageProvider, TextProvider
 from .human_callback import batch_mode_callback
 
 # Avoid circular imports
@@ -105,8 +105,10 @@ class Role(ABC):
             human_callback: Optional callback for agent-to-human questions
             role_config: Role-level configuration from global config file
                         (provider selection, cache settings, rate limits)
-            image_provider: Optional image generation provider (for roles like Illustrator)
-            audio_provider: Optional audio generation provider (for roles like AudioProducer)
+            image_provider: Optional image generation provider
+                           (for roles like Illustrator)
+            audio_provider: Optional audio generation provider
+                           (for roles like AudioProducer)
 
         Note:
             The `role_config` parameter contains settings from the global
@@ -145,9 +147,7 @@ class Role(ABC):
             spec_path = Path.cwd() / "spec"
             if not spec_path.exists():
                 # Fall back to relative to this file
-                spec_path = (
-                    Path(__file__).parent.parent.parent.parent / "spec"
-                )
+                spec_path = Path(__file__).parent.parent.parent.parent / "spec"
 
         self.spec_path = spec_path
         self._prompt_cache: dict[str, str] = {}
@@ -325,9 +325,7 @@ class Role(ABC):
 
             # Check if adding this artifact would exceed total size limit
             if total_size + artifact_text_len > MAX_FORMATTED_CONTEXT_SIZE:
-                formatted.append(
-                    "\n[Additional artifacts omitted due to size limits]"
-                )
+                formatted.append("\n[Additional artifacts omitted due to size limits]")
                 break
 
             formatted.append(artifact_text)
@@ -591,9 +589,7 @@ class Role(ABC):
         """String representation of the role."""
         session_info = f", session={bool(self.session)}" if self.session else ""
         callback_info = (
-            f", interactive={bool(self.human_callback)}"
-            if self.human_callback
-            else ""
+            f", interactive={bool(self.human_callback)}" if self.human_callback else ""
         )
         return (
             f"{self.__class__.__name__}("

@@ -76,7 +76,9 @@ class AudioProducer(Role):
         """Produce audio from plan."""
         # Check if audio provider is available
         if not self.has_audio_provider:
-            logger.warning("No audio provider available - generating specification only")
+            logger.warning(
+                "No audio provider available - generating specification only"
+            )
             return self._create_asset_spec_only(context)
 
         # Audio provider available - generate actual audio
@@ -124,9 +126,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -153,7 +153,6 @@ Respond in JSON format:
         system_prompt = self.build_system_prompt(context)
 
         audio_plan = context.additional_context.get("audio_plan", {})
-        audio_type = audio_plan.get("type", "narration")
 
         # First, use LLM to generate text for TTS or audio description
         user_prompt = f"""# Task: Create Audio Generation Specification
@@ -186,9 +185,7 @@ Respond in JSON format:
 
         try:
             # Get audio specification from LLM
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1000)
 
             data = self._parse_json_from_response(response)
             audio_text = data.get("audio_text", "")
@@ -213,9 +210,7 @@ Respond in JSON format:
                 workspace = MediaWorkspace(context.workspace_path)
 
                 # Generate artifact ID
-                artifact_id = workspace.generate_artifact_id(
-                    audio_text, prefix="audio"
-                )
+                artifact_id = workspace.generate_artifact_id(audio_text, prefix="audio")
 
                 # Save audio
                 audio_path = workspace.save_audio(
@@ -293,9 +288,7 @@ Respond in JSON format with mix specification.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -359,9 +352,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1000)
 
             data = self._parse_json_from_response(response)
 
@@ -421,9 +412,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=800
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=800)
 
             data = self._parse_json_from_response(response)
 

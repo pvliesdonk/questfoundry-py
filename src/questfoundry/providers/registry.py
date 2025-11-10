@@ -1,6 +1,5 @@
 """Provider registry for discovering and instantiating providers"""
 
-
 from .audio import AudioProvider
 from .base import ImageProvider, TextProvider
 from .config import ProviderConfig

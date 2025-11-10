@@ -76,7 +76,9 @@ class Illustrator(Role):
         """Produce illustration from art plan."""
         # Check if image provider is available
         if not self.has_image_provider:
-            logger.warning("No image provider available - generating specification only")
+            logger.warning(
+                "No image provider available - generating specification only"
+            )
             return self._create_render_spec_only(context)
 
         # Image provider available - generate actual image
@@ -121,9 +123,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -180,9 +180,7 @@ Respond in JSON format:
 
         try:
             # Get optimized prompt from LLM
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1000)
 
             data = self._parse_json_from_response(response)
             image_prompt = data.get("image_prompt", "")
@@ -285,9 +283,7 @@ Respond in JSON format with updated render_spec.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -346,9 +342,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1000)
 
             data = self._parse_json_from_response(response)
 
@@ -396,9 +390,7 @@ Respond in JSON format with array of variant specs.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
