@@ -161,9 +161,9 @@ class MediaWorkspace:
             data.update(metadata)
 
         return Artifact(
-            artifact_id=artifact_id,
             type=artifact_type,
             data=data,
+            metadata={"id": artifact_id},
         )
 
     def create_artifact_for_audio(
@@ -194,9 +194,9 @@ class MediaWorkspace:
             data.update(metadata)
 
         return Artifact(
-            artifact_id=artifact_id,
             type=artifact_type,
             data=data,
+            metadata={"id": artifact_id},
         )
 
     def generate_artifact_id(self, content: str, prefix: str = "") -> str:
