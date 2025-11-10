@@ -1,3 +1,14 @@
+## v0.3.0 (2025-11-10)
+
+### Feat
+
+- implement actual audio generation in AudioProducer role
+- bundle prompts with release and implement provider injection architecture
+
+### Fix
+
+- correct Artifact constructor usage in MediaWorkspace
+
 ## v0.2.1 (2025-11-09)
 
 ### Fix
