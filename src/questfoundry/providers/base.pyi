@@ -27,9 +27,9 @@ class TextProvider(Provider):
     def generate_text(
         self,
         prompt: str,
-        system_prompt: str | None = None,
-        temperature: float = 0.7,
+        model: str | None = None,
         max_tokens: int | None = None,
+        temperature: float | None = None,
         **kwargs: Any,
     ) -> str: ...
 
@@ -37,9 +37,9 @@ class TextProvider(Provider):
     def generate_text_streaming(
         self,
         prompt: str,
-        system_prompt: str | None = None,
-        temperature: float = 0.7,
+        model: str | None = None,
         max_tokens: int | None = None,
+        temperature: float | None = None,
         **kwargs: Any,
     ) -> Iterator[str]: ...
 
@@ -53,8 +53,9 @@ class ImageProvider(Provider):
     def generate_image(
         self,
         prompt: str,
-        size: str = "1024x1024",
-        quality: str = "standard",
+        model: str | None = None,
+        width: int | None = None,
+        height: int | None = None,
         **kwargs: Any,
     ) -> bytes: ...
 
@@ -62,7 +63,8 @@ class ImageProvider(Provider):
     def generate_image_url(
         self,
         prompt: str,
-        size: str = "1024x1024",
-        quality: str = "standard",
+        model: str | None = None,
+        width: int | None = None,
+        height: int | None = None,
         **kwargs: Any,
     ) -> str: ...

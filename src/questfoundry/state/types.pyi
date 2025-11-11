@@ -28,7 +28,7 @@ class TUState(BaseModel):
 class SnapshotInfo(BaseModel):
     """Snapshot metadata"""
     snapshot_id: str
-    created: datetime
+    created: datetime = ...
     tu_id: str
-    description: str
-    metadata: dict[str, Any]
+    description: str = ...
+    metadata: dict[str, Any] = ...
