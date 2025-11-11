@@ -86,9 +86,15 @@ class WorkspaceManager:
             >>> hook = ws.get_cold_artifact("HOOK-001")
 
         Create snapshot of current hot workspace:
-            >>> snapshot_id = ws.snapshot_hot("Before major rewrite")
+            >>> from questfoundry.state.types import SnapshotInfo
+            >>> snapshot = SnapshotInfo(
+            ...     snapshot_id="SNAP-001",
+            ...     tu_id="TU-2024-01-15-TEST01",
+            ...     description="Before major rewrite"
+            ... )
+            >>> ws.save_snapshot(snapshot)
             >>> # Work on changes...
-            >>> # Restore if needed: ws.restore_snapshot(snapshot_id)
+            >>> # Retrieve snapshot later: ws.get_snapshot("SNAP-001")
     """
 
     def __init__(self, project_dir: str | Path):

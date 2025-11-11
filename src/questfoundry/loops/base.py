@@ -218,6 +218,7 @@ class Loop(ABC):
 
     Loop execution example:
         >>> from questfoundry.loops.scene_forge import SceneForgeLoop
+        >>> # Assuming workspace, writer, and archivist are pre-instantiated
         >>> loop = SceneForgeLoop()
         >>> context = LoopContext(
         ...     loop_id="scene_forge",

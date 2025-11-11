@@ -8,7 +8,9 @@ validation rules and schema requirements.
 
 Typical usage:
     >>> from questfoundry.models import Artifact, ProjectMetadata
-    >>> metadata = ProjectMetadata(project_name="My Quest", version="0.1.0")
+    >>> metadata = ProjectMetadata(
+    ...     data={"project_name": "My Quest", "version": "0.1.0"}
+    ... )
 """
 
 from .artifact import (

@@ -127,24 +127,21 @@ class Role(ABC):
         ...     def role_description(self) -> str:
         ...         return "Custom role for specific task"
         ...
-        ...     def execute(self, context: RoleContext) -> RoleResult:
-        ...         # Load prompt
-        ...         prompt = self.load_prompt("custom_task")
-        ...
-        ...         # Format with context
-        ...         formatted = prompt.format(
-        ...             task=context.task,
-        ...             artifacts=self.format_artifacts(context.artifacts)
-        ...         )
+        ...     def execute_task(self, context: RoleContext) -> RoleResult:
+        ...         # Build prompts using base class helpers
+        ...         system_prompt = self.build_system_prompt(context)
+        ...         user_prompt = self.build_user_prompt(context)
         ...
         ...         # Execute via provider
-        ...         response = self.provider.generate(formatted)
+        ...         response = self.provider.generate_text(
+        ...             system_prompt + "\n\n" + user_prompt
+        ...         )
         ...
-        ...         # Parse and return results
+        ...         # Return results (parse artifacts as needed)
         ...         return RoleResult(
         ...             success=True,
         ...             output=response,
-        ...             artifacts=self.parse_artifacts(response)
+        ...             artifacts=[]  # Parse from response if needed
         ...         )
 
     Example role usage:
@@ -157,7 +154,7 @@ class Role(ABC):
         ...     artifacts=[hook, canon],
         ...     project_metadata={"style": "fantasy"}
         ... )
-        >>> result = writer.execute(context)
+        >>> result = writer.execute_task(context)
         >>> print(result.output)
         >>> for artifact in result.artifacts:
         ...     print(artifact.type, artifact.artifact_id)

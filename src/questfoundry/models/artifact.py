@@ -48,9 +48,11 @@ class Artifact(BaseModel):
             ...     print("Artifact is valid!")
 
         Access metadata properties:
-            >>> artifact.artifact_id = "HOOK-001"
-            >>> artifact.author = "Writer"
-            >>> print(artifact.created)  # Returns datetime or None
+            >>> artifact.artifact_id = "HOOK-001"  # Set ID
+            >>> print(artifact.artifact_id)  # Get ID: "HOOK-001"
+            >>> artifact.author = "Writer"  # Set author
+            >>> print(artifact.author)  # Get author: "Writer"
+            >>> print(artifact.created)  # Get created timestamp (or None)
 
         Serialize for storage:
             >>> data = artifact.to_dict()

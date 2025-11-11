@@ -59,7 +59,7 @@ class Provider(ABC):
         ...     "cache_enabled": True
         ... }
         >>> provider = OpenAIProvider(config)
-        >>> response = provider.generate("Write a tavern scene")
+        >>> response = provider.generate_text("Write a tavern scene")
         >>> print(response)
 
     Implementing a custom provider:
