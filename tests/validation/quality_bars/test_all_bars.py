@@ -504,10 +504,10 @@ class TestQualityBarRegistry:
     """Test quality bar registry functionality."""
 
     def test_all_bars_registered(self):
-        """Test that all 8 bars are registered."""
+        """Test that all 11 bars are registered."""
         from questfoundry.validation.quality_bars import QUALITY_BARS
 
-        assert len(QUALITY_BARS) == 8
+        assert len(QUALITY_BARS) == 11
         expected_bars = [
             "integrity",
             "reachability",
@@ -517,6 +517,9 @@ class TestQualityBarRegistry:
             "determinism",
             "presentation",
             "spoiler_hygiene",
+            "canon_conflict",
+            "timeline_chronology",
+            "entity_reference",
         ]
 
         for bar_name in expected_bars:
