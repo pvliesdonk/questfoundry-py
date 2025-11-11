@@ -31,6 +31,11 @@ class WorkspaceManager:
         5. Export cold artifacts to player-safe views
         6. Delete from hot after successful promotion (optional)
 
+    Canon Workflow Extensions (Layer 6/7):
+        - Immutability tracking: Mark artifacts as immutable during promotion
+        - Source attribution: Track canon origin (e.g., "canon-import", "world-genesis")
+        - Preserved during demotion: Canon integrity maintained across hot/cold moves
+
     Key benefits:
         - Hot: Human-readable, version-controllable, easy iteration
         - Cold: Validated, queryable, export-ready, immutable
@@ -80,6 +85,14 @@ class WorkspaceManager:
             >>> success = ws.promote_to_cold("HOOK-001", delete_hot=True)
             >>> if success:
             ...     print("Artifact promoted successfully")
+
+        Promote with immutability tracking (canon workflows):
+            >>> success = ws.promote_to_cold(
+            ...     "CANON-001",
+            ...     immutable=True,
+            ...     source="canon-import"
+            ... )
+            >>> # Artifact metadata now includes {"immutable": True, "source": "canon-import"}
 
         Query cold storage:
             >>> cold_hooks = ws.list_cold_artifacts(artifact_type="hook_card")
@@ -235,13 +248,24 @@ class WorkspaceManager:
 
     # Promotion operations
 
-    def promote_to_cold(self, artifact_id: str, delete_hot: bool = True) -> bool:
+    def promote_to_cold(
+        self,
+        artifact_id: str,
+        delete_hot: bool = True,
+        immutable: bool | None = None,
+        source: str | None = None,
+    ) -> bool:
         """
         Promote artifact from hot workspace to cold storage.
+
+        Optionally marks artifacts with immutability status and source attribution
+        for canon workflow tracking (Layer 6/7).
 
         Args:
             artifact_id: ID of artifact to promote
             delete_hot: Whether to delete from hot workspace after promotion
+            immutable: Mark artifact as immutable canon (for canon workflows)
+            source: Attribution source (e.g., "canon-import", "world-genesis")
 
         Returns:
             True if promotion succeeded, False if artifact not found
@@ -250,6 +274,12 @@ class WorkspaceManager:
         artifact = self.hot_store.get_artifact(artifact_id)
         if artifact is None:
             return False
+
+        # Add immutability tracking if specified
+        if immutable is not None:
+            artifact.metadata["immutable"] = immutable
+        if source is not None:
+            artifact.metadata["source"] = source
 
         # Save to cold
         self.cold_store.save_artifact(artifact)
@@ -260,13 +290,22 @@ class WorkspaceManager:
 
         return True
 
-    def demote_to_hot(self, artifact_id: str, delete_cold: bool = False) -> bool:
+    def demote_to_hot(
+        self,
+        artifact_id: str,
+        delete_cold: bool = False,
+        preserve_immutability: bool = True,
+    ) -> bool:
         """
         Demote artifact from cold storage to hot workspace.
+
+        By default, preserves immutability tracking and source attribution
+        during demotion to maintain canon integrity (Layer 6/7).
 
         Args:
             artifact_id: ID of artifact to demote
             delete_cold: Whether to delete from cold storage after demotion
+            preserve_immutability: Keep immutable/source metadata (default True)
 
         Returns:
             True if demotion succeeded, False if artifact not found
@@ -275,6 +314,11 @@ class WorkspaceManager:
         artifact = self.cold_store.get_artifact(artifact_id)
         if artifact is None:
             return False
+
+        # Optionally remove immutability tracking
+        if not preserve_immutability:
+            artifact.metadata.pop("immutable", None)
+            artifact.metadata.pop("source", None)
 
         # Save to hot
         self.hot_store.save_artifact(artifact)
