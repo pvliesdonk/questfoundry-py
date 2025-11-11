@@ -1,3 +1,14 @@
+## v0.4.0 (2025-11-11)
+
+### Feat
+
+- add type stubs for questfoundry package
+
+### Fix
+
+- resolve codecov upload issues in CI workflow
+- address PR review comments and fix linting issues
+
 ## v0.3.0 (2025-11-10)
 
 ### Feat
