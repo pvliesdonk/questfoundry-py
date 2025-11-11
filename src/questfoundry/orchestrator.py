@@ -216,6 +216,11 @@ class Orchestrator:
             len(metadata.consulted_roles),
         )
 
+        # Extract human_callback from config
+        human_callback = (config or {}).get("human_callback")
+        if human_callback:
+            logger.debug("Interactive mode enabled - human_callback provided")
+
         # Instantiate required roles
         role_instances = {}
         required_roles = set(metadata.primary_roles + metadata.consulted_roles)
@@ -223,16 +228,41 @@ class Orchestrator:
 
         for role_name in required_roles:
             try:
-                logger.trace("Getting role instance for '%s'", role_name)
-                role_instances[role_name] = self.role_registry.get_role(
-                    role_name,
-                    provider=self.provider,
-                    provider_name=self.provider_name,
-                )
-                logger.trace("Successfully instantiated role '%s'", role_name)
-            except KeyError:
-                # Role not implemented yet - skip it
-                logger.warning("Role '%s' not implemented, skipping", role_name)
+                if human_callback:
+                    # Interactive mode: Use Showrunner to create a new, non-cached
+                    # role instance with the callback.
+                    logger.trace("Instantiating role '%s' via Showrunner (interactive)", role_name)
+                    if role_name in self.role_registry._roles:
+                        role_class = self.role_registry._roles[role_name]
+                        role_instances[role_name] = self.showrunner.initialize_role_with_config(
+                            role_class=role_class,
+                            registry=self.provider_registry,
+                            spec_path=self.spec_path,
+                            human_callback=human_callback,
+                            role_name=role_name,
+                        )
+                    else:
+                        # This path is taken if a loop requires a role that is not
+                        # registered in the role registry. This might happen if a
+                        # role is defined in the spec but not implemented in code.
+                        # We log a warning and continue, as the loop might be
+                        # able to function without it.
+                        logger.warning("Role '%s' not registered, skipping", role_name)
+
+                else:
+                    # Batch mode: Use the existing registry logic to get a cached instance.
+                    logger.trace("Getting role instance for '%s' from registry (batch)", role_name)
+                    role_instances[role_name] = self.role_registry.get_role(
+                        role_name,
+                        provider=self.provider,
+                        provider_name=self.provider_name,
+                    )
+
+            except (KeyError, ValueError) as e:
+                # This can happen if a role is not implemented, or if a provider
+                # is not configured correctly. We log a warning and continue,
+                # as the loop might be able to function without this role.
+                logger.warning("Failed to instantiate role '%s': %s", role_name, e)
                 pass
 
         logger.debug("Successfully instantiated %d roles", len(role_instances))
