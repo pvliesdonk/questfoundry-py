@@ -496,7 +496,7 @@ def test_import_project_state(store, temp_db):
     # Initialize with default project info
     initial_info = ProjectInfo(name="Initial", description="Initial")
     store.save_project_info(initial_info)
-    
+
     # Create export data
     import json
 
@@ -551,7 +551,7 @@ def test_import_merge_mode(store):
     # Initialize with default project info
     initial_info = ProjectInfo(name="Initial", description="Initial")
     store.save_project_info(initial_info)
-    
+
     # Create initial data
     artifact1 = Artifact(
         type="hook_card",
@@ -564,7 +564,11 @@ def test_import_merge_mode(store):
     import json
 
     export_data = {
-        "project": {"name": "Test", "description": "Test", "created": "2024-01-01T00:00:00"},
+        "project": {
+            "name": "Test",
+            "description": "Test",
+            "created": "2024-01-01T00:00:00",
+        },
         "artifacts": [
             {"id": "HOOK-002", "type": "hook_card", "data": {"title": "New"}}
         ],
