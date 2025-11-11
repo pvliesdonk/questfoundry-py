@@ -1,3 +1,26 @@
+## v0.5.0 (2025-11-11)
+
+### Feat
+
+- add comprehensive logging across entire library
+- add comprehensive type stubs for state, roles, and providers
+- add JSON schemas for canon workflow artifacts
+- add canon workflow quality bars to Gatekeeper
+- add canon workflow intent handlers
+- add immutability tracking to Hot/Cold merge
+- add canon workflow protocol intents
+- implement core infrastructure for canon workflows
+- add Canon Transfer Package and World Genesis Manifest artifacts
+
+### Fix
+
+- address PR review comments on logging implementation
+- resolve ruff linting and mypy type issues in logging implementation
+- resolve all 590 mypy errors in provider and role stubs
+- resolve ruff, mypy issues and increase test coverage
+- resolve test failures and linter issues for Layer 6/7 canon workflows
+- address critical implementation and test issues from PR review
+
 ## v0.4.0 (2025-11-11)
 
 ### Feat
