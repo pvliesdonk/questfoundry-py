@@ -1,7 +1,6 @@
 """Binding Run loop implementation."""
 
 import logging
-
 from datetime import datetime, timezone
 from typing import Any
 
@@ -114,9 +113,7 @@ class BindingRunLoop(Loop):
             context: Loop execution context
         """
         super().__init__(context)
-        self.export_formats = context.config.get(
-            "formats", ["markdown", "html"]
-        )
+        self.export_formats = context.config.get("formats", ["markdown", "html"])
         self.export_config: dict[str, Any] = {}
         self.view_artifact: ViewArtifact | None = None
         self.binder = BookBinder()
@@ -384,9 +381,7 @@ class BindingRunLoop(Loop):
 
         if result.success:
             # Create export bundle
-            view_id = (
-                self.view_artifact.view_id if self.view_artifact else "unknown"
-            )
+            view_id = self.view_artifact.view_id if self.view_artifact else "unknown"
             bundle_data = {
                 "view_id": view_id,
                 "formats": self.export_formats,

@@ -263,8 +263,7 @@ class StateStore(ABC):
                 else str(project_info.created),
             },
             "artifacts": [
-                {"id": a.artifact_id, "type": a.type, "data": a.data}
-                for a in artifacts
+                {"id": a.artifact_id, "type": a.type, "data": a.data} for a in artifacts
             ],
             "tus": [
                 {
@@ -365,9 +364,11 @@ class StateStore(ABC):
                     data=artifact_data.get("data", {}),
                     metadata={"id": artifact_id} if artifact_id else {},
                 )
-                if not merge or artifact_id is None or self.get_artifact(
-                    artifact_id
-                ) is None:
+                if (
+                    not merge
+                    or artifact_id is None
+                    or self.get_artifact(artifact_id) is None
+                ):
                     self.save_artifact(artifact)
 
             # Import TUs
@@ -382,9 +383,7 @@ class StateStore(ABC):
 
             # Import snapshots
             for snap_data in import_data.get("snapshots", []):
-                timestamp_str = snap_data.get(
-                    "created", datetime.now().isoformat()
-                )
+                timestamp_str = snap_data.get("created", datetime.now().isoformat())
                 snapshot = SnapshotInfo(
                     snapshot_id=snap_data.get("id"),
                     tu_id=snap_data.get("tu_id"),

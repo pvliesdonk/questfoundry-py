@@ -66,9 +66,7 @@ class PresentationBar(QualityBar):
         issues: list[QualityIssue] = []
 
         # Compile internal pattern regex
-        internal_regex = re.compile(
-            "|".join(self.INTERNAL_PATTERNS), re.IGNORECASE
-        )
+        internal_regex = re.compile("|".join(self.INTERNAL_PATTERNS), re.IGNORECASE)
         logger.trace("Presentation validation patterns compiled")
 
         # Check player-facing artifacts
@@ -78,9 +76,7 @@ class PresentationBar(QualityBar):
             "player_note",
         ]
 
-        player_facing = [
-            a for a in artifacts if a.type in player_facing_types
-        ]
+        player_facing = [a for a in artifacts if a.type in player_facing_types]
 
         logger.trace("Found %d player-facing artifacts to validate", len(player_facing))
 
@@ -96,14 +92,14 @@ class PresentationBar(QualityBar):
                     QualityIssue(
                         severity="blocker",
                         message=(
-                        f"Player-facing text contains internal/technical "
-                        f"content: {matches[:2]}"
-                    ),
+                            f"Player-facing text contains internal/technical "
+                            f"content: {matches[:2]}"
+                        ),
                         location=f"artifact:{artifact_id}",
                         fix=(
-                        "Remove technical details and internal notes from "
-                        "player-visible text"
-                    ),
+                            "Remove technical details and internal notes from "
+                            "player-visible text"
+                        ),
                     )
                 )
 
@@ -121,14 +117,14 @@ class PresentationBar(QualityBar):
                         QualityIssue(
                             severity="blocker",
                             message=(
-                            f"Spoiler field '{field}' present in "
-                            f"player-facing artifact"
-                        ),
+                                f"Spoiler field '{field}' present in "
+                                f"player-facing artifact"
+                            ),
                             location=f"artifact:{artifact_id}.{field}",
                             fix=(
-                            f"Move '{field}' to canon notes or remove from "
-                            f"player-facing content"
-                        ),
+                                f"Move '{field}' to canon notes or remove from "
+                                f"player-facing content"
+                            ),
                         )
                     )
 
@@ -141,20 +137,24 @@ class PresentationBar(QualityBar):
 
                     choice_text = choice.get("text", "")
                     if choice_text and internal_regex.search(choice_text):
-                        logger.warning("Choice text contains internal/technical content at %s choice %d", artifact_id, i)
+                        logger.warning(
+                            (
+                                "Choice text contains internal/technical content "
+                                "at %s choice %d"
+                            ),
+                            artifact_id,
+                            i,
+                        )
                         issues.append(
                             QualityIssue(
                                 severity="blocker",
                                 message=(
-                            "Choice text contains internal/technical "
-                            "content"
-                        ),
+                                    "Choice text contains internal/technical content"
+                                ),
                                 location=f"artifact:{artifact_id}.choices[{i}]",
                                 fix="Remove technical terms from choice text",
                             )
                         )
 
         logger.debug("Presentation validation complete: %d issues found", len(issues))
-        return self._create_result(
-            issues, player_facing_checked=len(player_facing)
-        )
+        return self._create_result(issues, player_facing_checked=len(player_facing))

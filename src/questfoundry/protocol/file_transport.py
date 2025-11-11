@@ -61,7 +61,10 @@ class FileTransport(Transport):
         self.inbox_dir.mkdir(parents=True, exist_ok=True)
         self.outbox_dir.mkdir(parents=True, exist_ok=True)
         self.processed_dir.mkdir(parents=True, exist_ok=True)
-        logger.info("FileTransport initialized successfully for workspace: %s", self.workspace_dir)
+        logger.info(
+            "FileTransport initialized successfully for workspace: %s",
+            self.workspace_dir,
+        )
 
     def send(self, envelope: Envelope) -> None:
         """
@@ -104,7 +107,12 @@ class FileTransport(Transport):
             tmp_path.replace(file_path)
             logger.info("Envelope %s written to outbox: %s", envelope.id, filename)
         except Exception as e:
-            logger.error("Failed to write envelope %s to outbox: %s", envelope.id, str(e), exc_info=True)
+            logger.error(
+                "Failed to write envelope %s to outbox: %s",
+                envelope.id,
+                str(e),
+                exc_info=True,
+            )
             raise IOError(f"Failed to send envelope: {e}") from e
 
     def _move_to_error_dir(self, message_file: Path, error_suffix: str) -> None:

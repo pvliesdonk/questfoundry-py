@@ -70,13 +70,16 @@ class SpoilerHygieneBar(QualityBar):
             player_safe = metadata.get("player_safe", False)
             temperature = metadata.get("temperature", "hot")
 
-            logger.trace("Checking artifact %s: player_safe=%s, temperature=%s", artifact_id, player_safe, temperature)
+            logger.trace(
+                "Checking artifact %s: player_safe=%s, temperature=%s",
+                artifact_id,
+                player_safe,
+                temperature,
+            )
 
             # If cold and player_safe, check for spoiler leaks
             if temperature == "cold" and player_safe:
-                issues.extend(
-                    self._check_spoiler_leaks(artifact)
-                )
+                issues.extend(self._check_spoiler_leaks(artifact))
 
             # If has spoiler fields, should not be player_safe
             if player_safe:
@@ -99,18 +102,14 @@ class SpoilerHygieneBar(QualityBar):
 
             # Check for future content leaks in choices
             if artifact.type == "manuscript_section":
-                issues.extend(
-                    self._check_choice_spoilers(artifact)
-                )
+                issues.extend(self._check_choice_spoilers(artifact))
 
-        logger.debug("Spoiler hygiene validation complete: %d issues found", len(issues))
-        return self._create_result(
-            issues, artifacts_checked=len(artifacts)
+        logger.debug(
+            "Spoiler hygiene validation complete: %d issues found", len(issues)
         )
+        return self._create_result(issues, artifacts_checked=len(artifacts))
 
-    def _check_spoiler_leaks(
-        self, artifact: Artifact
-    ) -> list[QualityIssue]:
+    def _check_spoiler_leaks(self, artifact: Artifact) -> list[QualityIssue]:
         """Check for spoiler leaks in text fields."""
         issues: list[QualityIssue] = []
         artifact_id = artifact.data.get("id", "unknown")
@@ -133,8 +132,7 @@ class SpoilerHygieneBar(QualityBar):
                         QualityIssue(
                             severity="blocker",
                             message=(
-                                f"Spoiler marker '{marker}' found in "
-                                f"player-safe text"
+                                f"Spoiler marker '{marker}' found in player-safe text"
                             ),
                             location=f"artifact:{artifact_id}",
                             fix="Remove or properly mask spoiler content",
@@ -143,9 +141,7 @@ class SpoilerHygieneBar(QualityBar):
 
         return issues
 
-    def _check_choice_spoilers(
-        self, artifact: Artifact
-    ) -> list[QualityIssue]:
+    def _check_choice_spoilers(self, artifact: Artifact) -> list[QualityIssue]:
         """Check for future content spoilers in choice text."""
         issues: list[QualityIssue] = []
         artifact_id = artifact.data.get("id", "unknown")
@@ -175,8 +171,7 @@ class SpoilerHygieneBar(QualityBar):
                         QualityIssue(
                             severity="info",
                             message=(
-                                f"Choice text may reveal outcome: "
-                                f"'{choice_text[:50]}'"
+                                f"Choice text may reveal outcome: '{choice_text[:50]}'"
                             ),
                             location=f"artifact:{artifact_id}.choices[{i}]",
                             fix=(

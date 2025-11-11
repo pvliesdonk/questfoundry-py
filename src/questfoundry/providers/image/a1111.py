@@ -79,9 +79,7 @@ class Automatic1111Provider(ImageProvider):
                 f"Make sure the WebUI is running with --api flag. Error: {e}"
             ) from e
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to validate A1111 configuration: {e}"
-            ) from e
+            raise RuntimeError(f"Failed to validate A1111 configuration: {e}") from e
 
     def generate_image(
         self,
@@ -179,8 +177,7 @@ class Automatic1111Provider(ImageProvider):
             # Don't fail if model switch fails, just log
             # The generation will use whatever model is currently loaded
             logger.warning(
-                "Failed to switch to model '%s': %s. "
-                "Using currently loaded model.",
+                "Failed to switch to model '%s': %s. Using currently loaded model.",
                 model,
                 e,
             )

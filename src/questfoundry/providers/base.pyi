@@ -16,7 +16,6 @@ class Provider(ABC):
     cost_tracker: CostTracker | None
 
     def __init__(self, config: dict[str, Any]) -> None: ...
-
     @abstractmethod
     def validate_config(self) -> None: ...
 
@@ -32,7 +31,6 @@ class TextProvider(Provider):
         temperature: float | None = None,
         **kwargs: Any,
     ) -> str: ...
-
     @abstractmethod
     def generate_text_streaming(
         self,
@@ -42,7 +40,6 @@ class TextProvider(Provider):
         temperature: float | None = None,
         **kwargs: Any,
     ) -> Iterator[str]: ...
-
     @abstractmethod
     def count_tokens(self, text: str) -> int: ...
 
@@ -58,7 +55,6 @@ class ImageProvider(Provider):
         height: int | None = None,
         **kwargs: Any,
     ) -> bytes: ...
-
     @abstractmethod
     def generate_image_url(
         self,

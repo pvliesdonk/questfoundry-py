@@ -117,8 +117,17 @@ class QualityBar(ABC):
         warnings = [i for i in issues if i.severity == "warning"]
         passed = len(blockers) == 0
 
-        logger.trace("Quality bar %s result: passed=%s, blockers=%d, warnings=%d, total_issues=%d",
-                    self.name, passed, len(blockers), len(warnings), len(issues))
+        logger.trace(
+            (
+                "Quality bar %s result: passed=%s, blockers=%d, "
+                "warnings=%d, total_issues=%d"
+            ),
+            self.name,
+            passed,
+            len(blockers),
+            len(warnings),
+            len(issues),
+        )
 
         return QualityBarResult(
             bar_name=self.name,

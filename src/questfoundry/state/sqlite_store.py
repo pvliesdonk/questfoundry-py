@@ -181,8 +181,12 @@ class SQLiteStore(StateStore):
         is_create = existing is None
 
         action = "create" if is_create else "update"
-        logger.debug("Saving artifact '%s' to cold storage (action=%s, type=%s)",
-                     artifact_id, action, artifact.type)
+        logger.debug(
+            "Saving artifact '%s' to cold storage (action=%s, type=%s)",
+            artifact_id,
+            action,
+            artifact.type,
+        )
 
         now = datetime.now().isoformat()
 
@@ -195,8 +199,7 @@ class SQLiteStore(StateStore):
         else:
             # Preserve existing created timestamp
             cursor = conn.execute(
-                "SELECT created FROM artifacts WHERE artifact_id = ?",
-                (artifact_id,)
+                "SELECT created FROM artifacts WHERE artifact_id = ?", (artifact_id,)
             )
             row = cursor.fetchone()
             created = row["created"] if row else now
@@ -318,7 +321,9 @@ class SQLiteStore(StateStore):
         if deleted:
             logger.trace("Logging artifact '%s' deletion to history", artifact_id)
             self._log_history("artifact", artifact_id, "delete", {})
-            logger.info("Successfully deleted artifact '%s' from cold storage", artifact_id)
+            logger.info(
+                "Successfully deleted artifact '%s' from cold storage", artifact_id
+            )
         else:
             logger.warning("Artifact '%s' not found for deletion", artifact_id)
 
@@ -494,8 +499,7 @@ class SQLiteStore(StateStore):
         conn = self._get_connection()
 
         query = (
-            "SELECT snapshot_id, tu_id, created, description, metadata "
-            "FROM snapshots"
+            "SELECT snapshot_id, tu_id, created, description, metadata FROM snapshots"
         )
         conditions = []
         params = []

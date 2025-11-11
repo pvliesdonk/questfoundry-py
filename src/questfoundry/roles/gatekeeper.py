@@ -138,15 +138,17 @@ Format as JSON:
         response = ""
         try:
             logger.trace("Calling LLM for pre-gate check")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             # Parse JSON from response (handles markdown code blocks)
             data = self._parse_json_from_response(response)
             status = data.get("status", "unknown")
             num_blockers = len(data.get("blockers", []))
-            logger.info("Pre-gate check completed with status: %s, blockers: %d", status, num_blockers)
+            logger.info(
+                "Pre-gate check completed with status: %s, blockers: %d",
+                status,
+                num_blockers,
+            )
 
             return RoleResult(
                 success=True,
@@ -195,7 +197,7 @@ Format as JSON:
                 "spoiler_hygiene",
             ],
         )
-        logger.trace("Checking %d quality bars: %s", len(bars), ', '.join(bars))
+        logger.trace("Checking %d quality bars: %s", len(bars), ", ".join(bars))
 
         user_prompt = f"""# Task: Full Gate Check
 
@@ -203,7 +205,7 @@ Format as JSON:
 
 Validate these artifacts against the following quality bars:
 
-{', '.join(f'**{bar}**' for bar in bars)}
+{", ".join(f"**{bar}**" for bar in bars)}
 
 For each bar, provide:
 - **Status**: pass/fail
@@ -237,16 +239,17 @@ Format as JSON:
         response = ""
         try:
             logger.trace("Calling LLM for gate check")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=3000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=3000)
 
             # Parse JSON from response (handles markdown code blocks)
             data = self._parse_json_from_response(response)
             overall_status = data.get("overall_status", "unknown")
             merge_safe = data.get("merge_safe", False)
-            logger.info("Gate check completed - overall status: %s, merge safe: %s",
-                       overall_status, merge_safe)
+            logger.info(
+                "Gate check completed - overall status: %s, merge safe: %s",
+                overall_status,
+                merge_safe,
+            )
 
             return RoleResult(
                 success=True,
@@ -278,7 +281,9 @@ Format as JSON:
         """Validate a specific quality bar."""
         bar_name = context.additional_context.get("bar_name")
         if not bar_name:
-            logger.warning("bar_name not provided in additional_context for validate_bar")
+            logger.warning(
+                "bar_name not provided in additional_context for validate_bar"
+            )
             return RoleResult(
                 success=False,
                 output="",
@@ -304,9 +309,7 @@ Focus deeply on this one bar; ignore other quality aspects.
 
         try:
             logger.trace("Calling LLM to validate bar: %s", bar_name)
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
             logger.info("Successfully validated quality bar: %s", bar_name)
 
             return RoleResult(
@@ -348,9 +351,7 @@ Provide specific issues and fixes.
 
         try:
             logger.trace("Calling LLM for export check")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
             logger.info("Export check completed successfully")
 
             return RoleResult(

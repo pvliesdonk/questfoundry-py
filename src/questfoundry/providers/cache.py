@@ -276,7 +276,9 @@ class ResponseCache:
             temp_file.replace(cache_path)
 
             # Write metadata
-            logger.trace("Writing cache metadata for key: %s (TTL=%d seconds)", key, ttl)
+            logger.trace(
+                "Writing cache metadata for key: %s (TTL=%d seconds)", key, ttl
+            )
             now = time.time()
             metadata = {
                 "timestamp": now,
@@ -286,7 +288,9 @@ class ResponseCache:
             meta_path.write_text(json.dumps(metadata))
             logger.debug("Response cached successfully with key: %s", key)
         except Exception as e:
-            logger.error("Error caching response for key %s: %s", key, str(e), exc_info=True)
+            logger.error(
+                "Error caching response for key %s: %s", key, str(e), exc_info=True
+            )
             raise
 
     def clear(self) -> None:
@@ -333,7 +337,9 @@ class ResponseCache:
                 meta_file.unlink(missing_ok=True)
                 removed_count += 1
 
-        logger.info("Cache cleanup completed, removed %d expired entries", removed_count)
+        logger.info(
+            "Cache cleanup completed, removed %d expired entries", removed_count
+        )
         return removed_count
 
     def get_stats(self) -> dict[str, Any]:

@@ -52,16 +52,16 @@ class ReachabilityBar(QualityBar):
         issues: list[QualityIssue] = []
 
         # Build graph of manuscript sections
-        sections = [
-            a for a in artifacts if a.type == "manuscript_section"
-        ]
+        sections = [a for a in artifacts if a.type == "manuscript_section"]
 
         if not sections:
             # No sections to validate
             logger.trace("No manuscript sections found to validate")
             return self._create_result([], sections_checked=0)
 
-        logger.trace("Found %d manuscript sections for reachability validation", len(sections))
+        logger.trace(
+            "Found %d manuscript sections for reachability validation", len(sections)
+        )
 
         # Build section graph (id -> targets)
         graph: dict[str, list[str]] = defaultdict(list)
@@ -105,19 +105,22 @@ class ReachabilityBar(QualityBar):
 
         # Check reachability from start
         reachable = self._compute_reachable(graph, start_id)
-        logger.debug("Computed reachability: %d sections reachable from start", len(reachable))
+        logger.debug(
+            "Computed reachability: %d sections reachable from start", len(reachable)
+        )
 
         # Check keystones are reachable
         for keystone_id in keystones:
             if keystone_id not in reachable:
-                logger.warning("Keystone section '%s' not reachable from start", keystone_id)
+                logger.warning(
+                    "Keystone section '%s' not reachable from start", keystone_id
+                )
                 issues.append(
                     QualityIssue(
                         severity="blocker",
                         message=(
-                        f"Keystone section '{keystone_id}' not "
-                        f"reachable from start"
-                    ),
+                            f"Keystone section '{keystone_id}' not reachable from start"
+                        ),
                         location=f"section:{keystone_id}",
                         fix="Add a path from start to this keystone section",
                     )
@@ -127,9 +130,7 @@ class ReachabilityBar(QualityBar):
         for section_id in section_map:
             if section_id not in reachable and section_id != start_id:
                 # Check if it's intentionally orphaned
-                is_alternate_start = section_map[section_id].data.get(
-                    "alternate_start"
-                )
+                is_alternate_start = section_map[section_id].data.get("alternate_start")
                 if not is_alternate_start:
                     issues.append(
                         QualityIssue(
@@ -137,9 +138,9 @@ class ReachabilityBar(QualityBar):
                             message=f"Section '{section_id}' not reachable from start",
                             location=f"section:{section_id}",
                             fix=(
-                            "Add path to this section or mark "
-                            "'alternate_start: true' if intentional"
-                        ),
+                                "Add path to this section or mark "
+                                "'alternate_start: true' if intentional"
+                            ),
                         )
                     )
 
@@ -154,9 +155,7 @@ class ReachabilityBar(QualityBar):
             keystones=len(keystones),
         )
 
-    def _find_start_section(
-        self, sections: list[Artifact]
-    ) -> str | None:
+    def _find_start_section(self, sections: list[Artifact]) -> str | None:
         """Find the start section."""
         for section in sections:
             if section.data.get("start") or section.data.get("first"):
@@ -168,9 +167,7 @@ class ReachabilityBar(QualityBar):
 
         return None
 
-    def _compute_reachable(
-        self, graph: dict[str, list[str]], start: str
-    ) -> set[str]:
+    def _compute_reachable(self, graph: dict[str, list[str]], start: str) -> set[str]:
         """Compute all sections reachable from start."""
         reachable: set[str] = set()
         queue: deque[str] = deque([start])
@@ -229,14 +226,13 @@ class ReachabilityBar(QualityBar):
                             QualityIssue(
                                 severity="warning",
                                 message=(
-                                f"Choice requires '{req}' but no "
-                                f"section grants it"
-                            ),
+                                    f"Choice requires '{req}' but no section grants it"
+                                ),
                                 location=f"section:{section_id}.choices[{i}]",
                                 fix=(
-                                f"Add a section that grants '{req}' or "
-                                f"remove requirement"
-                            ),
+                                    f"Add a section that grants '{req}' or "
+                                    f"remove requirement"
+                                ),
                             )
                         )
 

@@ -214,10 +214,12 @@ class Role(ABC):
             )
         """
         logger.debug("Initializing %s role", self.__class__.__name__)
-        logger.trace("Provider: %s, Has image provider: %s, Has audio provider: %s",
-                     provider.__class__.__name__,
-                     image_provider is not None,
-                     audio_provider is not None)
+        logger.trace(
+            "Provider: %s, Has image provider: %s, Has audio provider: %s",
+            provider.__class__.__name__,
+            image_provider is not None,
+            audio_provider is not None,
+        )
 
         self.provider = provider
         self.config = config or {}
@@ -287,7 +289,11 @@ class Role(ABC):
             )
 
         brief_content = brief_path.read_text(encoding="utf-8")
-        logger.debug("Loaded brief for role %s, size: %d bytes", self.role_name, len(brief_content))
+        logger.debug(
+            "Loaded brief for role %s, size: %d bytes",
+            self.role_name,
+            len(brief_content),
+        )
         return brief_content
 
     def extract_section(self, content: str, section_name: str) -> str:
@@ -518,8 +524,15 @@ class Role(ABC):
         effective_max_tokens = max_tokens or self.config.get("max_tokens", 2000)
         effective_temperature = temperature or self.config.get("temperature", 0.7)
 
-        logger.trace("LLM call parameters - max_tokens: %d, temperature: %.2f, prompt_length: %d",
-                     effective_max_tokens, effective_temperature, len(full_prompt))
+        logger.trace(
+            (
+                "LLM call parameters - max_tokens: %d, "
+                "temperature: %.2f, prompt_length: %d"
+            ),
+            effective_max_tokens,
+            effective_temperature,
+            len(full_prompt),
+        )
 
         response = self.provider.generate_text(
             prompt=full_prompt,
@@ -527,7 +540,9 @@ class Role(ABC):
             temperature=effective_temperature,
         )
 
-        logger.debug("LLM call completed, response length: %d characters", len(response))
+        logger.debug(
+            "LLM call completed, response length: %d characters", len(response)
+        )
         return response
 
     def _parse_json_from_response(self, response: str) -> dict[str, Any]:
@@ -593,7 +608,10 @@ class Role(ABC):
 
         callback = self.human_callback or batch_mode_callback
         is_interactive = self.human_callback is not None
-        logger.debug("Using %s mode for human callback", "interactive" if is_interactive else "batch")
+        logger.debug(
+            "Using %s mode for human callback",
+            "interactive" if is_interactive else "batch",
+        )
 
         # Build callback context
         callback_context: dict[str, Any] = {
@@ -647,7 +665,9 @@ class Role(ABC):
             return False
         else:
             # If unclear, use default
-            logger.debug("Unclear yes/no response '%s', using default: %s", response, default)
+            logger.debug(
+                "Unclear yes/no response '%s', using default: %s", response, default
+            )
             return default
 
     def ask_choice(
@@ -675,7 +695,9 @@ class Role(ABC):
             ...     ["dark", "lighthearted", "neutral"]
             ... )
         """
-        logger.trace("Asking choice question: %s with %d options", question, len(choices))
+        logger.trace(
+            "Asking choice question: %s with %d options", question, len(choices)
+        )
         response = self.ask_human(
             question,
             context=context,

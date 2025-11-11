@@ -112,13 +112,19 @@ class ViewGenerator:
             player_safe_artifacts = [
                 a for a in player_safe_artifacts if a.type in include_types
             ]
-            logger.debug("Filtered to include types: %d artifacts remain", len(player_safe_artifacts))
+            logger.debug(
+                "Filtered to include types: %d artifacts remain",
+                len(player_safe_artifacts),
+            )
 
         if exclude_types is not None:
             player_safe_artifacts = [
                 a for a in player_safe_artifacts if a.type not in exclude_types
             ]
-            logger.debug("Filtered to exclude types: %d artifacts remain", len(player_safe_artifacts))
+            logger.debug(
+                "Filtered to exclude types: %d artifacts remain",
+                len(player_safe_artifacts),
+            )
 
         # Create view artifact
         view = ViewArtifact(
@@ -133,7 +139,11 @@ class ViewGenerator:
             },
         )
 
-        logger.info("View generation complete: %s with %d artifacts", view_id, len(player_safe_artifacts))
+        logger.info(
+            "View generation complete: %s with %d artifacts",
+            view_id,
+            len(player_safe_artifacts),
+        )
         return view
 
     def save_view(self, view: ViewArtifact) -> None:
@@ -165,7 +175,11 @@ class ViewGenerator:
 
         # Save to cold store
         self.cold_store.save_artifact(view_artifact)
-        logger.debug("View saved successfully: %s with %d artifacts", view.view_id, len(view.artifacts))
+        logger.debug(
+            "View saved successfully: %s with %d artifacts",
+            view.view_id,
+            len(view.artifacts),
+        )
 
     def get_view(self, view_id: str) -> ViewArtifact | None:
         """
@@ -193,11 +207,17 @@ class ViewGenerator:
 
         # Reconstruct view by loading referenced artifacts in batch
         artifact_ids = [aid for aid in data.get("artifact_ids", []) if aid]
-        logger.debug("Loading %d referenced artifacts for view %s", len(artifact_ids), view_id)
+        logger.debug(
+            "Loading %d referenced artifacts for view %s", len(artifact_ids), view_id
+        )
 
         view_artifacts = self.cold_store.get_artifacts_by_ids(artifact_ids)
 
-        logger.debug("View retrieved successfully: %s with %d artifacts", view_id, len(view_artifacts))
+        logger.debug(
+            "View retrieved successfully: %s with %d artifacts",
+            view_id,
+            len(view_artifacts),
+        )
 
         return ViewArtifact(
             view_id=data["view_id"],
@@ -266,5 +286,9 @@ class ViewGenerator:
                 player_safe_artifacts.append(artifact)
                 logger.trace("Artifact %s marked player-safe", artifact.artifact_id)
 
-        logger.debug("Player-safe filter result: %d of %d artifacts", len(player_safe_artifacts), len(artifacts))
+        logger.debug(
+            "Player-safe filter result: %d of %d artifacts",
+            len(player_safe_artifacts),
+            len(artifacts),
+        )
         return player_safe_artifacts

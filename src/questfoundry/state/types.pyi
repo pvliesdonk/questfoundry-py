@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 class ProjectInfo(BaseModel):
     """Project metadata and configuration"""
+
     name: str
     description: str
     created: datetime
@@ -17,6 +18,7 @@ class ProjectInfo(BaseModel):
 
 class TUState(BaseModel):
     """Thematic Unit state tracking"""
+
     tu_id: str
     status: str
     created: datetime
@@ -27,6 +29,7 @@ class TUState(BaseModel):
 
 class SnapshotInfo(BaseModel):
     """Snapshot metadata"""
+
     snapshot_id: str
     created: datetime = ...
     tu_id: str

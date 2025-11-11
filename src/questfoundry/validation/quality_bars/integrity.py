@@ -66,7 +66,11 @@ class IntegrityBar(QualityBar):
             if artifact.type == "manuscript_section" and artifact_id:
                 section_ids.add(artifact_id)
 
-        logger.trace("Built artifact index: %d artifacts, %d sections", len(artifact_ids), len(section_ids))
+        logger.trace(
+            "Built artifact index: %d artifacts, %d sections",
+            len(artifact_ids),
+            len(section_ids),
+        )
 
         # Validate each artifact
         for artifact in artifacts:
@@ -76,11 +80,7 @@ class IntegrityBar(QualityBar):
             issues.extend(self._check_required_fields(artifact))
 
             # Check references
-            issues.extend(
-                self._check_references(
-                    artifact, artifact_ids, section_ids
-                )
-            )
+            issues.extend(self._check_references(artifact, artifact_ids, section_ids))
 
             # Check for dead ends
             issues.extend(self._check_dead_ends(artifact))
@@ -93,9 +93,7 @@ class IntegrityBar(QualityBar):
             section_ids=len(section_ids),
         )
 
-    def _check_required_fields(
-        self, artifact: Artifact
-    ) -> list[QualityIssue]:
+    def _check_required_fields(self, artifact: Artifact) -> list[QualityIssue]:
         """Check that required fields are present."""
         issues: list[QualityIssue] = []
         artifact_id = artifact.data.get("id", "unknown")
@@ -113,9 +111,7 @@ class IntegrityBar(QualityBar):
 
         # Type-specific required fields
         if artifact.type == "manuscript_section":
-            if not artifact.data.get("text") and not artifact.data.get(
-                "body"
-            ):
+            if not artifact.data.get("text") and not artifact.data.get("body"):
                 issues.append(
                     QualityIssue(
                         severity="blocker",
@@ -152,8 +148,7 @@ class IntegrityBar(QualityBar):
                             message=f"Choice target '{target}' does not exist",
                             location=f"artifact:{artifact_id}.choices[{i}]",
                             fix=(
-                                f"Create section '{target}' or update "
-                                f"target reference"
+                                f"Create section '{target}' or update target reference"
                             ),
                         )
                     )
@@ -221,9 +216,9 @@ class IntegrityBar(QualityBar):
                         message="Section has no choices and not marked terminal",
                         location=f"artifact:{artifact_id}",
                         fix=(
-                        "Add choices or mark with 'terminal: true' "
-                        "if intentional ending"
-                    ),
+                            "Add choices or mark with 'terminal: true' "
+                            "if intentional ending"
+                        ),
                     )
                 )
 

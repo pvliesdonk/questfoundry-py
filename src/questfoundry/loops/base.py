@@ -247,15 +247,23 @@ class Loop(ABC):
             context: Loop execution context
         """
         logger.info("Initializing %s loop", self.__class__.__name__)
-        logger.trace("Loop ID: %s, Project ID: %s, Initial step: %d",
-                     context.loop_id, context.project_id, context.current_step)
+        logger.trace(
+            "Loop ID: %s, Project ID: %s, Initial step: %d",
+            context.loop_id,
+            context.project_id,
+            context.current_step,
+        )
 
         self.context = context
         self.current_step_index = context.current_step
         # Create instance-specific copy of steps to avoid shared state
         self.steps = copy.deepcopy(self.__class__.steps)
 
-        logger.debug("Loop %s initialized with %d steps", self.__class__.__name__, len(self.steps))
+        logger.debug(
+            "Loop %s initialized with %d steps",
+            self.__class__.__name__,
+            len(self.steps),
+        )
 
     @abstractmethod
     def execute(self) -> LoopResult:
@@ -296,7 +304,7 @@ class Loop(ABC):
         """
         logger.info("Executing step: %s", step.step_id)
         logger.debug("Step description: %s", step.description)
-        logger.trace("Assigned roles: %s", ', '.join(step.assigned_roles))
+        logger.trace("Assigned roles: %s", ", ".join(step.assigned_roles))
 
         step.status = StepStatus.IN_PROGRESS
 
@@ -341,9 +349,7 @@ class Loop(ABC):
             step.error = str(e)
             raise
 
-    def _execute_step_logic(
-        self, step: LoopStep, roles: dict[str, Role]
-    ) -> Any:
+    def _execute_step_logic(self, step: LoopStep, roles: dict[str, Role]) -> Any:
         """
         Execute the actual step logic.
 
@@ -387,8 +393,11 @@ class Loop(ABC):
 
         # Check if there are more steps
         if self.current_step_index >= len(self.steps):
-            logger.debug("No more steps available (current: %d, total: %d)",
-                        self.current_step_index, len(self.steps))
+            logger.debug(
+                "No more steps available (current: %d, total: %d)",
+                self.current_step_index,
+                len(self.steps),
+            )
             return False
 
         # Check if previous step succeeded

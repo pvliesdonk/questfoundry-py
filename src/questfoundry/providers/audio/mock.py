@@ -127,13 +127,13 @@ class MockAudioProvider(AudioProvider):
         # Create WAV in memory
         wav_buffer = BytesIO()
 
-        with wave.open(wav_buffer, 'wb') as wav_file:
+        with wave.open(wav_buffer, "wb") as wav_file:
             wav_file.setnchannels(num_channels)
             wav_file.setsampwidth(sample_width)
             wav_file.setframerate(sample_rate)
 
             # Write silent frames (zeros)
-            silent_data = b'\x00\x00' * num_frames
+            silent_data = b"\x00\x00" * num_frames
             wav_file.writeframes(silent_data)
 
         return wav_buffer.getvalue()

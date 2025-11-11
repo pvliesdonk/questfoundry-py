@@ -118,9 +118,7 @@ class ConflictReport:
 
     def get_critical_conflicts(self) -> list[CanonConflict]:
         """Get critical conflicts only."""
-        return [
-            c for c in self.conflicts if c.severity == ConflictSeverity.CRITICAL
-        ]
+        return [c for c in self.conflicts if c.severity == ConflictSeverity.CRITICAL]
 
     def to_dict(self) -> dict[str, Any]:
         """Convert report to dictionary."""
@@ -342,9 +340,7 @@ class ConflictDetector:
 
         return None
 
-    def suggest_revision(
-        self, conflict: CanonConflict
-    ) -> dict[str, str]:
+    def suggest_revision(self, conflict: CanonConflict) -> dict[str, str]:
         """
         Suggest a revision to resolve conflict.
 

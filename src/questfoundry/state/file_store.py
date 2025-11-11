@@ -152,10 +152,7 @@ class FileStore(StateStore):
 
         # Write to temp file in same directory (for atomic rename)
         with tempfile.NamedTemporaryFile(
-            mode="w",
-            dir=file_path.parent,
-            delete=False,
-            suffix=".tmp"
+            mode="w", dir=file_path.parent, delete=False, suffix=".tmp"
         ) as tmp_file:
             json.dump(data, tmp_file, indent=2, default=str)
             tmp_path = Path(tmp_file.name)
@@ -278,7 +275,8 @@ class FileStore(StateStore):
             dirs_to_search = [self._get_artifact_dir(artifact_type)]
         else:
             dirs_to_search = [
-                d for d in self.hot_dir.iterdir()
+                d
+                for d in self.hot_dir.iterdir()
                 if d.is_dir() and d.name not in ["tus", "snapshots"]
             ]
 
@@ -312,10 +310,7 @@ class FileStore(StateStore):
                 )
 
         # Sort by modified time (newest first)
-        artifacts.sort(
-            key=lambda a: a.metadata.get("modified", ""),
-            reverse=True
-        )
+        artifacts.sort(key=lambda a: a.metadata.get("modified", ""), reverse=True)
 
         return artifacts
 

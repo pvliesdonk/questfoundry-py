@@ -84,10 +84,12 @@ def get_prompt(role_name: str) -> str:
 
     return prompt_file.read_text()
 
+
 def list_schemas() -> list[str]:
     """List available schemas"""
     resource_dir = Path(__file__).parent.parent / "resources" / "schemas"
     return [f.stem for f in resource_dir.glob("*.schema.json")]
+
 
 def list_prompts() -> list[str]:
     """List available prompt roles"""

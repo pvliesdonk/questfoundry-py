@@ -173,23 +173,24 @@ class Gatekeeper:
             if result.passed:
                 logger.debug("Quality bar %s PASSED", bar_name)
             else:
-                logger.warning("Quality bar %s FAILED with %d issues", bar_name, len(result.issues))
+                logger.warning(
+                    "Quality bar %s FAILED with %d issues", bar_name, len(result.issues)
+                )
                 for issue in result.issues:
-                    logger.trace("  Issue [%s] %s at %s", issue.severity, issue.message, issue.location)
+                    logger.trace(
+                        "  Issue [%s] %s at %s",
+                        issue.severity,
+                        issue.message,
+                        issue.location,
+                    )
 
         # Determine overall pass/fail
-        has_blockers = any(
-            not result.passed for result in bar_results.values()
-        )
+        has_blockers = any(not result.passed for result in bar_results.values())
 
         # In strict mode, warnings also block
-        has_warnings = any(
-            len(result.warnings) > 0 for result in bar_results.values()
-        )
+        has_warnings = any(len(result.warnings) > 0 for result in bar_results.values())
 
-        passed = not has_blockers and (
-            not self.strict or not has_warnings
-        )
+        passed = not has_blockers and (not self.strict or not has_warnings)
         merge_safe = not has_blockers  # Blockers always block merge
 
         # Generate summary
@@ -198,9 +199,11 @@ class Gatekeeper:
         if passed:
             logger.info("Gatecheck PASSED - All quality bars passed")
         else:
-            logger.warning("Gatecheck FAILED - %d blocker(s), %d warning(s)",
-                          sum(len(r.blockers) for r in bar_results.values()),
-                          sum(len(r.warnings) for r in bar_results.values()))
+            logger.warning(
+                "Gatecheck FAILED - %d blocker(s), %d warning(s)",
+                sum(len(r.blockers) for r in bar_results.values()),
+                sum(len(r.warnings) for r in bar_results.values()),
+            )
 
         return GatecheckReport(
             passed=passed,
@@ -210,9 +213,7 @@ class Gatekeeper:
             metadata=metadata,
         )
 
-    def run_bar(
-        self, bar_name: str, artifacts: list[Artifact]
-    ) -> QualityBarResult:
+    def run_bar(self, bar_name: str, artifacts: list[Artifact]) -> QualityBarResult:
         """
         Run a single quality bar.
 
@@ -226,16 +227,27 @@ class Gatekeeper:
         Raises:
             ValueError: If bar_name not in configured bars
         """
-        logger.debug("Running single quality bar: %s on %d artifacts", bar_name, len(artifacts))
+        logger.debug(
+            "Running single quality bar: %s on %d artifacts", bar_name, len(artifacts)
+        )
 
         if bar_name not in self.bars:
-            logger.error("Quality bar '%s' not configured. Available: %s", bar_name, list(self.bars.keys()))
+            logger.error(
+                "Quality bar '%s' not configured. Available: %s",
+                bar_name,
+                list(self.bars.keys()),
+            )
             raise ValueError(
                 f"Bar '{bar_name}' not configured. Available: {list(self.bars.keys())}"
             )
 
         result = self.bars[bar_name].validate(artifacts)
-        logger.debug("Quality bar %s result: passed=%s, issues=%d", bar_name, result.passed, len(result.issues))
+        logger.debug(
+            "Quality bar %s result: passed=%s, issues=%d",
+            bar_name,
+            result.passed,
+            len(result.issues),
+        )
 
         return result
 

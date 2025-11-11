@@ -58,9 +58,7 @@ class StyleBar(QualityBar):
             logger.debug("Style guide found: %s", style_guide.data.get("id", "unknown"))
 
         # Check manuscript sections for style
-        sections = [
-            a for a in artifacts if a.type == "manuscript_section"
-        ]
+        sections = [a for a in artifacts if a.type == "manuscript_section"]
 
         logger.trace("Found %d manuscript sections for style validation", len(sections))
 
@@ -71,16 +69,15 @@ class StyleBar(QualityBar):
             # Check motif usage if style guide present
             if style_guide:
                 logger.debug("Checking motif usage against style guide")
-                issues.extend(
-                    self._check_motifs(sections, style_guide)
-                )
+                issues.extend(self._check_motifs(sections, style_guide))
 
         # Check style artifacts
-        style_artifacts = [
-            a for a in artifacts if a.type == "style_guide"
-        ]
+        style_artifacts = [a for a in artifacts if a.type == "style_guide"]
         for artifact in style_artifacts:
-            logger.debug("Validating style guide artifact: %s", artifact.data.get("id", "unknown"))
+            logger.debug(
+                "Validating style guide artifact: %s",
+                artifact.data.get("id", "unknown"),
+            )
             issues.extend(self._validate_style_guide(artifact))
 
         logger.debug("Style validation complete: %d issues found", len(issues))
@@ -90,18 +87,14 @@ class StyleBar(QualityBar):
             has_style_guide=style_guide is not None,
         )
 
-    def _find_style_guide(
-        self, artifacts: list[Artifact]
-    ) -> Artifact | None:
+    def _find_style_guide(self, artifacts: list[Artifact]) -> Artifact | None:
         """Find style guide artifact if present."""
         for artifact in artifacts:
             if artifact.type == "style_guide":
                 return artifact
         return None
 
-    def _check_voice_consistency(
-        self, sections: list[Artifact]
-    ) -> list[QualityIssue]:
+    def _check_voice_consistency(self, sections: list[Artifact]) -> list[QualityIssue]:
         """Check for voice/register consistency across sections."""
         issues: list[QualityIssue] = []
 
@@ -115,12 +108,8 @@ class StyleBar(QualityBar):
 
             # Check for common voice shift indicators
             # Present tense vs past tense mixing
-            has_present = bool(
-                re.search(r"\b(am|is|are|walks|runs|says|see)\b", text)
-            )
-            has_past = bool(
-                re.search(r"\b(was|were|walked|ran|said)\b", text)
-            )
+            has_present = bool(re.search(r"\b(am|is|are|walks|runs|says|see)\b", text))
+            has_past = bool(re.search(r"\b(was|were|walked|ran|said)\b", text))
 
             if has_present and has_past:
                 issues.append(
@@ -134,9 +123,7 @@ class StyleBar(QualityBar):
 
             # Check for first vs second vs third person mixing
             has_second_person = bool(re.search(r"\byou\b", text, re.I))
-            has_first_person = bool(
-                re.search(r"\b(I|me|my|mine)\b", text)
-            )
+            has_first_person = bool(re.search(r"\b(I|me|my|mine)\b", text))
 
             if has_first_person and has_second_person:
                 issues.append(
@@ -199,9 +186,7 @@ class StyleBar(QualityBar):
 
         return issues
 
-    def _validate_style_guide(
-        self, artifact: Artifact
-    ) -> list[QualityIssue]:
+    def _validate_style_guide(self, artifact: Artifact) -> list[QualityIssue]:
         """Validate style guide artifact structure."""
         issues: list[QualityIssue] = []
 

@@ -106,9 +106,7 @@ class PNGuard:
 
     def __init__(self) -> None:
         """Initialize PN Guard with meta pattern regexes."""
-        self._meta_regex = re.compile(
-            "|".join(self.META_PATTERNS), re.IGNORECASE
-        )
+        self._meta_regex = re.compile("|".join(self.META_PATTERNS), re.IGNORECASE)
 
     def validate_envelope(self, envelope: Envelope) -> PNGuardResult:
         """
@@ -141,8 +139,7 @@ class PNGuard:
                     message="Hot content cannot be sent to PN",
                     location=f"envelope:{envelope.id}",
                     suggestion=(
-                        "Only cold (merged to Cold SoT) content "
-                        "can be exposed to PN"
+                        "Only cold (merged to Cold SoT) content can be exposed to PN"
                     ),
                 )
             )
@@ -180,9 +177,7 @@ class PNGuard:
             filtered_envelope=filtered_envelope,
         )
 
-    def validate_artifacts(
-        self, artifacts: list[Artifact]
-    ) -> PNGuardResult:
+    def validate_artifacts(self, artifacts: list[Artifact]) -> PNGuardResult:
         """
         Validate a list of artifacts for PN safety.
 
@@ -235,9 +230,7 @@ class PNGuard:
         return PNGuardResult(
             safe=not any(v.severity == "blocker" for v in violations),
             violations=violations,
-            filtered_artifacts=[filtered_artifact]
-            if filtered_artifact
-            else [],
+            filtered_artifacts=[filtered_artifact] if filtered_artifact else [],
         )
 
     def _validate_payload(
@@ -268,8 +261,7 @@ class PNGuard:
                         ),
                         location=f"{location}.{field_name}",
                         suggestion=(
-                            f"Remove the '{field_name}' field or "
-                            f"move to canon notes"
+                            f"Remove the '{field_name}' field or move to canon notes"
                         ),
                     )
                 )
@@ -324,16 +316,12 @@ class PNGuard:
         # Recursively check nested dicts and lists
         for key, value in data.items():
             if isinstance(value, dict):
-                violations.extend(
-                    self._check_meta_language(value, f"{location}.{key}")
-                )
+                violations.extend(self._check_meta_language(value, f"{location}.{key}"))
             elif isinstance(value, list):
                 for i, item in enumerate(value):
                     if isinstance(item, dict):
                         violations.extend(
-                            self._check_meta_language(
-                                item, f"{location}.{key}[{i}]"
-                            )
+                            self._check_meta_language(item, f"{location}.{key}[{i}]")
                         )
 
         return violations
@@ -401,9 +389,7 @@ class PNGuard:
         filtered_data = self._filter_data(envelope.payload.data)
 
         # Create new payload with filtered data
-        filtered_payload = Payload(
-            type=envelope.payload.type, data=filtered_data
-        )
+        filtered_payload = Payload(type=envelope.payload.type, data=filtered_data)
 
         # Return new envelope with filtered payload
         return Envelope(

@@ -110,10 +110,10 @@ Write in engaging, player-facing prose. Keep it tight and focused.
 
         try:
             logger.trace("Calling LLM to draft scene")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully drafted scene, size: %d characters", len(response)
             )
-            logger.info("Successfully drafted scene, size: %d characters", len(response))
 
             return RoleResult(
                 success=True,
@@ -156,10 +156,10 @@ Focus on quality over quantity - 2 strong choices beat 4 weak ones.
 
         try:
             logger.trace("Calling LLM to draft choices")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
+            logger.info(
+                "Successfully drafted choices, size: %d characters", len(response)
             )
-            logger.info("Successfully drafted choices, size: %d characters", len(response))
 
             return RoleResult(
                 success=True,
@@ -203,10 +203,10 @@ Focus on the specific issues raised in the feedback.
 
         try:
             logger.trace("Calling LLM to rewrite scene")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully rewrote scene, size: %d characters", len(response)
             )
-            logger.info("Successfully rewrote scene, size: %d characters", len(response))
 
             return RoleResult(
                 success=True,
@@ -254,11 +254,12 @@ player meets the requirement, and provide a diegetic reason if they don't.
 
         try:
             logger.trace("Calling LLM to write gate scene")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
+            logger.info(
+                "Successfully wrote gate scene for %s gate, size: %d characters",
+                gate_type,
+                len(response),
             )
-            logger.info("Successfully wrote gate scene for %s gate, size: %d characters",
-                       gate_type, len(response))
 
             return RoleResult(
                 success=True,
@@ -267,7 +268,9 @@ player meets the requirement, and provide a diegetic reason if they don't.
             )
 
         except Exception as e:
-            logger.error("Error writing gate scene (%s): %s", gate_type, e, exc_info=True)
+            logger.error(
+                "Error writing gate scene (%s): %s", gate_type, e, exc_info=True
+            )
             return RoleResult(
                 success=False,
                 output="",
@@ -298,10 +301,10 @@ and choices while improving the prose quality.
 
         try:
             logger.trace("Calling LLM to polish prose")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully polished prose, size: %d characters", len(response)
             )
-            logger.info("Successfully polished prose, size: %d characters", len(response))
 
             return RoleResult(
                 success=True,

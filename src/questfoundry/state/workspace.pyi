@@ -18,7 +18,6 @@ class WorkspaceManager:
     cold_store: SQLiteStore
 
     def __init__(self, project_dir: str | Path) -> None: ...
-
     def init_workspace(
         self,
         name: str,
@@ -26,9 +25,7 @@ class WorkspaceManager:
         version: str = "1.0.0",
         author: str | None = None,
     ) -> None: ...
-
     def get_project_info(self, source: str = "hot") -> ProjectInfo: ...
-
     def save_project_info(self, info: ProjectInfo, target: str = "both") -> None: ...
 
     # Hot workspace artifact operations
@@ -59,7 +56,6 @@ class WorkspaceManager:
         immutable: bool | None = None,
         source: str | None = None,
     ) -> bool: ...
-
     def demote_to_hot(
         self,
         artifact_id: str,
@@ -80,8 +76,6 @@ class WorkspaceManager:
     def list_snapshots(
         self, filters: dict[str, Any] | None = None, source: str = "hot"
     ) -> list[SnapshotInfo]: ...
-
     def close(self) -> None: ...
-
     def __enter__(self) -> WorkspaceManager: ...
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None: ...

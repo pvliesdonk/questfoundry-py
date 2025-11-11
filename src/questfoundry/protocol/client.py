@@ -65,14 +65,21 @@ class ProtocolClient:
         Returns:
             ProtocolClient instance
         """
-        logger.info("Creating ProtocolClient from workspace: %s for role %s", workspace_dir, sender_role)
+        logger.info(
+            "Creating ProtocolClient from workspace: %s for role %s",
+            workspace_dir,
+            sender_role,
+        )
         workspace_path = (
             Path(workspace_dir) if isinstance(workspace_dir, str) else workspace_dir
         )
         logger.trace("Initializing FileTransport for workspace: %s", workspace_path)
         transport = FileTransport(workspace_path)
         client = cls(transport, sender_role)
-        logger.info("ProtocolClient successfully created from workspace for role %s", sender_role)
+        logger.info(
+            "ProtocolClient successfully created from workspace for role %s",
+            sender_role,
+        )
         return client
 
     def create_envelope(
@@ -110,8 +117,18 @@ class ProtocolClient:
         Returns:
             Constructed envelope
         """
-        logger.debug("Creating envelope from %s to %s with intent %s", self.sender_role, receiver, intent)
-        logger.trace("Envelope details: hot_cold=%s, player_safe=%s, spoilers=%s", hot_cold, player_safe, spoilers)
+        logger.debug(
+            "Creating envelope from %s to %s with intent %s",
+            self.sender_role,
+            receiver,
+            intent,
+        )
+        logger.trace(
+            "Envelope details: hot_cold=%s, player_safe=%s, spoilers=%s",
+            hot_cold,
+            player_safe,
+            spoilers,
+        )
 
         builder = (
             EnvelopeBuilder()
@@ -152,25 +169,44 @@ class ProtocolClient:
             ValueError: If envelope fails conformance validation
             IOError: If sending fails
         """
-        logger.debug("Sending envelope %s to %s with intent %s", envelope.id, envelope.receiver.role, envelope.intent)
+        logger.debug(
+            "Sending envelope %s to %s with intent %s",
+            envelope.id,
+            envelope.receiver.role,
+            envelope.intent,
+        )
 
         if validate:
             logger.trace("Validating envelope conformance for %s", envelope.id)
             result = validate_envelope_conformance(envelope)
             if not result.conformant:
-                logger.warning("Envelope %s failed conformance validation with %d violations", envelope.id, len(result.violations))
+                logger.warning(
+                    "Envelope %s failed conformance validation with %d violations",
+                    envelope.id,
+                    len(result.violations),
+                )
                 violations = "\n".join(f"  - {v.message}" for v in result.violations)
                 raise ValueError(
                     f"Envelope conformance validation failed:\n{violations}"
                 )
             if result.warnings:
-                logger.debug("Envelope %s has %d conformance warnings", envelope.id, len(result.warnings))
+                logger.debug(
+                    "Envelope %s has %d conformance warnings",
+                    envelope.id,
+                    len(result.warnings),
+                )
 
         try:
             self.transport.send(envelope)
-            logger.info("Envelope %s sent successfully to %s", envelope.id, envelope.receiver.role)
+            logger.info(
+                "Envelope %s sent successfully to %s",
+                envelope.id,
+                envelope.receiver.role,
+            )
         except Exception as e:
-            logger.error("Failed to send envelope %s: %s", envelope.id, str(e), exc_info=True)
+            logger.error(
+                "Failed to send envelope %s: %s", envelope.id, str(e), exc_info=True
+            )
             raise
 
     def receive(self, validate: bool = True) -> Iterator[Envelope]:
@@ -190,7 +226,12 @@ class ProtocolClient:
         count = 0
         for envelope in self.transport.receive():
             count += 1
-            logger.debug("Received envelope %s from %s with intent %s", envelope.id, envelope.sender.role, envelope.intent)
+            logger.debug(
+                "Received envelope %s from %s with intent %s",
+                envelope.id,
+                envelope.sender.role,
+                envelope.intent,
+            )
 
             if validate:
                 logger.trace("Validating envelope %s conformance", envelope.id)
@@ -198,23 +239,41 @@ class ProtocolClient:
                 if not result.conformant:
                     # Log warnings but don't block receiving
                     # In production, you might want to handle this differently
-                    logger.warning("Received non-conformant envelope %s, skipping: %d violations", envelope.id, len(result.violations))
+                    logger.warning(
+                        "Received non-conformant envelope %s, skipping: %d violations",
+                        envelope.id,
+                        len(result.violations),
+                    )
                     continue
                 if result.warnings:
-                    logger.debug("Received envelope %s with %d conformance warnings", envelope.id, len(result.warnings))
+                    logger.debug(
+                        "Received envelope %s with %d conformance warnings",
+                        envelope.id,
+                        len(result.warnings),
+                    )
 
             # Check subscribers
             subscriber_count = 0
             for pattern, callback in self._subscribers:
                 if pattern.match(envelope.intent):
                     subscriber_count += 1
-                    logger.trace("Invoking subscriber for intent pattern matching %s", pattern.pattern)
+                    logger.trace(
+                        "Invoking subscriber for intent pattern matching %s",
+                        pattern.pattern,
+                    )
                     try:
                         callback(envelope)
                     except Exception as e:
-                        logger.error("Subscriber callback failed for envelope %s: %s", envelope.id, str(e), exc_info=True)
+                        logger.error(
+                            "Subscriber callback failed for envelope %s: %s",
+                            envelope.id,
+                            str(e),
+                            exc_info=True,
+                        )
 
-            logger.trace("Envelope %s matched %d subscriber(s)", envelope.id, subscriber_count)
+            logger.trace(
+                "Envelope %s matched %d subscriber(s)", envelope.id, subscriber_count
+            )
             yield envelope
 
         logger.debug("Finished receiving envelopes, received %d envelope(s)", count)
@@ -240,7 +299,11 @@ class ProtocolClient:
             ValueError: If envelope fails conformance validation
             IOError: If sending/receiving fails
         """
-        logger.debug("Starting send_and_wait for envelope %s with timeout=%s", envelope.id, timeout)
+        logger.debug(
+            "Starting send_and_wait for envelope %s with timeout=%s",
+            envelope.id,
+            timeout,
+        )
 
         # Ensure envelope has correlation_id
         if not envelope.correlation_id:
@@ -254,7 +317,9 @@ class ProtocolClient:
         self.send(envelope, validate=validate)
 
         # Wait for response with matching correlation_id
-        logger.trace("Waiting for response with correlation_id=%s", envelope.correlation_id)
+        logger.trace(
+            "Waiting for response with correlation_id=%s", envelope.correlation_id
+        )
         start_time = time.time()
         first_iteration = True
         while time.time() - start_time < timeout:
@@ -270,12 +335,24 @@ class ProtocolClient:
                     and response.id != envelope.id
                 ):
                     elapsed = time.time() - start_time
-                    logger.info("Received matching response %s in %.2f seconds", response.id, elapsed)
-                    logger.trace("Response from %s with intent %s", response.sender.role, response.intent)
+                    logger.info(
+                        "Received matching response %s in %.2f seconds",
+                        response.id,
+                        elapsed,
+                    )
+                    logger.trace(
+                        "Response from %s with intent %s",
+                        response.sender.role,
+                        response.intent,
+                    )
                     return response
 
         elapsed = time.time() - start_time
-        logger.warning("Timeout waiting for response to envelope %s after %.2f seconds", envelope.id, elapsed)
+        logger.warning(
+            "Timeout waiting for response to envelope %s after %.2f seconds",
+            envelope.id,
+            elapsed,
+        )
         return None
 
     def subscribe(
@@ -293,7 +370,11 @@ class ProtocolClient:
         logger.debug("Subscribing to intent pattern: %s", intent_pattern)
         pattern = re.compile(intent_pattern)
         self._subscribers.append((pattern, callback))
-        logger.trace("Added subscriber for pattern %s (total subscribers: %d)", intent_pattern, len(self._subscribers))
+        logger.trace(
+            "Added subscriber for pattern %s (total subscribers: %d)",
+            intent_pattern,
+            len(self._subscribers),
+        )
 
     def unsubscribe_all(self) -> None:
         """Remove all subscriptions."""

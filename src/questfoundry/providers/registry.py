@@ -43,8 +43,12 @@ class ProviderRegistry:
         # Register built-in providers
         logger.debug("Registering built-in providers")
         self._register_builtin_providers()
-        logger.info("ProviderRegistry initialized with %d text, %d image, %d audio providers",
-                   len(self._text_providers), len(self._image_providers), len(self._audio_providers))
+        logger.info(
+            "ProviderRegistry initialized with %d text, %d image, %d audio providers",
+            len(self._text_providers),
+            len(self._image_providers),
+            len(self._audio_providers),
+        )
 
     def register_text_provider(
         self, name: str, provider_class: type[TextProvider]
@@ -118,7 +122,11 @@ class ProviderRegistry:
 
         # Get provider class
         if name not in self._text_providers:
-            logger.error("Text provider %s not registered. Available: %s", name, list(self._text_providers.keys()))
+            logger.error(
+                "Text provider %s not registered. Available: %s",
+                name,
+                list(self._text_providers.keys()),
+            )
             raise ValueError(f"Text provider '{name}' not registered")
 
         provider_class = self._text_providers[name]
@@ -129,7 +137,9 @@ class ProviderRegistry:
             provider_config = self.config.get_provider_config("text", name)
             logger.trace("Loaded configuration for text provider %s", name)
         except KeyError:
-            logger.debug("No configuration found for text provider %s, using empty config", name)
+            logger.debug(
+                "No configuration found for text provider %s, using empty config", name
+            )
             provider_config = {}
 
         # Create and cache instance
@@ -281,7 +291,9 @@ class ProviderRegistry:
                 text_provider.close()
                 text_count += 1
             except Exception as e:
-                logger.warning("Error closing text provider: %s", str(e), exc_info=False)
+                logger.warning(
+                    "Error closing text provider: %s", str(e), exc_info=False
+                )
 
         image_count = 0
         for image_provider in self._image_instances.values():
@@ -290,7 +302,9 @@ class ProviderRegistry:
                 image_provider.close()
                 image_count += 1
             except Exception as e:
-                logger.warning("Error closing image provider: %s", str(e), exc_info=False)
+                logger.warning(
+                    "Error closing image provider: %s", str(e), exc_info=False
+                )
 
         audio_count = 0
         for audio_provider in self._audio_instances.values():
@@ -299,12 +313,19 @@ class ProviderRegistry:
                 audio_provider.close()
                 audio_count += 1
             except Exception as e:
-                logger.warning("Error closing audio provider: %s", str(e), exc_info=False)
+                logger.warning(
+                    "Error closing audio provider: %s", str(e), exc_info=False
+                )
 
         self._text_instances.clear()
         self._image_instances.clear()
         self._audio_instances.clear()
-        logger.info("Closed %d text, %d image, %d audio provider instances", text_count, image_count, audio_count)
+        logger.info(
+            "Closed %d text, %d image, %d audio provider instances",
+            text_count,
+            image_count,
+            audio_count,
+        )
 
     def _register_builtin_providers(self) -> None:
         """Register built-in providers."""

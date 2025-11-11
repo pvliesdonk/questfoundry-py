@@ -1,6 +1,5 @@
 """Hook lifecycle state machine"""
 
-
 from .base import Lifecycle
 
 

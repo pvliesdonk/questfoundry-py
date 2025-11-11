@@ -157,10 +157,10 @@ Format as structured text (not necessarily JSON). Be specific but concise.
 
         try:
             logger.trace("Calling LLM to create TU brief")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=3000
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=3000)
+            logger.info(
+                "Successfully created TU brief, size: %d characters", len(response)
             )
-            logger.info("Successfully created TU brief, size: %d characters", len(response))
 
             return RoleResult(
                 success=True,
@@ -198,10 +198,11 @@ Provide a clear structure showing how these elements connect.
 
         try:
             logger.trace("Calling LLM to design topology")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully created topology design, size: %d characters",
+                len(response),
             )
-            logger.info("Successfully created topology design, size: %d characters", len(response))
 
             return RoleResult(
                 success=True,
@@ -220,7 +221,7 @@ Provide a clear structure showing how these elements connect.
     def _create_section_briefs(self, context: RoleContext) -> RoleResult:
         """Create section briefs for scene development."""
         logger.debug("Creating section briefs")
-        section_count = context.additional_context.get('section_count', 4)
+        section_count = context.additional_context.get("section_count", 4)
         logger.trace("Creating %d section briefs", section_count)
 
         system_prompt = self.build_system_prompt(context)
@@ -243,11 +244,12 @@ Number of sections: {section_count}
 
         try:
             logger.trace("Calling LLM to create section briefs")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=3000
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=3000)
+            logger.info(
+                "Successfully created %d section briefs, size: %d characters",
+                section_count,
+                len(response),
             )
-            logger.info("Successfully created %d section briefs, size: %d characters",
-                       section_count, len(response))
 
             return RoleResult(
                 success=True,
@@ -286,10 +288,11 @@ Provide specific feedback with line/section references where possible.
 
         try:
             logger.trace("Calling LLM to review narrative structure")
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully completed structure review, size: %d characters",
+                len(response),
             )
-            logger.info("Successfully completed structure review, size: %d characters", len(response))
 
             return RoleResult(
                 success=True,

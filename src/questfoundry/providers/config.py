@@ -55,7 +55,9 @@ class ProviderConfig:
             self.load()
             logger.info("Configuration loaded successfully from %s", config_path)
         else:
-            logger.debug("Config file not found at %s, using default configuration", config_path)
+            logger.debug(
+                "Config file not found at %s, using default configuration", config_path
+            )
             self._config = self._get_default_config()
             logger.trace("Default configuration initialized")
 
@@ -79,7 +81,9 @@ class ProviderConfig:
                 raw_config = yaml.safe_load(f)
                 logger.trace("Substituting environment variables in configuration")
                 self._config = self._substitute_env_vars(raw_config or {})
-            logger.info("Configuration loaded and environment variables substituted successfully")
+            logger.info(
+                "Configuration loaded and environment variables substituted"
+            )
         except yaml.YAMLError as e:
             logger.error("Invalid YAML in config file: %s", str(e), exc_info=True)
             raise ValueError(f"Invalid YAML in config file: {e}") from e
@@ -203,9 +207,7 @@ class ProviderConfig:
         roles = self._config.get("roles", {})
         return roles.get(role_name, {})
 
-    def get_role_provider(
-        self, role_name: str, provider_type: str
-    ) -> str | None:
+    def get_role_provider(self, role_name: str, provider_type: str) -> str | None:
         """
         Get the provider to use for a specific role and provider type.
 

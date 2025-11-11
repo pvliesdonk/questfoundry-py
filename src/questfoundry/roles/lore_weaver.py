@@ -130,9 +130,7 @@ Provide responses in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=3000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=3000)
 
             # Parse JSON response
             data = self._parse_json_from_response(response)
@@ -164,11 +162,11 @@ Provide responses in JSON format:
 {self.format_artifacts(context.artifacts)}
 
 ## Conflicting Statements
-Statement A: {contradiction.get('statement_a', '')}
-Source A: {contradiction.get('source_a', '')}
+Statement A: {contradiction.get("statement_a", "")}
+Source A: {contradiction.get("source_a", "")}
 
-Statement B: {contradiction.get('statement_b', '')}
-Source B: {contradiction.get('source_b', '')}
+Statement B: {contradiction.get("statement_b", "")}
+Source B: {contradiction.get("source_b", "")}
 
 Resolve this contradiction by:
 1. **Analysis**: What's the core conflict?
@@ -180,9 +178,7 @@ Respond in JSON format with resolution decision.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -225,9 +221,7 @@ Respond in JSON format with timeline structure.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -255,8 +249,8 @@ Respond in JSON format with timeline structure.
 {self.format_artifacts(context.artifacts)}
 
 ## Canon Entry (Spoiler-Heavy)
-Title: {canon_entry.get('title', '')}
-Answer: {canon_entry.get('answer', '')}
+Title: {canon_entry.get("title", "")}
+Answer: {canon_entry.get("answer", "")}
 
 Create a player-safe summary that:
 1. Provides useful context without revealing twists
@@ -268,9 +262,7 @@ Keep it 2-4 sentences, bland and informative.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=500)
 
             return RoleResult(
                 success=True,
@@ -321,9 +313,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 

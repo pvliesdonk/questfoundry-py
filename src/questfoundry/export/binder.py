@@ -108,7 +108,9 @@ class BookBinder:
         logger.debug("Initializing BookBinder with sort_artifacts=%s", sort_artifacts)
         self.html_template = html_template or self.HTML_TEMPLATE
         self.sort_artifacts = sort_artifacts
-        logger.trace("BookBinder initialized with custom template=%s", html_template is not None)
+        logger.trace(
+            "BookBinder initialized with custom template=%s", html_template is not None
+        )
 
     def render_html(self, view: ViewArtifact, title: str | None = None) -> str:
         """
@@ -121,7 +123,11 @@ class BookBinder:
         Returns:
             HTML string
         """
-        logger.info("Rendering HTML view: %s with %d artifacts", view.view_id, len(view.artifacts))
+        logger.info(
+            "Rendering HTML view: %s with %d artifacts",
+            view.view_id,
+            len(view.artifacts),
+        )
         page_title = title or f"View: {view.view_id}"
 
         # Prepare artifacts
@@ -142,7 +148,11 @@ class BookBinder:
 
         # Render each artifact
         for artifact in artifacts:
-            logger.trace("Rendering artifact to HTML: %s (%s)", artifact.artifact_id, artifact.type)
+            logger.trace(
+                "Rendering artifact to HTML: %s (%s)",
+                artifact.artifact_id,
+                artifact.type,
+            )
             content_parts.append(self._render_artifact_html(artifact))
 
         content = "\n".join(content_parts)
@@ -169,12 +179,20 @@ class BookBinder:
         Returns:
             Markdown string
         """
-        logger.info("Rendering Markdown view: %s with %d artifacts", view.view_id, len(view.artifacts))
+        logger.info(
+            "Rendering Markdown view: %s with %d artifacts",
+            view.view_id,
+            len(view.artifacts),
+        )
         page_title = title or f"View: {view.view_id}"
 
         # Prepare artifacts
         artifacts = self._prepare_artifacts(view.artifacts)
-        logger.trace("Prepared %d artifacts for Markdown rendering, include_metadata=%s", len(artifacts), include_metadata)
+        logger.trace(
+            "Prepared %d artifacts for Markdown rendering, include_metadata=%s",
+            len(artifacts),
+            include_metadata,
+        )
 
         # Render content
         content_parts = [f"# {page_title}\n"]
@@ -235,7 +253,9 @@ class BookBinder:
         with open(output, "w", encoding="utf-8") as f:
             f.write(markdown)
 
-        logger.debug("Markdown saved successfully: %d bytes to %s", len(markdown), output)
+        logger.debug(
+            "Markdown saved successfully: %d bytes to %s", len(markdown), output
+        )
         return output
 
     def _prepare_artifacts(self, artifacts: list[Artifact]) -> list[Artifact]:

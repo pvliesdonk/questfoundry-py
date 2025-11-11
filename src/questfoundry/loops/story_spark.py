@@ -1,7 +1,6 @@
 """Story Spark loop implementation."""
 
 import logging
-
 from typing import Any
 
 from ..models.artifact import Artifact
@@ -429,9 +428,7 @@ class StorySparkLoop(Loop):
         Returns:
             Loop result indicating iteration needed
         """
-        completed_steps = [
-            s for s in self.steps if s.status == StepStatus.COMPLETED
-        ]
+        completed_steps = [s for s in self.steps if s.status == StepStatus.COMPLETED]
         return LoopResult(
             success=False,
             loop_id=self.metadata.loop_id,

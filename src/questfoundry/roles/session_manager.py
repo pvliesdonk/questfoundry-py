@@ -29,9 +29,7 @@ class SessionManager:
         self.workspace_path = workspace_path or Path.cwd()
         self.active_sessions: dict[str, RoleSession] = {}
 
-    def wake_role(
-        self, role: str, tu_context: str | None = None
-    ) -> RoleSession:
+    def wake_role(self, role: str, tu_context: str | None = None) -> RoleSession:
         """
         Create new session for role (wake it up).
 
@@ -130,8 +128,7 @@ class SessionManager:
             Dictionary mapping role name to archived session data
         """
         return {
-            role: session.archive()
-            for role, session in self.active_sessions.items()
+            role: session.archive() for role, session in self.active_sessions.items()
         }
 
     def dormant_all(self) -> dict[str, dict[str, Any]]:

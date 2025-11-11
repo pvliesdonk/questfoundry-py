@@ -17,14 +17,16 @@ Downstream applications can use this module to configure logging for their needs
 
 import logging
 import sys
-from typing import Literal
+from typing import Any, Literal
 
 # Define custom TRACE level (lower than DEBUG)
 TRACE = 5
 logging.addLevelName(TRACE, "TRACE")
 
 
-def _trace(logger: logging.Logger, message: str, *args: object, **kwargs: object) -> None:
+def _trace(
+    logger: logging.Logger, message: str, *args: object, **kwargs: object
+) -> None:
     """Log a TRACE level message."""
     if logger.isEnabledFor(TRACE):
         logger._log(TRACE, message, args, **kwargs)  # type: ignore
@@ -41,7 +43,7 @@ class TraceFormatter(logging.Formatter):
         self,
         fmt: str | None = None,
         datefmt: str | None = None,
-        style: str = "%",
+        style: Literal["%", "{", "$"] = "%",
         include_module: bool = True,
     ):
         if fmt is None:
@@ -116,7 +118,7 @@ def setup_logging(
     # Add handlers
     if handlers is None:
         # Default to stderr handler
-        handler = logging.StreamHandler(sys.stderr)
+        handler: Any = logging.StreamHandler(sys.stderr)
         handler.setLevel(log_level)
         handler.setFormatter(formatter)
         questfoundry_logger.addHandler(handler)

@@ -1,7 +1,6 @@
 """Art Touch-Up loop implementation."""
 
 import logging
-
 from typing import Any
 
 from ..models.artifact import Artifact
@@ -134,10 +133,7 @@ class ArtTouchUpLoop(Loop):
         for step in self.steps:
             try:
                 # Skip image generation if illustrator is dormant
-                if (
-                    step.step_id == "generate_images"
-                    and not self.illustrator_active
-                ):
+                if step.step_id == "generate_images" and not self.illustrator_active:
                     step.status = StepStatus.SKIPPED
                     continue
 

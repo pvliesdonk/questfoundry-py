@@ -1,7 +1,6 @@
 """Translation Pass loop implementation."""
 
 import logging
-
 from typing import Any
 
 from ..models.artifact import Artifact

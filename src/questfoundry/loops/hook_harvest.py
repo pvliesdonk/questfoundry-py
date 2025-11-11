@@ -1,7 +1,6 @@
 """Hook Harvest loop implementation."""
 
 import logging
-
 from typing import Any
 
 from ..models.artifact import Artifact
@@ -183,25 +182,13 @@ class HookHarvestLoop(Loop):
                 "hooks_processed": len(self.hooks_collected),
                 "clusters_created": len(self.clusters),
                 "accepted": len(
-                    [
-                        d
-                        for d in self.triage_decisions.values()
-                        if d == "accepted"
-                    ]
+                    [d for d in self.triage_decisions.values() if d == "accepted"]
                 ),
                 "deferred": len(
-                    [
-                        d
-                        for d in self.triage_decisions.values()
-                        if d == "deferred"
-                    ]
+                    [d for d in self.triage_decisions.values() if d == "deferred"]
                 ),
                 "rejected": len(
-                    [
-                        d
-                        for d in self.triage_decisions.values()
-                        if d == "rejected"
-                    ]
+                    [d for d in self.triage_decisions.values() if d == "rejected"]
                 ),
             },
         )
@@ -434,8 +421,7 @@ class HookHarvestLoop(Loop):
                     "accepted": [
                         h
                         for h in self.hooks_collected
-                        if self.triage_decisions.get(h.get("id", ""), "")
-                        == "accepted"
+                        if self.triage_decisions.get(h.get("id", ""), "") == "accepted"
                     ],
                     "deferred": [],
                     "rejected": [],
@@ -484,20 +470,17 @@ class HookHarvestLoop(Loop):
                 "accepted": [
                     h
                     for h in self.hooks_collected
-                    if self.triage_decisions.get(h.get("id", ""), "")
-                    == "accepted"
+                    if self.triage_decisions.get(h.get("id", ""), "") == "accepted"
                 ],
                 "deferred": [
                     h
                     for h in self.hooks_collected
-                    if self.triage_decisions.get(h.get("id", ""), "")
-                    == "deferred"
+                    if self.triage_decisions.get(h.get("id", ""), "") == "deferred"
                 ],
                 "rejected": [
                     h
                     for h in self.hooks_collected
-                    if self.triage_decisions.get(h.get("id", ""), "")
-                    == "rejected"
+                    if self.triage_decisions.get(h.get("id", ""), "") == "rejected"
                 ],
                 "handoffs": {
                     "lore_deepening": "Accepted narrative hooks",

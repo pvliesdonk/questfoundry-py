@@ -52,9 +52,7 @@ class DeterminismBar(QualityBar):
 
         # Check visual assets
         visual_artifacts = [
-            a
-            for a in artifacts
-            if a.type in ["visual_asset", "image_plan", "art_plan"]
+            a for a in artifacts if a.type in ["visual_asset", "image_plan", "art_plan"]
         ]
 
         logger.trace("Found %d visual artifacts to validate", len(visual_artifacts))
@@ -63,9 +61,10 @@ class DeterminismBar(QualityBar):
             artifact_id = artifact.data.get("id", "unknown")
 
             # Check if this is a plan or executed asset
-            is_plan = artifact.type.endswith("_plan") or artifact.data.get(
-                "status"
-            ) == "planned"
+            is_plan = (
+                artifact.type.endswith("_plan")
+                or artifact.data.get("status") == "planned"
+            )
 
             if is_plan:
                 # Plans should be marked deferred
@@ -81,28 +80,23 @@ class DeterminismBar(QualityBar):
                     )
             else:
                 # Executed assets should have generation params
-                issues.extend(
-                    self._check_asset_params(artifact)
-                )
+                issues.extend(self._check_asset_params(artifact))
 
         # Check audio assets
         audio_artifacts = [
-            a
-            for a in artifacts
-            if a.type in ["audio_asset", "audio_plan"]
+            a for a in artifacts if a.type in ["audio_asset", "audio_plan"]
         ]
 
         logger.trace("Found %d audio artifacts to validate", len(audio_artifacts))
 
         for artifact in audio_artifacts:
-            is_plan = artifact.type == "audio_plan" or artifact.data.get(
-                "status"
-            ) == "planned"
+            is_plan = (
+                artifact.type == "audio_plan"
+                or artifact.data.get("status") == "planned"
+            )
 
             if not is_plan:
-                issues.extend(
-                    self._check_asset_params(artifact)
-                )
+                issues.extend(self._check_asset_params(artifact))
 
         logger.debug("Determinism validation complete: %d issues found", len(issues))
         return self._create_result(
@@ -111,9 +105,7 @@ class DeterminismBar(QualityBar):
             audio_assets=len(audio_artifacts),
         )
 
-    def _check_asset_params(
-        self, artifact: Artifact
-    ) -> list[QualityIssue]:
+    def _check_asset_params(self, artifact: Artifact) -> list[QualityIssue]:
         """Check that asset has required generation parameters."""
         issues: list[QualityIssue] = []
         artifact_id = artifact.data.get("id", "unknown")

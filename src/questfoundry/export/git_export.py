@@ -103,7 +103,12 @@ class GitExporter:
             ValueError: If snapshot not found
             IOError: If export fails
         """
-        logger.info("Exporting snapshot %s to %s (include_hot=%s)", snapshot_id, export_dir, include_hot)
+        logger.info(
+            "Exporting snapshot %s to %s (include_hot=%s)",
+            snapshot_id,
+            export_dir,
+            include_hot,
+        )
         export_path = Path(export_dir)
         export_path.mkdir(parents=True, exist_ok=True)
 
@@ -118,7 +123,9 @@ class GitExporter:
         # Export artifacts by type
         artifact_index: dict[str, list[str]] = {}
         for artifact in artifacts:
-            logger.trace("Exporting artifact: %s (%s)", artifact.artifact_id, artifact.type)
+            logger.trace(
+                "Exporting artifact: %s (%s)", artifact.artifact_id, artifact.type
+            )
             self._export_artifact(artifact, export_path)
 
             # Track in index
@@ -127,7 +134,11 @@ class GitExporter:
                 artifact_index[artifact_type] = []
             artifact_index[artifact_type].append(artifact.artifact_id or "unknown")
 
-        logger.debug("Exported %d artifact types: %s", len(artifact_index), list(artifact_index.keys()))
+        logger.debug(
+            "Exported %d artifact types: %s",
+            len(artifact_index),
+            list(artifact_index.keys()),
+        )
 
         # Create manifest
         self._create_manifest(snapshot, artifact_index, export_path)
@@ -170,7 +181,11 @@ class GitExporter:
 
         # Use provided snapshot ID or from manifest
         snapshot_id = target_snapshot_id or manifest["snapshot"]["snapshot_id"]
-        logger.debug("Importing snapshot: %s (original: %s)", snapshot_id, manifest["snapshot"]["snapshot_id"])
+        logger.debug(
+            "Importing snapshot: %s (original: %s)",
+            snapshot_id,
+            manifest["snapshot"]["snapshot_id"],
+        )
 
         # Create snapshot in database
         snapshot = SnapshotInfo(
@@ -193,7 +208,9 @@ class GitExporter:
                 logger.trace("No directory found for artifact type: %s", artifact_type)
                 continue
 
-            logger.debug("Importing %d artifacts of type %s", len(artifact_ids), artifact_type)
+            logger.debug(
+                "Importing %d artifacts of type %s", len(artifact_ids), artifact_type
+            )
             for artifact_id in artifact_ids:
                 artifact_file = artifact_dir / f"{artifact_id}.yml"
                 if artifact_file.exists():
@@ -276,7 +293,11 @@ class GitExporter:
             artifact_index: Index of artifacts by type
             export_dir: Export directory
         """
-        logger.debug("Creating manifest for snapshot %s with %d artifact types", snapshot.snapshot_id, len(artifact_index))
+        logger.debug(
+            "Creating manifest for snapshot %s with %d artifact types",
+            snapshot.snapshot_id,
+            len(artifact_index),
+        )
 
         manifest = {
             "snapshot": {
@@ -364,9 +385,7 @@ class GitExporter:
         # If not including hot, filter to only cold artifacts
         if not include_hot:
             artifacts = [
-                a
-                for a in artifacts
-                if a.metadata.get("temperature") == "cold"
+                a for a in artifacts if a.metadata.get("temperature") == "cold"
             ]
 
         return artifacts

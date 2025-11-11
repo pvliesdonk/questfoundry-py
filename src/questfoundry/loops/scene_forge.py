@@ -141,7 +141,10 @@ class SceneForgeLoop(Loop):
                     if step.result and isinstance(step.result, dict):
                         if "artifacts" in step.result:
                             artifacts_created.extend(step.result["artifacts"])
-                            logger.trace("Collected %d artifacts from step", len(step.result["artifacts"]))
+                            logger.trace(
+                                "Collected %d artifacts from step",
+                                len(step.result["artifacts"]),
+                            )
 
                 elif step.status == StepStatus.FAILED:
                     steps_failed += 1
@@ -171,8 +174,15 @@ class SceneForgeLoop(Loop):
                 )
 
         # All steps completed successfully
-        logger.info("Scene Forge loop completed successfully: %d/%d steps, %d artifacts created",
-                   steps_completed, len(self.steps), len(artifacts_created))
+        logger.info(
+            (
+                "Scene Forge loop completed successfully: %d/%d steps, "
+                "%d artifacts created"
+            ),
+            steps_completed,
+            len(self.steps),
+            len(artifacts_created),
+        )
         return LoopResult(
             success=True,
             loop_id=self.metadata.loop_id,
@@ -253,9 +263,7 @@ class SceneForgeLoop(Loop):
         scene_smith = roles["scene_smith"]
 
         # Gather relevant canon packs
-        canon_artifacts = [
-            a for a in self.context.artifacts if a.type == "canon_pack"
-        ]
+        canon_artifacts = [a for a in self.context.artifacts if a.type == "canon_pack"]
 
         context = RoleContext(
             task="draft_scene",

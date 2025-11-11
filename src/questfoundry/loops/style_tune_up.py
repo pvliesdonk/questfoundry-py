@@ -1,7 +1,6 @@
 """Style Tune-Up loop implementation."""
 
 import logging
-
 from typing import Any
 
 from ..models.artifact import Artifact
@@ -218,9 +217,7 @@ class StyleTuneUpLoop(Loop):
 
         # Find manuscript sections to analyze
         manuscript_sections = [
-            a
-            for a in self.context.artifacts
-            if a.type == "manuscript_section"
+            a for a in self.context.artifacts if a.type == "manuscript_section"
         ]
 
         context = RoleContext(

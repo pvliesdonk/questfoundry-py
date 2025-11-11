@@ -112,7 +112,9 @@ class Provider(ABC):
                 cache_dir=self.cache_config.cache_dir,
                 ttl_seconds=self.cache_config.ttl_seconds,
             )
-            logger.trace("Cache initialized with TTL=%s seconds", self.cache_config.ttl_seconds)
+            logger.trace(
+                "Cache initialized with TTL=%s seconds", self.cache_config.ttl_seconds
+            )
         else:
             logger.debug("Cache disabled for %s", self.__class__.__name__)
             self.cache = None
@@ -125,7 +127,10 @@ class Provider(ABC):
             rate_config = RateLimitConfig(**rate_limit_config_dict)
             self.rate_limiter = RateLimiter(rate_config)
             self.cost_tracker = CostTracker()
-            logger.trace("Rate limiter configured with %d requests/minute", rate_config.requests_per_minute)
+            logger.trace(
+                "Rate limiter configured with %d requests/minute",
+                rate_config.requests_per_minute,
+            )
         else:
             logger.trace("Rate limiter not configured for %s", self.__class__.__name__)
             self.rate_limiter = None
@@ -245,7 +250,11 @@ class Provider(ABC):
         if self.rate_limiter is None:
             return True
 
-        logger.trace("Checking rate limits: input_tokens=%d, output_tokens=%d", input_tokens, output_tokens)
+        logger.trace(
+            "Checking rate limits: input_tokens=%d, output_tokens=%d",
+            input_tokens,
+            output_tokens,
+        )
         allowed = self.rate_limiter.check_limit(
             input_tokens=input_tokens,
             output_tokens=output_tokens,
@@ -273,7 +282,12 @@ class Provider(ABC):
             cost_per_input_1k: Cost per 1000 input tokens
             cost_per_output_1k: Cost per 1000 output tokens
         """
-        logger.trace("Recording usage for model=%s: input=%d, output=%d tokens", model, input_tokens, output_tokens)
+        logger.trace(
+            "Recording usage for model=%s: input=%d, output=%d tokens",
+            model,
+            input_tokens,
+            output_tokens,
+        )
 
         if self.rate_limiter:
             self.rate_limiter.record_usage(input_tokens, output_tokens)

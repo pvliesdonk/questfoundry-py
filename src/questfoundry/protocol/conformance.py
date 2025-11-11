@@ -83,7 +83,9 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
         pn_violations = _check_pn_safety_invariant(envelope)
         violations.extend(pn_violations)
         if pn_violations:
-            logger.warning("PN safety invariant violations found: %d", len(pn_violations))
+            logger.warning(
+                "PN safety invariant violations found: %d", len(pn_violations)
+            )
 
     # Check context requirements
     logger.trace("Checking context requirements for envelope %s", envelope.id)
@@ -94,7 +96,11 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
     logger.trace("Validating payload schema for type %s", envelope.payload.type)
     payload_result = validate_artifact(envelope.payload.data, envelope.payload.type)
     if not payload_result.valid:
-        logger.warning("Payload schema validation failed for type %s: %d errors", envelope.payload.type, len(payload_result.errors))
+        logger.warning(
+            "Payload schema validation failed for type %s: %d errors",
+            envelope.payload.type,
+            len(payload_result.errors),
+        )
         violations.append(
             ConformanceViolation(
                 rule="PAYLOAD_SCHEMA_VALIDATION",
@@ -107,7 +113,9 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
         )
 
     # Check protocol version compatibility
-    logger.trace("Checking protocol version %s compatibility", envelope.protocol.version)
+    logger.trace(
+        "Checking protocol version %s compatibility", envelope.protocol.version
+    )
     version_warnings = _check_protocol_version(envelope)
     warnings.extend(version_warnings)
 
@@ -118,7 +126,11 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
     if result.conformant:
         logger.debug("Envelope %s passed conformance validation", envelope.id)
     else:
-        logger.warning("Envelope %s failed conformance validation with %d violations", envelope.id, len(violations))
+        logger.warning(
+            "Envelope %s failed conformance validation with %d violations",
+            envelope.id,
+            len(violations),
+        )
 
     return result
 

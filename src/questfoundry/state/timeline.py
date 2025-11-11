@@ -315,7 +315,8 @@ class TimelineManager:
             gap = years[i + 1] - years[i]
             if gap > 1000:
                 issues.append(
-                    f"Large gap ({gap} years) between year {years[i]} and {years[i+1]}"
+                    f"Large gap ({gap} years) between year {years[i]} "
+                    f"and {years[i + 1]}"
                 )
 
         return issues
@@ -418,9 +419,7 @@ class TimelineManager:
         # Validate chronology after merge
         validation_issues = self.validate_chronology()
         if validation_issues:
-            conflicts.extend(
-                [{"reason": issue} for issue in validation_issues]
-            )
+            conflicts.extend([{"reason": issue} for issue in validation_issues])
 
         return {
             "added": added,

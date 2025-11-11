@@ -1,7 +1,6 @@
 """Gatecheck loop implementation."""
 
 import logging
-
 from typing import Any
 
 from ..models.artifact import Artifact
@@ -350,9 +349,7 @@ class GatecheckLoop(Loop):
                 data={
                     "decision": self.decision,
                     "blockers": [f for f in triage_results if f["status"] == "red"],
-                    "warnings": [
-                        f for f in triage_results if f["status"] == "yellow"
-                    ],
+                    "warnings": [f for f in triage_results if f["status"] == "yellow"],
                 },
                 metadata={"created_by": "gatekeeper", "loop": "gatecheck"},
             )
@@ -488,9 +485,7 @@ class GatecheckLoop(Loop):
             if finding["status"] == "yellow":
                 fix = finding.get("smallest_viable_fix", "TBD")
                 owner = finding.get("owner", "TBD")
-                handoffs.append(
-                    f"Bar: {finding['bar']}; Fix: {fix}; Owner: {owner}"
-                )
+                handoffs.append(f"Bar: {finding['bar']}; Fix: {fix}; Owner: {owner}")
         return handoffs
 
     def validate_step(self, step: LoopStep, result: Any) -> bool:

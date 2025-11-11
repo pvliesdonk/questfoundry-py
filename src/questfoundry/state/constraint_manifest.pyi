@@ -9,6 +9,7 @@ from .timeline import TimelineManager
 @dataclass
 class ConstraintManifest:
     """Manifest of creative constraints derived from canon."""
+
     invariants: list[str]
     mutables: list[str]
     timeline_constraints: list[str]
@@ -24,7 +25,6 @@ class ConstraintManifestGenerator:
     """Generator for constraint manifests."""
 
     def __init__(self) -> None: ...
-
     def generate(
         self,
         invariant_canon: list[dict[str, Any]] | None = None,

@@ -48,9 +48,7 @@ class CanonConflictBar(QualityBar):
         issues: list[QualityIssue] = []
 
         # Extract canon transfer packages
-        canon_packages = [
-            a for a in artifacts if a.type == "canon_transfer_package"
-        ]
+        canon_packages = [a for a in artifacts if a.type == "canon_transfer_package"]
 
         if not canon_packages:
             # No canon packages to validate - pass
@@ -105,9 +103,7 @@ class CanonConflictBar(QualityBar):
                 issues.extend(entity_issues)
 
         logger.debug("Canon conflict validation complete: %d issues found", len(issues))
-        return self._create_result(
-            issues, validated_packages=len(canon_packages)
-        )
+        return self._create_result(issues, validated_packages=len(canon_packages))
 
     def _detect_contradiction(self, fact1: str, fact2: str) -> bool:
         """Simple contradiction detection using keyword pairs."""
@@ -156,8 +152,7 @@ class CanonConflictBar(QualityBar):
                         QualityIssue(
                             severity="blocker",
                             message=(
-                                f"Duplicate immutable entity: {name} "
-                                f"({entity_type})"
+                                f"Duplicate immutable entity: {name} ({entity_type})"
                             ),
                             location=f"{pkg_id}/entity_registry",
                             fix="Remove duplicate or mark one as mutable",
@@ -249,7 +244,14 @@ class TimelineChronologyBar(QualityBar):
             # Run chronology validation
             validation_errors = timeline.validate_chronology()
             if validation_errors:
-                logger.warning("Timeline chronology validation errors for artifact %s: %d error(s)", artifact_id, len(validation_errors))
+                logger.warning(
+                    (
+                        "Timeline chronology validation errors for artifact %s: "
+                        "%d error(s)"
+                    ),
+                    artifact_id,
+                    len(validation_errors),
+                )
                 for error in validation_errors:
                     issues.append(
                         QualityIssue(
@@ -262,10 +264,10 @@ class TimelineChronologyBar(QualityBar):
             else:
                 logger.debug("Timeline chronology valid for artifact %s", artifact_id)
 
-        logger.debug("Timeline chronology validation complete: %d issues found", len(issues))
-        return self._create_result(
-            issues, validated_artifacts=len(timeline_artifacts)
+        logger.debug(
+            "Timeline chronology validation complete: %d issues found", len(issues)
         )
+        return self._create_result(issues, validated_artifacts=len(timeline_artifacts))
 
 
 class EntityReferenceBar(QualityBar):
@@ -357,7 +359,10 @@ class EntityReferenceBar(QualityBar):
                 immutable = entity.get("immutable", False)
                 source = entity.get("source", "")
                 if immutable and not source:
-                    logger.warning("Immutable entity missing source: %s", entity.get('name', 'unknown'))
+                    logger.warning(
+                        "Immutable entity missing source: %s",
+                        entity.get("name", "unknown"),
+                    )
                     issues.append(
                         QualityIssue(
                             severity="warning",
@@ -370,7 +375,7 @@ class EntityReferenceBar(QualityBar):
                         )
                     )
 
-        logger.debug("Entity reference validation complete: %d issues found", len(issues))
-        return self._create_result(
-            issues, validated_artifacts=len(entity_artifacts)
+        logger.debug(
+            "Entity reference validation complete: %d issues found", len(issues)
         )
+        return self._create_result(issues, validated_artifacts=len(entity_artifacts))

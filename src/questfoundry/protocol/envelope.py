@@ -28,9 +28,7 @@ class Sender(BaseModel):
     """Message sender information"""
 
     role: RoleName = Field(..., description="Sending role")
-    agent: str | None = Field(
-        None, description="Optional human/agent identifier"
-    )
+    agent: str | None = Field(None, description="Optional human/agent identifier")
 
 
 class Receiver(BaseModel):
@@ -53,9 +51,7 @@ class Context(BaseModel):
         pattern=r"^Cold @ \d{4}-\d{2}-\d{2}$",
         description="Cold snapshot reference",
     )
-    loop: str | None = Field(
-        None, description="Loop/playbook context"
-    )
+    loop: str | None = Field(None, description="Loop/playbook context")
 
 
 class Safety(BaseModel):
@@ -64,9 +60,7 @@ class Safety(BaseModel):
     player_safe: bool = Field(
         ..., description="Whether content is safe for Player Narrator"
     )
-    spoilers: SpoilerPolicy = Field(
-        ..., description="Spoiler content policy"
-    )
+    spoilers: SpoilerPolicy = Field(..., description="Spoiler content policy")
 
 
 class Payload(BaseModel):
@@ -184,15 +178,11 @@ class Envelope(BaseModel):
     correlation_id: str | None = Field(
         None, description="Correlation identifier for request/response"
     )
-    reply_to: str | None = Field(
-        None, description="Message ID this is replying to"
-    )
+    reply_to: str | None = Field(None, description="Message ID this is replying to")
     context: Context = Field(..., description="Message context")
     safety: Safety = Field(..., description="Safety policies")
     payload: Payload = Field(..., description="Message payload")
-    refs: list[str] = Field(
-        default_factory=list, description="Referenced artifact IDs"
-    )
+    refs: list[str] = Field(default_factory=list, description="Referenced artifact IDs")
 
 
 class EnvelopeBuilder:
@@ -317,9 +307,7 @@ class EnvelopeBuilder:
         loop: str | None = None,
     ) -> "EnvelopeBuilder":
         """Set context"""
-        self._context = Context(
-            hot_cold=hot_cold, tu=tu, snapshot=snapshot, loop=loop
-        )
+        self._context = Context(hot_cold=hot_cold, tu=tu, snapshot=snapshot, loop=loop)
         return self
 
     def with_safety(

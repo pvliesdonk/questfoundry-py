@@ -51,15 +51,15 @@ class NonlinearityBar(QualityBar):
         logger.debug("Validating nonlinearity in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
-        sections = [
-            a for a in artifacts if a.type == "manuscript_section"
-        ]
+        sections = [a for a in artifacts if a.type == "manuscript_section"]
 
         if not sections:
             logger.trace("No manuscript sections found to validate")
             return self._create_result([], sections_checked=0)
 
-        logger.trace("Found %d manuscript sections for nonlinearity validation", len(sections))
+        logger.trace(
+            "Found %d manuscript sections for nonlinearity validation", len(sections)
+        )
 
         # Build graph for topology analysis
         graph: dict[str, list[str]] = defaultdict(list)
@@ -80,23 +80,21 @@ class NonlinearityBar(QualityBar):
 
         # Check for hubs (sections with multiple incoming paths)
         hubs = {
-            sid: sources
-            for sid, sources in reverse_graph.items()
-            if len(sources) > 2
+            sid: sources for sid, sources in reverse_graph.items() if len(sources) > 2
         }
 
         # Check for loops (sections that can reach themselves)
         loops = self._find_loops(graph, sections)
 
-        logger.debug("Topology analysis: %d hubs, %d loops found", len(hubs), len(loops))
+        logger.debug(
+            "Topology analysis: %d hubs, %d loops found", len(hubs), len(loops)
+        )
 
         # Check for meaningful choices
         issues.extend(self._check_meaningful_choices(sections, graph))
 
         # Check first-choice integrity at convergence points
-        issues.extend(
-            self._check_convergence_integrity(sections, hubs)
-        )
+        issues.extend(self._check_convergence_integrity(sections, hubs))
 
         logger.debug("Nonlinearity validation complete: %d issues found", len(issues))
         return self._create_result(
@@ -172,9 +170,9 @@ class NonlinearityBar(QualityBar):
                             message="Multiple choices lead to same immediate target",
                             location=f"section:{section_id}",
                             fix=(
-                            "Ensure choices have different immediate "
-                            "outcomes or effects"
-                        ),
+                                "Ensure choices have different immediate "
+                                "outcomes or effects"
+                            ),
                         )
                     )
 
@@ -201,8 +199,7 @@ class NonlinearityBar(QualityBar):
 
             # Simple heuristic: look for conditional markers
             has_conditional = any(
-                marker in text
-                for marker in ["[if ", "[unless ", "{if ", "{{#if"]
+                marker in text for marker in ["[if ", "[unless ", "{if ", "{{#if"]
             )
 
             if not has_conditional and len(sources) > 1:

@@ -132,9 +132,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -191,9 +189,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -256,9 +252,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -315,9 +309,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1000)
 
             data = self._parse_json_from_response(response)
 
@@ -375,9 +367,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
