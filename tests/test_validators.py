@@ -70,6 +70,7 @@ def test_validate_instance_detailed_invalid():
             assert "message" in result
             assert "path" in result
     except FileNotFoundError:
+        # Schema might not be available in test environment
         pass
 
 
