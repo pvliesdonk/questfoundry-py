@@ -113,6 +113,7 @@ class FileTransport(Transport):
                 str(e),
                 exc_info=True,
             )
+            # Wrap in IOError to match documented interface while preserving cause
             raise IOError(f"Failed to send envelope: {e}") from e
 
     def _move_to_error_dir(self, message_file: Path, error_suffix: str) -> None:

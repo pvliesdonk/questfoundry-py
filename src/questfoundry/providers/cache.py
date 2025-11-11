@@ -288,10 +288,11 @@ class ResponseCache:
             meta_path.write_text(json.dumps(metadata))
             logger.debug("Response cached successfully with key: %s", key)
         except Exception as e:
-            logger.error(
+            # Cache failures are logged but not raised to allow graceful
+            # degradation. The application can continue without caching.
+            logger.warning(
                 "Error caching response for key %s: %s", key, str(e), exc_info=True
             )
-            raise
 
     def clear(self) -> None:
         """Clear all cached entries.

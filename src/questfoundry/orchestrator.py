@@ -1,10 +1,10 @@
 """Orchestrator for QuestFoundry loop execution."""
 
-import logging
 import re
 from pathlib import Path
 from typing import Any
 
+from .logging_config import get_logger
 from .loops.base import Loop, LoopContext, LoopResult
 from .loops.registry import LoopRegistry
 from .models.artifact import Artifact
@@ -15,7 +15,7 @@ from .roles.base import Role, RoleContext
 from .roles.registry import RoleRegistry
 from .state.workspace import WorkspaceManager
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class Orchestrator:

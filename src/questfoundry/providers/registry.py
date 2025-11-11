@@ -292,7 +292,7 @@ class ProviderRegistry:
                 text_count += 1
             except Exception as e:
                 logger.warning(
-                    "Error closing text provider: %s", str(e), exc_info=False
+                    "Error closing text provider: %s", str(e), exc_info=True
                 )
 
         image_count = 0
@@ -303,7 +303,7 @@ class ProviderRegistry:
                 image_count += 1
             except Exception as e:
                 logger.warning(
-                    "Error closing image provider: %s", str(e), exc_info=False
+                    "Error closing image provider: %s", str(e), exc_info=True
                 )
 
         audio_count = 0
@@ -314,7 +314,7 @@ class ProviderRegistry:
                 audio_count += 1
             except Exception as e:
                 logger.warning(
-                    "Error closing audio provider: %s", str(e), exc_info=False
+                    "Error closing audio provider: %s", str(e), exc_info=True
                 )
 
         self._text_instances.clear()

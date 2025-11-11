@@ -264,6 +264,8 @@ class ProtocolClient:
                     try:
                         callback(envelope)
                     except Exception as e:
+                        # Subscriber exceptions are logged but not re-raised to prevent
+                        # one subscriber failure from breaking the receive stream
                         logger.error(
                             "Subscriber callback failed for envelope %s: %s",
                             envelope.id,
