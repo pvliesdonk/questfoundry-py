@@ -649,3 +649,224 @@ class StyleManifest(Artifact):
     """
 
     type: str = "style_manifest"
+
+
+class CanonTransferPackage(Artifact):
+    """
+    Canon Transfer Package artifact.
+
+    A Canon Transfer Package exports canon elements for reuse in sequels or
+    shared universe projects. It packages worldbuilding, timeline anchors,
+    entity registries, and codex baselines for import into new projects.
+
+    Purpose:
+        - Enable canon continuity across multiple projects/sequels
+        - Share worldbuilding in collaborative/shared universes
+        - Prevent contradictions when extending established worlds
+        - Preserve immutable canon while allowing extensions
+
+    Canon mutability levels:
+        - **Invariant**: Immutable rules that cannot be changed (core canon)
+        - **Mutable**: Extensible canon that can be elaborated upon
+        - **Local**: Project-specific canon not exported
+
+    Package contents:
+        - Invariant canon packs (immutable worldbuilding rules)
+        - Mutable canon packs (extensible worldbuilding)
+        - Codex baseline (player-facing reference)
+        - Timeline anchors (T0/T1/T2 baseline events)
+        - Entity registry (characters, places, factions, items)
+        - Constraint documentation (creative boundaries)
+
+    Typical data fields:
+        - header: {package_id, source_project, created_by, version}
+        - invariant_canon: List of immutable canon pack references
+        - mutable_canon: List of extensible canon pack references
+        - codex_baseline: Player-facing reference entries
+        - timeline: {anchors: [T0, T1, T2, ...], offsets: {...}}
+        - entity_registry: {
+            characters: [{name, role, description, source}],
+            places: [{name, type, description, source}],
+            factions: [{name, type, description, source}],
+            items: [{name, type, description, source}]
+          }
+        - constraints: Manifest of invariants, mutables, timeline, entities
+        - metadata: Export date, gatecheck status, compatibility version
+
+    Workflow:
+        1. Complete project reaches final Binding Run
+        2. Author tags canon elements (invariant/mutable/local)
+        3. System extracts tagged canon, codex, timeline, entities
+        4. Gatekeeper validates for spoilers, conflicts, broken references
+        5. Package exported as `canon_transfer_package_<slug>.json`
+        6. Import into new project with conflict detection
+        7. Merge to Cold (invariant) or Hot (mutable) storage
+
+    Import conflict resolution:
+        When invariant canon conflicts with new project seed:
+        - **Reject**: Abandon conflicting seed idea, keep invariant
+        - **Revise**: Modify seed to align with invariant canon
+        - **Downgrade**: Change invariant to mutable, allow seed
+
+    Example:
+        >>> package = CanonTransferPackage(
+        ...     data={
+        ...         "header": {
+        ...             "package_id": "TRANSFER-DRAGONS-001",
+        ...             "source_project": "dragon-quest-1",
+        ...             "created_by": "Author",
+        ...             "version": "1.0.0"
+        ...         },
+        ...         "invariant_canon": [
+        ...             "CANON-DRAGONS-001",  # Dragons sleep for decades
+        ...             "CANON-MAGIC-SYSTEM-001"  # Magic requires sacrifice
+        ...         ],
+        ...         "mutable_canon": [
+        ...             "CANON-GEOGRAPHY-001",  # Map can be extended
+        ...             "CANON-FACTIONS-001"  # New factions can emerge
+        ...         ],
+        ...         "timeline": {
+        ...             "anchors": [
+        ...                 {"id": "T0", "description": "Founding of Kingdom"},
+        ...                 {"id": "T1", "description": "Dragon Wars begin"},
+        ...                 {"id": "T2", "description": "Peace treaty signed"}
+        ...             ]
+        ...         },
+        ...         "entity_registry": {
+        ...             "characters": [
+        ...                 {
+        ...                     "name": "Queen Elara",
+        ...                     "role": "ruler",
+        ...                     "description": "First queen of united kingdom",
+        ...                     "source": "dragon-quest-1"
+        ...                 }
+        ...             ],
+        ...             "places": [
+        ...                 {
+        ...                     "name": "Dragon's Spine Mountains",
+        ...                     "type": "geographical",
+        ...                     "description": "Impassable mountain range",
+        ...                     "source": "dragon-quest-1"
+        ...                 }
+        ...             ]
+        ...         }
+        ...     },
+        ...     metadata={"id": "TRANSFER-001"}
+        ... )
+    """
+
+    type: str = "canon_transfer_package"
+
+
+class WorldGenesisManifest(Artifact):
+    """
+    World Genesis Manifest artifact.
+
+    A World Genesis Manifest documents proactive worldbuilding performed
+    before story development begins. It captures the output of Canon-First
+    workflow where worldbuilding themes are explored systematically to
+    establish a rich, coherent universe before writing begins.
+
+    Purpose:
+        - Enable "Canon-First" project initialization workflow
+        - Document systematic worldbuilding by theme
+        - Establish constraints before Story Spark begins
+        - Track worldbuilding iteration and stabilization
+        - Provide foundation for multiple stories in same universe
+
+    Worldbuilding budgets:
+        - **Minimal** (2-4 hours): Core themes only, light detail
+        - **Standard** (5-10 hours): Balanced coverage, moderate depth
+        - **Epic** (20+ hours): Exhaustive themes, deep lore
+
+    Common worldbuilding themes:
+        - Geography & climate
+        - History & major events
+        - Cultures & societies
+        - Magic/technology systems
+        - Factions & power structures
+        - Economy & resources
+        - Religion & beliefs
+        - Language & communication
+
+    Typical data fields:
+        - header: {manifest_id, project_slug, budget, created_date}
+        - themes: List of worldbuilding themes explored
+        - canon_packs: {theme_name: [canon_pack_ids]}
+        - codex_baseline: Initial player-facing reference entries
+        - style_addendum: Voice, register, tone for this universe
+        - timeline: Chronological anchor points
+        - constraints: {
+            invariants: [immutable rules],
+            mutables: [extensible rules],
+            boundaries: [creative limits]
+          }
+        - entity_registry: Initial characters, places, factions, items
+        - iteration_history: [{phase, artifacts_created, duration}]
+        - stabilization_status: "unstable" | "converging" | "stable"
+
+    Workflow:
+        1. Author provides project concept and theme selection
+        2. System runs Lore Deepening proactively per theme
+        3. Researcher corroborates facts, checks contradictions
+        4. Archivist builds canon packs and codex baseline
+        5. Stylist establishes voice and register guidelines
+        6. Gatekeeper validates for completeness and consistency
+        7. Package merged to Cold storage
+        8. Constraint manifest generated for creative roles
+        9. Ready for Story Spark (plot development begins)
+
+    Integration with Story Spark:
+        - Constraint manifest displayed in sidebar
+        - Plot changes validated against invariants
+        - Entity list auto-populated from registry
+        - Timeline anchors enforce chronology
+        - Canon packs provide reference context
+
+    Example:
+        >>> manifest = WorldGenesisManifest(
+        ...     data={
+        ...         "header": {
+        ...             "manifest_id": "GENESIS-SCIFI-001",
+        ...             "project_slug": "star-colony",
+        ...             "budget": "standard",
+        ...             "created_date": "2025-01-15"
+        ...         },
+        ...         "themes": [
+        ...             "solar-system-geography",
+        ...             "ftl-technology",
+        ...             "colonial-factions",
+        ...             "alien-first-contact"
+        ...         ],
+        ...         "canon_packs": {
+        ...             "solar-system-geography": [
+        ...                 "CANON-SOL-SYSTEM-001",
+        ...                 "CANON-MARS-COLONY-001"
+        ...             ],
+        ...             "ftl-technology": [
+        ...                 "CANON-WARP-DRIVE-001"
+        ...             ]
+        ...         },
+        ...         "constraints": {
+        ...             "invariants": [
+        ...                 "FTL travel requires antimatter fuel",
+        ...                 "Mars colony established 2147 AD"
+        ...             ],
+        ...             "mutables": [
+        ...                 "New colonies can be founded",
+        ...                 "Alien species traits not fully defined"
+        ...             ]
+        ...         },
+        ...         "timeline": {
+        ...             "anchors": [
+        ...                 {"id": "T0", "year": 2147, "event": "Mars Colony Founded"},
+        ...                 {"id": "T1", "year": 2203, "event": "FTL Discovered"}
+        ...             ]
+        ...         },
+        ...         "stabilization_status": "stable"
+        ...     },
+        ...     metadata={"id": "GENESIS-001"}
+        ... )
+    """
+
+    type: str = "world_genesis_manifest"

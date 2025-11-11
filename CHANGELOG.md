@@ -2,6 +2,16 @@
 
 ### Feat
 
+- **canon-workflows**: implement Layer 6/7 canon workflows for shared universe projects
+  - Add Canon Transfer Package and World Genesis Manifest artifact types
+  - Implement entity registry with CRUD operations and deduplication
+  - Implement timeline anchor management with chronological validation
+  - Implement conflict detection algorithm for canon import validation
+  - Implement constraint manifest generator for creative guidance
+  - Add canon.transfer.export, canon.transfer.import, canon.genesis.create protocol intents
+  - Extend Hot/Cold merge with immutability tracking and source attribution
+  - Add canon workflow quality bars (Canon Conflict, Timeline Chronology, Entity Reference)
+  - Add JSON schemas for canon workflow artifacts with comprehensive validation
 - add type stubs for questfoundry package
 
 ### Fix

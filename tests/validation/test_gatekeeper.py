@@ -12,7 +12,7 @@ class TestGatekeeper:
     def test_initialization_default(self):
         """Test Gatekeeper initialization with defaults."""
         gk = Gatekeeper()
-        assert len(gk.bars) == 8
+        assert len(gk.bars) == 11
         assert gk.strict is True
 
     def test_initialization_custom_bars(self):
@@ -51,7 +51,7 @@ class TestGatekeeper:
         assert isinstance(report, GatecheckReport)
         assert report.passed is True
         assert report.merge_safe is True
-        assert len(report.bar_results) == 8
+        assert len(report.bar_results) == 11
 
     def test_run_gatecheck_fail_blockers(self):
         """Test gatecheck fails with blockers."""

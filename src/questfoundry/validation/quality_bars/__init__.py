@@ -1,6 +1,7 @@
 """Quality bar validators for gatekeeper checks."""
 
 from .base import QualityBar, QualityBarResult, QualityIssue
+from .canon import CanonConflictBar, EntityReferenceBar, TimelineChronologyBar
 from .determinism import DeterminismBar
 from .gateways import GatewaysBar
 from .integrity import IntegrityBar
@@ -22,6 +23,9 @@ __all__ = [
     "DeterminismBar",
     "PresentationBar",
     "SpoilerHygieneBar",
+    "CanonConflictBar",
+    "TimelineChronologyBar",
+    "EntityReferenceBar",
 ]
 
 # Registry of all quality bars
@@ -34,6 +38,10 @@ QUALITY_BARS = {
     "determinism": DeterminismBar,
     "presentation": PresentationBar,
     "spoiler_hygiene": SpoilerHygieneBar,
+    # Canon workflow quality bars (Layer 6/7)
+    "canon_conflict": CanonConflictBar,
+    "timeline_chronology": TimelineChronologyBar,
+    "entity_reference": EntityReferenceBar,
 }
 
 
