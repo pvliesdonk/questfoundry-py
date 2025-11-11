@@ -100,7 +100,7 @@ class Gatekeeper:
     """
     Gatekeeper: Runs quality bar validation and generates reports.
 
-    Integrates all 8 quality bars:
+    Integrates all quality bars:
     - Integrity: References resolve, no dead ends
     - Reachability: Keystones reachable
     - Style: Voice/register consistent
@@ -109,6 +109,9 @@ class Gatekeeper:
     - Determinism: Assets reproducible
     - Presentation: No spoilers/internals on player surfaces
     - Spoiler Hygiene: PN boundaries maintained
+    - Canon Conflict: No contradictions in imported canon (Layer 6/7)
+    - Timeline Chronology: Anchors properly ordered (Layer 6/7)
+    - Entity Reference: Entity registry consistency (Layer 6/7)
     """
 
     def __init__(
