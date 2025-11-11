@@ -20,10 +20,60 @@ class Provider(ABC):
     """
     Base class for all QuestFoundry providers.
 
-    Providers enable integration with external services for text generation,
-    image generation, and other AI capabilities.
+    Providers enable integration with external AI services for text generation,
+    image generation, audio synthesis, and other creative AI capabilities.
+    They abstract away API specifics and provide a unified interface for
+    QuestFoundry roles to leverage external AI models.
 
-    Supports optional response caching and rate limiting.
+    Provider types:
+        - Text providers: LLM text generation (OpenAI, Anthropic, Ollama, etc.)
+        - Image providers: Image generation (DALL-E, Stable Diffusion, etc.)
+        - Audio providers: Text-to-speech and audio generation (ElevenLabs, etc.)
+
+    Built-in features:
+        - Response caching: Avoid redundant API calls and reduce costs
+        - Rate limiting: Respect provider API limits and manage concurrency
+        - Cost tracking: Monitor API usage and costs
+        - Retry logic: Handle transient failures automatically
+        - Streaming support: Enable streaming responses where available
+
+    Provider plugin pattern:
+        New providers can be added by:
+        1. Subclassing Provider (or TextProvider, ImageProvider, AudioProvider)
+        2. Implementing required abstract methods
+        3. Registering in the provider registry
+        4. Configuring via project settings
+
+    Configuration:
+        Providers are configured via dictionaries with common keys:
+        - cache_enabled: Enable response caching (default: True)
+        - cache_ttl_seconds: Cache time-to-live in seconds
+        - rate_limit_config: Rate limiting parameters
+        - Provider-specific keys (api_key, base_url, model, etc.)
+
+    Example provider usage:
+        >>> from questfoundry.providers.text.openai import OpenAIProvider
+        >>> config = {
+        ...     "api_key": "sk-...",
+        ...     "model": "gpt-4",
+        ...     "cache_enabled": True
+        ... }
+        >>> provider = OpenAIProvider(config)
+        >>> response = provider.generate("Write a tavern scene")
+        >>> print(response)
+
+    Implementing a custom provider:
+        >>> from questfoundry.providers.base import Provider
+        >>> class MyCustomProvider(Provider):
+        ...     def __init__(self, config):
+        ...         super().__init__(config)
+        ...         self.api_key = config["api_key"]
+        ...
+        ...     def validate_config(self):
+        ...         if not self.api_key:
+        ...             raise ValueError("api_key required")
+        ...
+        ...     # Implement other abstract methods...
     """
 
     cache: Optional[ResponseCache]

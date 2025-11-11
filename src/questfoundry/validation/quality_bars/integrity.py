@@ -29,10 +29,12 @@ class IntegrityBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "integrity"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "References resolve; no unintended dead ends"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:

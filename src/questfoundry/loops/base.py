@@ -132,11 +132,101 @@ class LoopResult:
 
 class Loop(ABC):
     """
-    Base class for all loop implementations.
+    Base class for all QuestFoundry loop implementations.
 
-    Loops are hardcoded Python classes that define workflow structure,
-    not runtime playbook parsing. This reduces context usage while
-    maintaining flexibility through LLM-backed roles.
+    Loops are multi-step workflows that orchestrate role execution for specific
+    creative objectives. Unlike runtime playbook parsing, loops are hardcoded
+    Python classes with explicit step definitions, reducing LLM context usage
+    while maintaining flexibility through LLM-backed role execution.
+
+    Core loop types:
+        - Scene Forge: Manuscript scene development
+        - Hook Harvest: Identify and classify new hooks
+        - Lore Deepening: Expand canon and worldbuilding
+        - Gatecheck: Quality validation before cold promotion
+        - Archive Snapshot: Create cold storage snapshots
+        - Art Touch-Up: Visual asset refinement
+        - Audio Pass: Audio production and cue implementation
+        - Style Tune-Up: Voice and style consistency improvements
+        - Codex Expansion: Player-facing reference expansion
+        - Binding Run: Final assembly and export
+
+    Loop architecture:
+        - Fixed step sequence defined in Python
+        - Each step assigns specific roles (RACI model)
+        - Roles execute with LLM autonomy within step scope
+        - Artifacts flow between steps
+        - Validation gates control progression
+        - Context limited to ~500 lines for efficiency
+
+    Step execution flow:
+        1. Load step definition (assigned roles, inputs, outputs)
+        2. Wake assigned roles with step context
+        3. Roles execute and produce artifacts
+        4. Validate outputs (if validation_required)
+        5. Update loop context and history
+        6. Proceed to next step or terminate
+
+    Benefits of hardcoded loops:
+        - Predictable execution paths
+        - Reduced LLM context requirements
+        - Clear role responsibility boundaries
+        - Type-safe step definitions
+        - Easy testing and debugging
+        - Explicit artifact flow
+        - Compile-time step validation
+
+    Example loop structure:
+        >>> class CustomLoop(Loop):
+        ...     @property
+        ...     def loop_name(self) -> str:
+        ...         return "custom_loop"
+        ...
+        ...     @property
+        ...     def description(self) -> str:
+        ...         return "Custom workflow for specific task"
+        ...
+        ...     def define_steps(self) -> list[LoopStep]:
+        ...         return [
+        ...             LoopStep(
+        ...                 step_id="step_1",
+        ...                 description="Gather requirements",
+        ...                 assigned_roles=["researcher"],
+        ...                 artifacts_input=["hook_card"],
+        ...                 artifacts_output=["research_memo"]
+        ...             ),
+        ...             LoopStep(
+        ...                 step_id="step_2",
+        ...                 description="Create content",
+        ...                 assigned_roles=["writer"],
+        ...                 artifacts_input=["research_memo"],
+        ...                 artifacts_output=["manuscript_section"]
+        ...             )
+        ...         ]
+        ...
+        ...     def execute(self, context: LoopContext) -> LoopResult:
+        ...         # Execute steps sequentially
+        ...         for step in self.steps:
+        ...             result = self.execute_step(step, context)
+        ...             if not result.success:
+        ...                 return LoopResult(
+        ...                     success=False,
+        ...                     loop_id=self.loop_name,
+        ...                     error=result.error
+        ...                 )
+        ...         return LoopResult(success=True, loop_id=self.loop_name)
+
+    Loop execution example:
+        >>> from questfoundry.loops.scene_forge import SceneForgeLoop
+        >>> loop = SceneForgeLoop()
+        >>> context = LoopContext(
+        ...     loop_id="scene_forge",
+        ...     project_id="my_project",
+        ...     workspace=workspace,
+        ...     role_instances={"writer": writer, "archivist": archivist}
+        ... )
+        >>> result = loop.execute(context)
+        >>> print(f"Created {len(result.artifacts_created)} artifacts")
     """
 
     # Class-level metadata (defined by subclasses)

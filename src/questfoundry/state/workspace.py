@@ -13,27 +13,82 @@ class WorkspaceManager:
     """
     Unified manager for QuestFoundry workspace.
 
-    Manages both hot workspace (file-based, .questfoundry/hot/) and
-    cold storage (SQLite, .qfproj file) with methods to promote artifacts
-    between hot and cold storage.
+    WorkspaceManager orchestrates the hot/cold storage workflow, which is
+    central to QuestFoundry's content development process:
+
+    - **Hot storage**: Work-in-progress artifacts stored as individual JSON files
+      in a file-based hierarchy. Easy to edit, version control, and collaborate on.
+
+    - **Cold storage**: Ship-ready artifacts validated and stored in a SQLite
+      database. Optimized for querying, export, and distribution. Immutable once
+      promoted (requires versioning to update).
+
+    Hot/Cold Workflow:
+        1. Create artifacts in hot workspace (FileStore)
+        2. Iterate and edit using standard text editors
+        3. Validate with Gatekeeper quality bars
+        4. Promote passing artifacts to cold storage (SQLiteStore)
+        5. Export cold artifacts to player-safe views
+        6. Delete from hot after successful promotion (optional)
+
+    Key benefits:
+        - Hot: Human-readable, version-controllable, easy iteration
+        - Cold: Validated, queryable, export-ready, immutable
+        - Separation ensures only quality-checked content ships
+        - Enables team collaboration via Git on hot files
+        - Enables efficient querying/export of cold content
 
     Directory structure:
         project_dir/
-            .questfoundry/
-                hot/
-                    hooks/
-                    canon/
-                    tus/
-                    snapshots/
-                metadata.json
-            project.qfproj
+            .questfoundry/          # Hot workspace root
+                hot/                # Hot artifact storage
+                    hooks/          # Hook cards by ID
+                    canon/          # Canon packs
+                    tus/            # TU briefs
+                    snapshots/      # Workspace snapshots
+                    manuscripts/    # Manuscript sections
+                metadata.json       # Project metadata (hot)
+            project.qfproj          # Cold storage database (SQLite)
 
-    Example:
-        >>> ws = WorkspaceManager("/path/to/project")
-        >>> ws.init_workspace(name="My Project")
-        >>> artifact = Artifact(...)
-        >>> ws.save_hot_artifact(artifact)
-        >>> ws.promote_to_cold("HOOK-001")
+    Thread safety:
+        WorkspaceManager is NOT thread-safe. For concurrent access, use
+        separate instances per thread/process or implement external locking.
+
+    Examples:
+        Initialize a new project workspace:
+            >>> ws = WorkspaceManager("/path/to/my-quest")
+            >>> ws.init_workspace(
+            ...     name="Dragon's Quest",
+            ...     description="Interactive fantasy adventure",
+            ...     version="0.1.0",
+            ...     author="Jane Writer"
+            ... )
+
+        Create and save artifacts to hot storage:
+            >>> hook = Artifact(
+            ...     type="hook_card",
+            ...     data={"header": {"short_name": "Dragon Encounter"}},
+            ...     metadata={"id": "HOOK-001"}
+            ... )
+            >>> ws.save_hot_artifact(hook)
+
+        List hot artifacts by type:
+            >>> hooks = ws.list_hot_artifacts(artifact_type="hook_card")
+            >>> print(f"Found {len(hooks)} hooks")
+
+        Promote artifact from hot to cold:
+            >>> success = ws.promote_to_cold("HOOK-001", delete_hot=True)
+            >>> if success:
+            ...     print("Artifact promoted successfully")
+
+        Query cold storage:
+            >>> cold_hooks = ws.list_cold_artifacts(artifact_type="hook_card")
+            >>> hook = ws.get_cold_artifact("HOOK-001")
+
+        Create snapshot of current hot workspace:
+            >>> snapshot_id = ws.snapshot_hot("Before major rewrite")
+            >>> # Work on changes...
+            >>> # Restore if needed: ws.restore_snapshot(snapshot_id)
     """
 
     def __init__(self, project_dir: str | Path):

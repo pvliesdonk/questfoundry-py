@@ -36,10 +36,12 @@ class SpoilerHygieneBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "spoiler_hygiene"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "Spoilers properly masked; PN boundaries maintained"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:

@@ -27,10 +27,12 @@ class NonlinearityBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "nonlinearity"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "Hubs/loops/gateways are deliberate and meaningful"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:

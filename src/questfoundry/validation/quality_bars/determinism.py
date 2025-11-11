@@ -25,10 +25,12 @@ class DeterminismBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "determinism"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "Promised assets are reproducible from recorded parameters"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:
