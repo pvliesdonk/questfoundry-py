@@ -1,7 +1,7 @@
 """Type stubs for logging_config module."""
 
 import logging
-from typing import Any, Literal
+from typing import Literal
 
 TRACE: int
 
