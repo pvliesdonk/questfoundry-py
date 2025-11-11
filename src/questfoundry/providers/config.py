@@ -1,11 +1,14 @@
 """Configuration management for QuestFoundry providers"""
 
+import logging
 import os
 import re
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 class ProviderConfig:
@@ -39,16 +42,22 @@ class ProviderConfig:
         """
         if config_path is None:
             config_path = Path.cwd() / ".questfoundry" / "config.yml"
+            logger.debug("No config path specified, using default: %s", config_path)
         else:
             config_path = Path(config_path)
 
+        logger.debug("Initializing ProviderConfig from path: %s", config_path)
         self.config_path = config_path
         self._config: dict[str, Any] = {}
 
         if config_path.exists():
+            logger.trace("Config file exists, loading configuration")
             self.load()
+            logger.info("Configuration loaded successfully from %s", config_path)
         else:
+            logger.debug("Config file not found at %s, using default configuration", config_path)
             self._config = self._get_default_config()
+            logger.trace("Default configuration initialized")
 
     def load(self) -> None:
         """
@@ -58,15 +67,25 @@ class ProviderConfig:
             FileNotFoundError: If config file doesn't exist
             ValueError: If config file is invalid YAML
         """
+        logger.debug("Loading configuration from file: %s", self.config_path)
+
         if not self.config_path.exists():
+            logger.error("Config file not found: %s", self.config_path)
             raise FileNotFoundError(f"Config file not found: {self.config_path}")
 
         try:
+            logger.trace("Reading and parsing YAML configuration file")
             with open(self.config_path) as f:
                 raw_config = yaml.safe_load(f)
+                logger.trace("Substituting environment variables in configuration")
                 self._config = self._substitute_env_vars(raw_config or {})
+            logger.info("Configuration loaded and environment variables substituted successfully")
         except yaml.YAMLError as e:
+            logger.error("Invalid YAML in config file: %s", str(e), exc_info=True)
             raise ValueError(f"Invalid YAML in config file: {e}") from e
+        except Exception as e:
+            logger.error("Error loading configuration: %s", str(e), exc_info=True)
+            raise
 
     def save(self) -> None:
         """
@@ -74,10 +93,18 @@ class ProviderConfig:
 
         Creates parent directories if they don't exist.
         """
+        logger.debug("Saving configuration to file: %s", self.config_path)
+        logger.trace("Creating parent directories if needed")
         self.config_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(self.config_path, "w") as f:
-            yaml.safe_dump(self._config, f, default_flow_style=False)
+        try:
+            logger.trace("Writing YAML configuration to file")
+            with open(self.config_path, "w") as f:
+                yaml.safe_dump(self._config, f, default_flow_style=False)
+            logger.info("Configuration saved successfully to %s", self.config_path)
+        except Exception as e:
+            logger.error("Error saving configuration: %s", str(e), exc_info=True)
+            raise
 
     def get_provider_config(
         self, provider_type: str, provider_name: str
@@ -337,12 +364,15 @@ class ProviderConfig:
 
         def replace_match(match: re.Match[str]) -> str:
             env_var = match.group(1)
+            logger.trace("Substituting environment variable: %s", env_var)
             env_value = os.environ.get(env_var)
             if env_value is None:
+                logger.error("Required environment variable not set: %s", env_var)
                 raise ValueError(
                     f"Environment variable '{env_var}' is not set. "
                     f"Please set it before loading configuration."
                 )
+            logger.trace("Environment variable %s substituted successfully", env_var)
             return env_value
 
         return self.ENV_VAR_PATTERN.sub(replace_match, value)

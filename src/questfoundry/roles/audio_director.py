@@ -1,8 +1,12 @@
 """Audio Director role implementation."""
 
+import logging
+
 from typing import Any
 
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class AudioDirector(Role):

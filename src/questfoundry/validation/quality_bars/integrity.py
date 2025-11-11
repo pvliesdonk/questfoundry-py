@@ -9,10 +9,13 @@ Validates that:
 - Schema conformance
 """
 
+import logging
 from typing import Any
 
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class IntegrityBar(QualityBar):
@@ -47,6 +50,7 @@ class IntegrityBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating integrity in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Build index of all artifact IDs
@@ -61,6 +65,8 @@ class IntegrityBar(QualityBar):
             # Track section IDs for manuscript sections
             if artifact.type == "manuscript_section" and artifact_id:
                 section_ids.add(artifact_id)
+
+        logger.trace("Built artifact index: %d artifacts, %d sections", len(artifact_ids), len(section_ids))
 
         # Validate each artifact
         for artifact in artifacts:
@@ -79,6 +85,7 @@ class IntegrityBar(QualityBar):
             # Check for dead ends
             issues.extend(self._check_dead_ends(artifact))
 
+        logger.debug("Integrity validation complete: %d issues found", len(issues))
         return self._create_result(
             issues,
             artifacts_checked=len(artifacts),

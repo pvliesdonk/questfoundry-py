@@ -8,10 +8,13 @@ Validates that:
 - No unrealistic dependency chains
 """
 
+import logging
 from collections import defaultdict, deque
 
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class ReachabilityBar(QualityBar):
@@ -45,6 +48,7 @@ class ReachabilityBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating reachability in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Build graph of manuscript sections
@@ -54,7 +58,10 @@ class ReachabilityBar(QualityBar):
 
         if not sections:
             # No sections to validate
+            logger.trace("No manuscript sections found to validate")
             return self._create_result([], sections_checked=0)
+
+        logger.trace("Found %d manuscript sections for reachability validation", len(sections))
 
         # Build section graph (id -> targets)
         graph: dict[str, list[str]] = defaultdict(list)
@@ -80,9 +87,12 @@ class ReachabilityBar(QualityBar):
                     if target:
                         graph[section_id].append(target)
 
+        logger.debug("Found %d keystones", len(keystones))
+
         # Find start section
         start_id = self._find_start_section(sections)
         if not start_id:
+            logger.error("No start section found in manuscript")
             issues.append(
                 QualityIssue(
                     severity="blocker",
@@ -95,10 +105,12 @@ class ReachabilityBar(QualityBar):
 
         # Check reachability from start
         reachable = self._compute_reachable(graph, start_id)
+        logger.debug("Computed reachability: %d sections reachable from start", len(reachable))
 
         # Check keystones are reachable
         for keystone_id in keystones:
             if keystone_id not in reachable:
+                logger.warning("Keystone section '%s' not reachable from start", keystone_id)
                 issues.append(
                     QualityIssue(
                         severity="blocker",
@@ -134,6 +146,7 @@ class ReachabilityBar(QualityBar):
         # Check gateway reachability
         issues.extend(self._check_gateway_reachability(sections, reachable))
 
+        logger.debug("Reachability validation complete: %d issues found", len(issues))
         return self._create_result(
             issues,
             sections_checked=len(sections),

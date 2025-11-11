@@ -1,5 +1,6 @@
 """Orchestrator for QuestFoundry loop execution."""
 
+import logging
 import re
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,8 @@ from .providers.registry import ProviderRegistry
 from .roles.base import Role, RoleContext
 from .roles.registry import RoleRegistry
 from .state.workspace import WorkspaceManager
+
+logger = logging.getLogger(__name__)
 
 
 class Orchestrator:
@@ -47,8 +50,11 @@ class Orchestrator:
             loop_registry: Loop registry (creates default if None)
             spec_path: Path to spec directory
         """
+        logger.debug("Initializing Orchestrator")
         self.workspace = workspace
         self.spec_path = spec_path or Path.cwd() / "spec"
+
+        logger.trace("Orchestrator spec_path=%s", self.spec_path)
 
         # Initialize registries
         self.provider_registry = provider_registry or ProviderRegistry(
@@ -59,10 +65,16 @@ class Orchestrator:
         )
         self.loop_registry = loop_registry or LoopRegistry(spec_path=self.spec_path)
 
+        logger.trace("Registries initialized - roles=%d, loops=%d",
+                     len(self.role_registry.list_roles()),
+                     len(self.loop_registry.list_loops()))
+
         # Initialize showrunner and provider (type annotations for mypy)
         self.showrunner: Role | None = None
         self.provider: TextProvider | None = None
         self.provider_name: str | None = None
+
+        logger.info("Orchestrator initialized successfully")
 
     def initialize(
         self,
@@ -76,16 +88,21 @@ class Orchestrator:
             provider: Text provider to use
             provider_name: Name of provider in registry
         """
+        logger.debug("Initializing orchestrator with provider_name=%s", provider_name)
+
         # Save provider for later use
         self.provider = provider
         self.provider_name = provider_name
 
+        logger.trace("Getting showrunner role instance")
         # Get showrunner instance
         self.showrunner = self.role_registry.get_role(
             "showrunner",
             provider=provider,
             provider_name=provider_name,
         )
+
+        logger.info("Orchestrator initialized with provider '%s'", provider_name)
 
     def select_loop(
         self,
@@ -107,11 +124,17 @@ class Orchestrator:
         Raises:
             RuntimeError: If showrunner not initialized or selection fails
         """
+        logger.info("Selecting loop for goal: %s", goal)
+
         if self.showrunner is None:
+            logger.error("Orchestrator not initialized - showrunner is None")
             raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
 
         # Get available loops
         loops = self.loop_registry.list_loops()
+        logger.debug("Retrieved %d available loops", len(loops))
+        logger.trace("Available loops: %s", [m.loop_id for m in loops])
+
         loop_data = [
             {
                 "loop_id": metadata.loop_id,
@@ -125,6 +148,9 @@ class Orchestrator:
 
         # Create context for showrunner
         project_info = self.workspace.get_project_info()
+        logger.trace("Creating RoleContext for showrunner task with %d artifacts",
+                     len(artifacts or []))
+
         context = RoleContext(
             task="select_loop",
             artifacts=artifacts or [],
@@ -137,15 +163,19 @@ class Orchestrator:
         )
 
         # Call showrunner to select loop
+        logger.trace("Calling showrunner.execute_task()")
         result = self.showrunner.execute_task(context)
 
         if not result.success:
+            logger.error("Loop selection failed: %s", result.error)
             raise RuntimeError(f"Loop selection failed: {result.error}")
 
         # Parse loop_id from response
         # For now, extract from output (in production, would parse structured response)
+        logger.trace("Extracting loop ID from showrunner output")
         loop_id = self._extract_loop_id(result.output)
 
+        logger.info("Selected loop '%s' for goal '%s'", loop_id, goal)
         return loop_id
 
     def execute_loop(
@@ -171,26 +201,40 @@ class Orchestrator:
             KeyError: If loop not found
             RuntimeError: If required roles not available
         """
+        logger.info("Executing loop '%s' for project '%s'", loop_id, project_id)
+
         # Get loop metadata (raises KeyError if not found)
+        logger.debug("Retrieving loop metadata for loop '%s'", loop_id)
         metadata = self.loop_registry.get_loop_metadata(loop_id)
+        logger.trace("Loop metadata retrieved - primary_roles=%d, consulted_roles=%d",
+                     len(metadata.primary_roles), len(metadata.consulted_roles))
 
         # Instantiate required roles
         role_instances = {}
         required_roles = set(metadata.primary_roles + metadata.consulted_roles)
+        logger.debug("Instantiating %d required roles", len(required_roles))
 
         for role_name in required_roles:
             try:
+                logger.trace("Getting role instance for '%s'", role_name)
                 role_instances[role_name] = self.role_registry.get_role(
                     role_name,
                     provider=self.provider,
                     provider_name=self.provider_name,
                 )
+                logger.trace("Successfully instantiated role '%s'", role_name)
             except KeyError:
                 # Role not implemented yet - skip it
+                logger.warning("Role '%s' not implemented, skipping", role_name)
                 pass
+
+        logger.debug("Successfully instantiated %d roles", len(role_instances))
 
         # Create loop context
         project_info = self.workspace.get_project_info()
+        logger.trace("Creating LoopContext with %d artifacts and %d config items",
+                     len(artifacts or []), len(config or {}))
+
         loop_context = LoopContext(
             loop_id=loop_id,
             project_id=project_id,
@@ -202,11 +246,19 @@ class Orchestrator:
         )
 
         # Get loop class and instantiate
+        logger.trace("Getting loop class for loop '%s'", loop_id)
         loop_class = self._get_loop_class(loop_id)
         loop_instance = loop_class(loop_context)
+        logger.debug("Loop instance created, starting execution")
 
         # Execute loop
+        logger.trace("Calling loop_instance.execute()")
         result = loop_instance.execute()
+
+        if result.success:
+            logger.info("Loop '%s' executed successfully", loop_id)
+        else:
+            logger.warning("Loop '%s' execution failed: %s", loop_id, result.error)
 
         return result
 
@@ -231,16 +283,27 @@ class Orchestrator:
         Returns:
             Loop execution result
         """
+        logger.info("Executing goal workflow for project '%s': %s", project_id, goal)
+        logger.debug("Goal execution - artifacts=%d, config=%d",
+                     len(artifacts or []), len(config or {}))
+
         # Select appropriate loop
+        logger.trace("Calling select_loop()")
         loop_id = self.select_loop(goal, project_state, artifacts)
 
         # Execute the selected loop
+        logger.trace("Calling execute_loop() with selected loop_id='%s'", loop_id)
         result = self.execute_loop(
             loop_id=loop_id,
             project_id=project_id,
             artifacts=artifacts,
             config=config,
         )
+
+        if result.success:
+            logger.info("Goal workflow completed successfully for project '%s'", project_id)
+        else:
+            logger.warning("Goal workflow failed for project '%s': %s", project_id, result.error)
 
         return result
 
@@ -260,6 +323,8 @@ class Orchestrator:
         Raises:
             RuntimeError: If loop ID cannot be extracted
         """
+        logger.trace("Attempting to extract loop ID from showrunner output (length=%d)", len(output))
+
         # Look for patterns like "Selected Loop: story_spark"
         # or "**Selected Loop**: story_spark"
         patterns = [
@@ -269,22 +334,28 @@ class Orchestrator:
             r"loop_id:?\s*[`'\"]*([a-z_]+)[`'\"]*",
         ]
 
-        for pattern in patterns:
+        for i, pattern in enumerate(patterns):
             match = re.search(pattern, output, re.IGNORECASE)
             if match:
                 loop_id = match.group(1).lower()
+                logger.trace("Pattern %d matched, extracted candidate loop_id='%s'", i, loop_id)
                 # Verify it's a valid loop
                 try:
                     self.loop_registry.get_loop_metadata(loop_id)
+                    logger.debug("Extracted loop ID '%s' from pattern %d", loop_id, i)
                     return loop_id
                 except KeyError:
+                    logger.trace("Loop '%s' not found in registry, trying next pattern", loop_id)
                     continue
 
         # Fallback: check if any loop_id appears in the output
+        logger.trace("No pattern matches found, trying fallback lookup")
         for loop_metadata in self.loop_registry.list_loops():
             if loop_metadata.loop_id in output.lower():
+                logger.debug("Found loop ID '%s' using fallback lookup", loop_metadata.loop_id)
                 return loop_metadata.loop_id
 
+        logger.error("Could not extract loop ID from showrunner output")
         raise RuntimeError(
             f"Could not extract loop ID from showrunner output:\n{output}"
         )
@@ -302,6 +373,8 @@ class Orchestrator:
         Raises:
             KeyError: If loop not implemented
         """
+        logger.debug("Getting loop class for loop_id='%s'", loop_id)
+
         # Map loop IDs to loop classes
         # For now, only story_spark is implemented
         loop_classes = {
@@ -309,12 +382,17 @@ class Orchestrator:
         }
 
         if loop_id not in loop_classes:
+            logger.error("Loop '%s' not yet implemented. Available: %s",
+                         loop_id, list(loop_classes.keys()))
             raise KeyError(
                 f"Loop '{loop_id}' not yet implemented. "
                 f"Available loops: {list(loop_classes.keys())}"
             )
 
-        return loop_classes[loop_id]()
+        logger.trace("Calling importer for loop '%s'", loop_id)
+        loop_class = loop_classes[loop_id]()
+        logger.debug("Retrieved loop class %s for loop '%s'", loop_class.__name__, loop_id)
+        return loop_class
 
     def _import_story_spark_loop(self) -> type[Loop]:
         """Import and return StorySparkLoop class."""

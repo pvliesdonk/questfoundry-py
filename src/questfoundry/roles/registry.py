@@ -1,11 +1,14 @@
 """Registry for QuestFoundry roles."""
 
+import logging
 from pathlib import Path
 from typing import Any
 
 from ..providers.base import TextProvider
 from ..providers.registry import ProviderRegistry
 from .base import Role
+
+logger = logging.getLogger(__name__)
 
 
 class RoleRegistry:

@@ -1,5 +1,6 @@
 """Base classes for QuestFoundry roles."""
 
+import logging
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -10,6 +11,8 @@ from ..models.artifact import Artifact
 from ..providers.audio import AudioProvider
 from ..providers.base import ImageProvider, TextProvider
 from .human_callback import batch_mode_callback
+
+logger = logging.getLogger(__name__)
 
 # Avoid circular imports
 if TYPE_CHECKING:
@@ -210,6 +213,12 @@ class Role(ABC):
                 role_config=role_config
             )
         """
+        logger.debug("Initializing %s role", self.__class__.__name__)
+        logger.trace("Provider: %s, Has image provider: %s, Has audio provider: %s",
+                     provider.__class__.__name__,
+                     image_provider is not None,
+                     audio_provider is not None)
+
         self.provider = provider
         self.config = config or {}
         self.role_config = role_config or {}
@@ -227,7 +236,9 @@ class Role(ABC):
                 spec_path = Path(__file__).parent.parent.parent.parent / "spec"
 
         self.spec_path = spec_path
+        logger.trace("Spec path set to: %s", self.spec_path)
         self._prompt_cache: dict[str, str] = {}
+        logger.info("Role %s initialized successfully", self.__class__.__name__)
 
     @property
     def has_image_provider(self) -> bool:
@@ -265,15 +276,19 @@ class Role(ABC):
         Raises:
             FileNotFoundError: If brief file doesn't exist
         """
+        logger.trace("Loading brief for role: %s", self.role_name)
         brief_path = self.spec_path / "01-roles" / "briefs" / f"{self.role_name}.md"
 
         if not brief_path.exists():
+            logger.error("Role brief not found at: %s", brief_path)
             raise FileNotFoundError(
                 f"Role brief not found: {brief_path}\n"
                 f"Expected spec path: {self.spec_path}"
             )
 
-        return brief_path.read_text(encoding="utf-8")
+        brief_content = brief_path.read_text(encoding="utf-8")
+        logger.debug("Loaded brief for role %s, size: %d bytes", self.role_name, len(brief_content))
+        return brief_content
 
     def extract_section(self, content: str, section_name: str) -> str:
         """
@@ -494,15 +509,26 @@ class Role(ABC):
         Returns:
             LLM response text
         """
+        logger.debug("Calling LLM for role %s", self.__class__.__name__)
+
         # Combine system and user prompts
         # Most providers expect this format
         full_prompt = f"{system_prompt}\n\n{user_prompt}"
 
-        return self.provider.generate_text(
+        effective_max_tokens = max_tokens or self.config.get("max_tokens", 2000)
+        effective_temperature = temperature or self.config.get("temperature", 0.7)
+
+        logger.trace("LLM call parameters - max_tokens: %d, temperature: %.2f, prompt_length: %d",
+                     effective_max_tokens, effective_temperature, len(full_prompt))
+
+        response = self.provider.generate_text(
             prompt=full_prompt,
-            max_tokens=max_tokens or self.config.get("max_tokens", 2000),
-            temperature=temperature or self.config.get("temperature", 0.7),
+            max_tokens=effective_max_tokens,
+            temperature=effective_temperature,
         )
+
+        logger.debug("LLM call completed, response length: %d characters", len(response))
+        return response
 
     def _parse_json_from_response(self, response: str) -> dict[str, Any]:
         """
@@ -562,7 +588,12 @@ class Role(ABC):
             ...     suggestions=["dark", "lighthearted", "neutral"]
             ... )
         """
+        logger.info("Asking human: %s", question)
+        logger.trace("Number of suggestions: %d", len(suggestions or []))
+
         callback = self.human_callback or batch_mode_callback
+        is_interactive = self.human_callback is not None
+        logger.debug("Using %s mode for human callback", "interactive" if is_interactive else "batch")
 
         # Build callback context
         callback_context: dict[str, Any] = {
@@ -573,7 +604,9 @@ class Role(ABC):
             "role": self.role_name,
         }
 
-        return callback(question, callback_context)
+        response = callback(question, callback_context)
+        logger.debug("Human response received: %s", response)
+        return response
 
     def ask_yes_no(
         self,
@@ -596,6 +629,7 @@ class Role(ABC):
             >>> if role.ask_yes_no("Generate images for this scene?"):
             ...     generate_images()
         """
+        logger.trace("Asking yes/no question: %s (default: %s)", question, default)
         response = self.ask_human(
             question,
             context=context,
@@ -606,11 +640,14 @@ class Role(ABC):
         response_lower = response.lower().strip()
 
         if response_lower in ["yes", "y", "true", "1"]:
+            logger.debug("Yes/no question answered: true")
             return True
         elif response_lower in ["no", "n", "false", "0"]:
+            logger.debug("Yes/no question answered: false")
             return False
         else:
             # If unclear, use default
+            logger.debug("Unclear yes/no response '%s', using default: %s", response, default)
             return default
 
     def ask_choice(
@@ -638,6 +675,7 @@ class Role(ABC):
             ...     ["dark", "lighthearted", "neutral"]
             ... )
         """
+        logger.trace("Asking choice question: %s with %d options", question, len(choices))
         response = self.ask_human(
             question,
             context=context,
@@ -646,21 +684,30 @@ class Role(ABC):
 
         # If response matches a choice, return it
         if response in choices:
+            logger.debug("Choice selected: %s", response)
             return response
 
         # Try to parse as number (1-indexed)
         try:
             index = int(response) - 1
             if 0 <= index < len(choices):
-                return choices[index]
+                selected = choices[index]
+                logger.debug("Choice selected by index: %d -> %s", index + 1, selected)
+                return selected
         except ValueError:
             # If input is not a valid integer, fall back to default below
+            logger.trace("Could not parse choice as integer: %s", response)
             pass
 
         # Fall back to default with bounds checking
         if 0 <= default < len(choices):
-            return choices[default]
-        return choices[0] if choices else ""
+            selected = choices[default]
+            logger.debug("Using default choice: %d -> %s", default, selected)
+            return selected
+
+        fallback = choices[0] if choices else ""
+        logger.warning("No valid choice, using fallback: %s", fallback)
+        return fallback
 
     def __repr__(self) -> str:
         """String representation of the role."""

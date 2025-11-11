@@ -1,8 +1,11 @@
 """Lore Weaver role implementation."""
 
+import logging
 from typing import Any
 
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class LoreWeaver(Role):
@@ -51,18 +54,26 @@ class LoreWeaver(Role):
             Result with canon entries or validation results
         """
         task = context.task.lower()
+        logger.info("LoreWeaver executing task: %s", task)
+        logger.trace("Number of artifacts provided: %d", len(context.artifacts))
 
         if task == "expand_canon":
+            logger.debug("Expanding canon from hooks")
             return self._expand_canon(context)
         elif task == "resolve_contradiction":
+            logger.debug("Resolving canon contradiction")
             return self._resolve_contradiction(context)
         elif task == "create_timeline":
+            logger.debug("Creating temporal timeline")
             return self._create_timeline(context)
         elif task == "generate_player_summary":
+            logger.debug("Generating player-safe summary")
             return self._generate_player_summary(context)
         elif task == "check_canon_consistency":
+            logger.debug("Checking canon consistency")
             return self._check_canon_consistency(context)
         else:
+            logger.warning("Unknown LoreWeaver task: %s", task)
             return RoleResult(
                 success=False,
                 output="",

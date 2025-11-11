@@ -1,11 +1,14 @@
 """Protocol envelope Pydantic models"""
 
+import logging
 from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from .types import HotCold, RoleName, SpoilerPolicy
+
+logger = logging.getLogger(__name__)
 
 
 class Protocol(BaseModel):
@@ -340,6 +343,8 @@ class EnvelopeBuilder:
 
     def build(self) -> Envelope:
         """Build the envelope (validates all required fields are set)"""
+        logger.trace("Building envelope with EnvelopeBuilder")
+
         if not all(
             [
                 self._id,
@@ -352,6 +357,7 @@ class EnvelopeBuilder:
                 self._payload,
             ]
         ):
+            logger.error("Cannot build envelope: missing required fields")
             raise ValueError(
                 "Missing required fields. Set all required fields before building."
             )
@@ -366,7 +372,8 @@ class EnvelopeBuilder:
         assert self._safety is not None
         assert self._payload is not None
 
-        return Envelope(
+        logger.trace("All required fields validated, constructing Envelope instance")
+        envelope = Envelope(
             protocol=self._protocol,
             id=self._id,
             time=self._time,
@@ -380,3 +387,5 @@ class EnvelopeBuilder:
             payload=self._payload,
             refs=self._refs,
         )
+        logger.trace("Envelope built successfully: id=%s", self._id)
+        return envelope

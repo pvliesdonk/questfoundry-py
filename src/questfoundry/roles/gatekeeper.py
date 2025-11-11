@@ -1,8 +1,11 @@
 """Gatekeeper role implementation."""
 
 import json
+import logging
 
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class Gatekeeper(Role):
@@ -54,33 +57,47 @@ class Gatekeeper(Role):
             Result with validation report
         """
         task = context.task.lower()
+        logger.info("Gatekeeper executing task: %s", task)
+        logger.trace("Number of artifacts to validate: %d", len(context.artifacts))
 
         if task == "pre_gate":
+            logger.debug("Performing pre-gate check")
             return self._pre_gate(context)
         elif task == "gate_check":
+            logger.debug("Performing full gate check")
             return self._gate_check(context)
         elif task == "validate_bar":
+            logger.debug("Validating specific quality bar")
             return self._validate_bar(context)
         elif task == "export_check":
+            logger.debug("Checking export formatting")
             return self._export_check(context)
         # New tasks for gatecheck loop
         elif task == "evaluate_quality_bars":
+            logger.debug("Evaluating quality bars")
             return self._gate_check(context)
         elif task == "collect_findings":
+            logger.debug("Collecting quality findings")
             return self._gate_check(context)
         elif task == "triage_blockers":
+            logger.debug("Triaging blockers by severity")
             return self._gate_check(context)
         elif task == "create_gatecheck_report":
+            logger.debug("Creating gatecheck report")
             return self._gate_check(context)
         # New tasks for post_mortem loop
         elif task == "final_validation":
+            logger.debug("Performing final validation")
             return self._gate_check(context)
         elif task == "create_post_mortem_report":
+            logger.debug("Creating post-mortem report")
             return self._gate_check(context)
         # New tasks for archive_snapshot loop
         elif task == "validate_snapshot":
+            logger.debug("Validating snapshot")
             return self._gate_check(context)
         else:
+            logger.warning("Unknown Gatekeeper task: %s", task)
             return RoleResult(
                 success=False,
                 output="",
@@ -89,6 +106,7 @@ class Gatekeeper(Role):
 
     def _pre_gate(self, context: RoleContext) -> RoleResult:
         """Quick pre-gate check for obvious issues."""
+        logger.debug("Running pre-gate check")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Pre-Gate Check
@@ -119,19 +137,23 @@ Format as JSON:
 
         response = ""
         try:
+            logger.trace("Calling LLM for pre-gate check")
             response = self._call_llm(
                 system_prompt, user_prompt, max_tokens=1500
             )
 
             # Parse JSON from response (handles markdown code blocks)
             data = self._parse_json_from_response(response)
+            status = data.get("status", "unknown")
+            num_blockers = len(data.get("blockers", []))
+            logger.info("Pre-gate check completed with status: %s, blockers: %d", status, num_blockers)
 
             return RoleResult(
                 success=True,
                 output=response,
                 metadata={
                     "check_type": "pre_gate",
-                    "status": data.get("status", "unknown"),
+                    "status": status,
                     "blockers": data.get("blockers", []),
                     "quick_wins": data.get("quick_wins", []),
                     "review_needed": data.get("review_needed", []),
@@ -139,12 +161,14 @@ Format as JSON:
             )
 
         except json.JSONDecodeError as e:
+            logger.error("Failed to parse JSON in pre-gate check: %s", e)
             return RoleResult(
                 success=False,
                 output=response,
                 error=f"Failed to parse JSON response: {e}",
             )
         except Exception as e:
+            logger.error("Error in pre-gate check: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -153,6 +177,8 @@ Format as JSON:
 
     def _gate_check(self, context: RoleContext) -> RoleResult:
         """Full gate check against all quality bars."""
+        logger.debug("Running full gate check")
+
         system_prompt = self.build_system_prompt(context)
 
         # Get which bars to check (default: all 8)
@@ -169,6 +195,7 @@ Format as JSON:
                 "spoiler_hygiene",
             ],
         )
+        logger.trace("Checking %d quality bars: %s", len(bars), ', '.join(bars))
 
         user_prompt = f"""# Task: Full Gate Check
 
@@ -209,31 +236,38 @@ Format as JSON:
 
         response = ""
         try:
+            logger.trace("Calling LLM for gate check")
             response = self._call_llm(
                 system_prompt, user_prompt, max_tokens=3000
             )
 
             # Parse JSON from response (handles markdown code blocks)
             data = self._parse_json_from_response(response)
+            overall_status = data.get("overall_status", "unknown")
+            merge_safe = data.get("merge_safe", False)
+            logger.info("Gate check completed - overall status: %s, merge safe: %s",
+                       overall_status, merge_safe)
 
             return RoleResult(
                 success=True,
                 output=response,
                 metadata={
                     "check_type": "gate_check",
-                    "overall_status": data.get("overall_status", "unknown"),
-                    "merge_safe": data.get("merge_safe", False),
+                    "overall_status": overall_status,
+                    "merge_safe": merge_safe,
                     "bars": data.get("bars", {}),
                 },
             )
 
         except json.JSONDecodeError as e:
+            logger.error("Failed to parse JSON in gate check: %s", e)
             return RoleResult(
                 success=False,
                 output=response,
                 error=f"Failed to parse JSON response: {e}",
             )
         except Exception as e:
+            logger.error("Error in gate check: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -244,12 +278,14 @@ Format as JSON:
         """Validate a specific quality bar."""
         bar_name = context.additional_context.get("bar_name")
         if not bar_name:
+            logger.warning("bar_name not provided in additional_context for validate_bar")
             return RoleResult(
                 success=False,
                 output="",
                 error="bar_name required in additional_context",
             )
 
+        logger.debug("Validating quality bar: %s", bar_name)
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Validate Quality Bar - {bar_name}
@@ -267,9 +303,11 @@ Focus deeply on this one bar; ignore other quality aspects.
 """
 
         try:
+            logger.trace("Calling LLM to validate bar: %s", bar_name)
             response = self._call_llm(
                 system_prompt, user_prompt, max_tokens=2000
             )
+            logger.info("Successfully validated quality bar: %s", bar_name)
 
             return RoleResult(
                 success=True,
@@ -281,6 +319,7 @@ Focus deeply on this one bar; ignore other quality aspects.
             )
 
         except Exception as e:
+            logger.error("Error validating bar %s: %s", bar_name, e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -289,6 +328,7 @@ Focus deeply on this one bar; ignore other quality aspects.
 
     def _export_check(self, context: RoleContext) -> RoleResult:
         """Check export/view formatting."""
+        logger.debug("Checking export/view formatting")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Export/View Check
@@ -307,9 +347,11 @@ Provide specific issues and fixes.
 """
 
         try:
+            logger.trace("Calling LLM for export check")
             response = self._call_llm(
                 system_prompt, user_prompt, max_tokens=1500
             )
+            logger.info("Export check completed successfully")
 
             return RoleResult(
                 success=True,
@@ -318,6 +360,7 @@ Provide specific issues and fixes.
             )
 
         except Exception as e:
+            logger.error("Error in export check: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",

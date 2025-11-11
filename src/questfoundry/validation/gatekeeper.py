@@ -5,6 +5,7 @@ Runs all quality bar validators and generates gatecheck reports.
 Blocks hot->cold promotion on failures.
 """
 
+import logging
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -16,6 +17,8 @@ from .quality_bars import (
     QualityIssue,
     get_quality_bar,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -126,17 +129,22 @@ class Gatekeeper:
             bars: List of bar names to run (default: all 8)
             strict: If True, warnings also block merge (default: True)
         """
+        logger.debug("Initializing Gatekeeper with strict=%s", strict)
         self.strict = strict
 
         # Default to all bars
         if bars is None:
             bars = list(QUALITY_BARS.keys())
 
+        logger.trace("Configured quality bars: %s", bars)
+
         # Initialize quality bar instances
         self.bars: dict[str, QualityBar] = {}
         for bar_name in bars:
             bar_class = get_quality_bar(bar_name)
             self.bars[bar_name] = bar_class()
+
+        logger.debug("Gatekeeper initialized with %d quality bars", len(self.bars))
 
     def run_gatecheck(
         self, artifacts: list[Artifact], **metadata: Any
@@ -151,12 +159,23 @@ class Gatekeeper:
         Returns:
             GatecheckReport with results from all bars
         """
+        logger.info("Starting gatecheck on %d artifacts", len(artifacts))
+        logger.trace("Gatecheck metadata: %s", metadata)
+
         bar_results: dict[str, QualityBarResult] = {}
 
         # Run each quality bar
         for bar_name, bar in self.bars.items():
+            logger.debug("Running quality bar: %s", bar_name)
             result = bar.validate(artifacts)
             bar_results[bar_name] = result
+
+            if result.passed:
+                logger.debug("Quality bar %s PASSED", bar_name)
+            else:
+                logger.warning("Quality bar %s FAILED with %d issues", bar_name, len(result.issues))
+                for issue in result.issues:
+                    logger.trace("  Issue [%s] %s at %s", issue.severity, issue.message, issue.location)
 
         # Determine overall pass/fail
         has_blockers = any(
@@ -175,6 +194,13 @@ class Gatekeeper:
 
         # Generate summary
         summary = self._generate_summary(bar_results, passed)
+
+        if passed:
+            logger.info("Gatecheck PASSED - All quality bars passed")
+        else:
+            logger.warning("Gatecheck FAILED - %d blocker(s), %d warning(s)",
+                          sum(len(r.blockers) for r in bar_results.values()),
+                          sum(len(r.warnings) for r in bar_results.values()))
 
         return GatecheckReport(
             passed=passed,
@@ -200,12 +226,18 @@ class Gatekeeper:
         Raises:
             ValueError: If bar_name not in configured bars
         """
+        logger.debug("Running single quality bar: %s on %d artifacts", bar_name, len(artifacts))
+
         if bar_name not in self.bars:
+            logger.error("Quality bar '%s' not configured. Available: %s", bar_name, list(self.bars.keys()))
             raise ValueError(
                 f"Bar '{bar_name}' not configured. Available: {list(self.bars.keys())}"
             )
 
-        return self.bars[bar_name].validate(artifacts)
+        result = self.bars[bar_name].validate(artifacts)
+        logger.debug("Quality bar %s result: passed=%s, issues=%d", bar_name, result.passed, len(result.issues))
+
+        return result
 
     def _generate_summary(
         self, bar_results: dict[str, QualityBarResult], passed: bool

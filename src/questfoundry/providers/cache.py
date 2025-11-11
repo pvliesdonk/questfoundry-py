@@ -2,10 +2,13 @@
 
 import hashlib
 import json
+import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
+
+logger = logging.getLogger(__name__)
 
 
 def generate_cache_key(
@@ -165,11 +168,15 @@ class ResponseCache:
             cache_dir: Directory for cache storage
             ttl_seconds: Default TTL for cached responses
         """
+        logger.debug("Initializing ResponseCache with TTL=%d seconds", ttl_seconds)
         self.cache_dir = cache_dir or Path.cwd() / ".questfoundry" / "cache"
         self.ttl_seconds = ttl_seconds
+        logger.trace("Cache directory: %s", self.cache_dir)
 
         # Create cache directory if it doesn't exist
+        logger.trace("Creating cache directory if needed")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
+        logger.trace("ResponseCache initialized successfully")
 
     def _get_cache_path(self, key: str) -> Path:
         """Get file path for cache key.
@@ -210,25 +217,31 @@ class ResponseCache:
         Returns:
             Cached response string, or None if not found or expired
         """
+        logger.trace("Looking up cache key: %s", key)
         cache_path = self._get_cache_path(key)
         meta_path = self._get_metadata_path(key)
 
         if not cache_path.exists():
+            logger.trace("Cache key not found: %s", key)
             return None
 
         try:
             # Check if expired
+            logger.trace("Checking cache expiration for key: %s", key)
             metadata = json.loads(meta_path.read_text())
             if time.time() > metadata["expires_at"]:
                 # Clean up expired entries
+                logger.debug("Cache entry expired, cleaning up key: %s", key)
                 cache_path.unlink(missing_ok=True)
                 meta_path.unlink(missing_ok=True)
                 return None
 
             # Cache hit
+            logger.debug("Cache hit for key: %s", key)
             return cache_path.read_text()
-        except (json.JSONDecodeError, KeyError, FileNotFoundError):
+        except (json.JSONDecodeError, KeyError, FileNotFoundError) as e:
             # Corrupted cache, clean up
+            logger.warning("Corrupted cache entry for key %s: %s", key, str(e))
             cache_path.unlink(missing_ok=True)
             meta_path.unlink(missing_ok=True)
             return None
@@ -246,26 +259,35 @@ class ResponseCache:
             value: Response value to cache
             ttl: Time-to-live in seconds (uses default if None)
         """
+        logger.trace("Caching value for key: %s", key)
         ttl = ttl or self.ttl_seconds
         cache_path = self._get_cache_path(key)
         meta_path = self._get_metadata_path(key)
 
         # Create directory if needed
+        logger.trace("Creating cache directory if needed for key: %s", key)
         cache_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Write cache file (atomic: write to temp, then rename)
-        temp_file = cache_path.with_suffix(".tmp")
-        temp_file.write_text(value)
-        temp_file.replace(cache_path)
+        try:
+            # Write cache file (atomic: write to temp, then rename)
+            logger.trace("Writing cache file for key: %s", key)
+            temp_file = cache_path.with_suffix(".tmp")
+            temp_file.write_text(value)
+            temp_file.replace(cache_path)
 
-        # Write metadata
-        now = time.time()
-        metadata = {
-            "timestamp": now,
-            "ttl_seconds": ttl,
-            "expires_at": now + ttl,
-        }
-        meta_path.write_text(json.dumps(metadata))
+            # Write metadata
+            logger.trace("Writing cache metadata for key: %s (TTL=%d seconds)", key, ttl)
+            now = time.time()
+            metadata = {
+                "timestamp": now,
+                "ttl_seconds": ttl,
+                "expires_at": now + ttl,
+            }
+            meta_path.write_text(json.dumps(metadata))
+            logger.debug("Response cached successfully with key: %s", key)
+        except Exception as e:
+            logger.error("Error caching response for key %s: %s", key, str(e), exc_info=True)
+            raise
 
     def clear(self) -> None:
         """Clear all cached entries.
@@ -286,7 +308,10 @@ class ResponseCache:
         Returns:
             Number of entries removed
         """
+        logger.debug("Starting cleanup of expired cache entries")
+
         if not self.cache_dir.exists():
+            logger.trace("Cache directory does not exist, nothing to clean")
             return 0
 
         removed_count = 0
@@ -297,15 +322,18 @@ class ResponseCache:
                 metadata = json.loads(meta_file.read_text())
                 if current_time > metadata["expires_at"]:
                     # Remove both meta and cache file
+                    logger.trace("Removing expired cache entry: %s", meta_file.name)
                     cache_file = meta_file.with_suffix("")
                     meta_file.unlink(missing_ok=True)
                     cache_file.unlink(missing_ok=True)
                     removed_count += 1
             except (json.JSONDecodeError, KeyError, FileNotFoundError):
                 # Clean up corrupted files
+                logger.warning("Cleaning up corrupted cache file: %s", meta_file.name)
                 meta_file.unlink(missing_ok=True)
                 removed_count += 1
 
+        logger.info("Cache cleanup completed, removed %d expired entries", removed_count)
         return removed_count
 
     def get_stats(self) -> dict[str, Any]:

@@ -8,8 +8,12 @@ Validates that:
 - Content masking applied correctly
 """
 
+import logging
+
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class SpoilerHygieneBar(QualityBar):
@@ -54,6 +58,7 @@ class SpoilerHygieneBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating spoiler hygiene in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Check each artifact for spoiler hygiene
@@ -64,6 +69,8 @@ class SpoilerHygieneBar(QualityBar):
             metadata = artifact.metadata or {}
             player_safe = metadata.get("player_safe", False)
             temperature = metadata.get("temperature", "hot")
+
+            logger.trace("Checking artifact %s: player_safe=%s, temperature=%s", artifact_id, player_safe, temperature)
 
             # If cold and player_safe, check for spoiler leaks
             if temperature == "cold" and player_safe:
@@ -96,6 +103,7 @@ class SpoilerHygieneBar(QualityBar):
                     self._check_choice_spoilers(artifact)
                 )
 
+        logger.debug("Spoiler hygiene validation complete: %d issues found", len(issues))
         return self._create_result(
             issues, artifacts_checked=len(artifacts)
         )

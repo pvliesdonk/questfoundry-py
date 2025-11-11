@@ -8,8 +8,12 @@ Validates that:
 - Convergence reflects entering state
 """
 
+import logging
+
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class DeterminismBar(QualityBar):
@@ -43,6 +47,7 @@ class DeterminismBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating determinism in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Check visual assets
@@ -51,6 +56,8 @@ class DeterminismBar(QualityBar):
             for a in artifacts
             if a.type in ["visual_asset", "image_plan", "art_plan"]
         ]
+
+        logger.trace("Found %d visual artifacts to validate", len(visual_artifacts))
 
         for artifact in visual_artifacts:
             artifact_id = artifact.data.get("id", "unknown")
@@ -63,6 +70,7 @@ class DeterminismBar(QualityBar):
             if is_plan:
                 # Plans should be marked deferred
                 if not artifact.data.get("deferred"):
+                    logger.debug("Plan asset %s not marked as deferred", artifact_id)
                     issues.append(
                         QualityIssue(
                             severity="info",
@@ -84,6 +92,8 @@ class DeterminismBar(QualityBar):
             if a.type in ["audio_asset", "audio_plan"]
         ]
 
+        logger.trace("Found %d audio artifacts to validate", len(audio_artifacts))
+
         for artifact in audio_artifacts:
             is_plan = artifact.type == "audio_plan" or artifact.data.get(
                 "status"
@@ -94,6 +104,7 @@ class DeterminismBar(QualityBar):
                     self._check_asset_params(artifact)
                 )
 
+        logger.debug("Determinism validation complete: %d issues found", len(issues))
         return self._create_result(
             issues,
             visual_assets=len(visual_artifacts),

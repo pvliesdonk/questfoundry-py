@@ -1,6 +1,7 @@
 """File-based state store implementation for hot workspace"""
 
 import json
+import logging
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -9,6 +10,8 @@ from typing import Any
 from ..models.artifact import Artifact
 from .store import StateStore
 from .types import ProjectInfo, SnapshotInfo, TUState
+
+logger = logging.getLogger(__name__)
 
 
 class FileStore(StateStore):
@@ -62,8 +65,12 @@ class FileStore(StateStore):
         self.hot_dir = self.workspace_dir / "hot"
         self.metadata_file = self.workspace_dir / "metadata.json"
 
+        logger.debug("Initializing FileStore at %s", self.workspace_dir)
+
         # Ensure directory structure exists
         self._init_directories()
+
+        logger.trace("FileStore directory structure initialized")
 
     def _init_directories(self) -> None:
         """Initialize workspace directory structure"""
@@ -199,7 +206,10 @@ class FileStore(StateStore):
         """Save an artifact as JSON file"""
         artifact_id = artifact.metadata.get("id")
         if not artifact_id:
+            logger.error("Attempted to save artifact without 'id' in metadata")
             raise ValueError("Artifact must have an 'id' in metadata")
+
+        logger.debug("Saving artifact '%s' (type=%s)", artifact_id, artifact.type)
 
         # Get target directory and file
         artifact_dir = self._get_artifact_dir(artifact.type)
@@ -209,6 +219,7 @@ class FileStore(StateStore):
         now = datetime.now().isoformat()
         if "created" not in artifact.metadata:
             artifact.metadata["created"] = now
+            logger.trace("Set artifact '%s' created timestamp", artifact_id)
         artifact.metadata["modified"] = now
 
         # Write atomically
@@ -217,7 +228,10 @@ class FileStore(StateStore):
             "data": artifact.data,
             "metadata": artifact.metadata,
         }
+        logger.trace("Writing artifact '%s' to %s", artifact_id, file_path)
         self._atomic_write_json(file_path, data)
+
+        logger.info("Successfully saved artifact '%s' to %s", artifact_id, file_path)
 
     def get_artifact(self, artifact_id: str) -> Artifact | None:
         """
@@ -232,6 +246,8 @@ class FileStore(StateStore):
         Returns:
             Artifact if found, None otherwise
         """
+        logger.trace("Retrieving artifact '%s' from hot storage", artifact_id)
+
         # Get prioritized list of directories to search
         dirs_to_search = self._infer_artifact_dirs(artifact_id)
 
@@ -241,12 +257,14 @@ class FileStore(StateStore):
             data = self._read_json(file_path)
 
             if data:
+                logger.debug("Found artifact '%s' at %s", artifact_id, file_path)
                 return Artifact(
                     type=data["type"],
                     data=data["data"],
                     metadata=data["metadata"],
                 )
 
+        logger.debug("Artifact '%s' not found in hot storage", artifact_id)
         return None
 
     def list_artifacts(
@@ -314,6 +332,8 @@ class FileStore(StateStore):
         Returns:
             True if artifact was deleted, False if not found
         """
+        logger.debug("Deleting artifact '%s' from hot storage", artifact_id)
+
         # Get prioritized list of directories to search
         dirs_to_search = self._infer_artifact_dirs(artifact_id)
 
@@ -321,9 +341,12 @@ class FileStore(StateStore):
         for artifact_dir in dirs_to_search:
             file_path = artifact_dir / f"{artifact_id}.json"
             if file_path.exists():
+                logger.trace("Found artifact file at %s, deleting", file_path)
                 file_path.unlink()
+                logger.info("Successfully deleted artifact '%s'", artifact_id)
                 return True
 
+        logger.warning("Artifact '%s' not found for deletion", artifact_id)
         return False
 
     def save_tu(self, tu: TUState) -> None:

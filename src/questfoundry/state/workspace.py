@@ -1,5 +1,6 @@
 """Unified workspace manager for hot and cold storage"""
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -7,6 +8,8 @@ from ..models.artifact import Artifact
 from .file_store import FileStore
 from .sqlite_store import SQLiteStore
 from .types import ProjectInfo, SnapshotInfo, TUState
+
+logger = logging.getLogger(__name__)
 
 
 class WorkspaceManager:
@@ -122,9 +125,16 @@ class WorkspaceManager:
         self.hot_dir = self.project_dir / ".questfoundry"
         self.cold_file = self.project_dir / "project.qfproj"
 
+        logger.debug(
+            "Initializing WorkspaceManager at %s", self.project_dir
+        )
+
         # Initialize stores
         self.hot_store = FileStore(self.hot_dir)
         self.cold_store = SQLiteStore(self.cold_file)
+
+        logger.trace("WorkspaceManager initialized with hot_dir=%s, cold_file=%s",
+                     self.hot_dir, self.cold_file)
 
     def init_workspace(
         self,
@@ -145,7 +155,13 @@ class WorkspaceManager:
             version: Project version
             author: Project author
         """
+        logger.info(
+            "Initializing workspace '%s' (version=%s, author=%s)",
+            name, version, author
+        )
+
         # Initialize cold storage database
+        logger.debug("Initializing cold storage database at %s", self.cold_file)
         self.cold_store.init_database()
 
         # Create project info
@@ -157,8 +173,11 @@ class WorkspaceManager:
         )
 
         # Save to both stores
+        logger.trace("Saving project info to hot and cold storage")
         self.hot_store.save_project_info(info)
         self.cold_store.save_project_info(info)
+
+        logger.info("Workspace '%s' initialized successfully", name)
 
     def get_project_info(self, source: str = "hot") -> ProjectInfo:
         """
@@ -271,24 +290,37 @@ class WorkspaceManager:
         Returns:
             True if promotion succeeded, False if artifact not found
         """
+        logger.debug(
+            "Promoting artifact '%s' to cold storage (delete_hot=%s, immutable=%s, source=%s)",
+            artifact_id, delete_hot, immutable, source
+        )
+
         # Get from hot
         artifact = self.hot_store.get_artifact(artifact_id)
         if artifact is None:
+            logger.warning("Artifact '%s' not found in hot storage", artifact_id)
             return False
+
+        logger.trace("Retrieved artifact '%s' from hot storage for promotion", artifact_id)
 
         # Add immutability tracking if specified
         if immutable is not None:
             artifact.metadata["immutable"] = immutable
+            logger.debug("Marked artifact '%s' as immutable=%s", artifact_id, immutable)
         if source is not None:
             artifact.metadata["source"] = source
+            logger.debug("Set artifact '%s' source attribution to '%s'", artifact_id, source)
 
         # Save to cold
+        logger.trace("Saving promoted artifact '%s' to cold storage", artifact_id)
         self.cold_store.save_artifact(artifact)
 
         # Optionally delete from hot
         if delete_hot:
+            logger.trace("Deleting artifact '%s' from hot storage", artifact_id)
             self.hot_store.delete_artifact(artifact_id)
 
+        logger.info("Successfully promoted artifact '%s' to cold storage", artifact_id)
         return True
 
     def demote_to_hot(
@@ -311,23 +343,35 @@ class WorkspaceManager:
         Returns:
             True if demotion succeeded, False if artifact not found
         """
+        logger.debug(
+            "Demoting artifact '%s' to hot storage (delete_cold=%s, preserve_immutability=%s)",
+            artifact_id, delete_cold, preserve_immutability
+        )
+
         # Get from cold
         artifact = self.cold_store.get_artifact(artifact_id)
         if artifact is None:
+            logger.warning("Artifact '%s' not found in cold storage", artifact_id)
             return False
+
+        logger.trace("Retrieved artifact '%s' from cold storage for demotion", artifact_id)
 
         # Optionally remove immutability tracking
         if not preserve_immutability:
             artifact.metadata.pop("immutable", None)
             artifact.metadata.pop("source", None)
+            logger.debug("Removed immutability metadata from artifact '%s'", artifact_id)
 
         # Save to hot
+        logger.trace("Saving demoted artifact '%s' to hot storage", artifact_id)
         self.hot_store.save_artifact(artifact)
 
         # Optionally delete from cold
         if delete_cold:
+            logger.trace("Deleting artifact '%s' from cold storage", artifact_id)
             self.cold_store.delete_artifact(artifact_id)
 
+        logger.info("Successfully demoted artifact '%s' to hot storage", artifact_id)
         return True
 
     # TU operations (hot workspace only)

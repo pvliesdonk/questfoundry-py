@@ -8,11 +8,14 @@ Validates that:
 - Visual/aesthetic cues align with style
 """
 
+import logging
 import re
 from collections import Counter
 
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class StyleBar(QualityBar):
@@ -46,15 +49,20 @@ class StyleBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating style in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Extract style guide if present
         style_guide = self._find_style_guide(artifacts)
+        if style_guide:
+            logger.debug("Style guide found: %s", style_guide.data.get("id", "unknown"))
 
         # Check manuscript sections for style
         sections = [
             a for a in artifacts if a.type == "manuscript_section"
         ]
+
+        logger.trace("Found %d manuscript sections for style validation", len(sections))
 
         if sections:
             # Check voice consistency
@@ -62,6 +70,7 @@ class StyleBar(QualityBar):
 
             # Check motif usage if style guide present
             if style_guide:
+                logger.debug("Checking motif usage against style guide")
                 issues.extend(
                     self._check_motifs(sections, style_guide)
                 )
@@ -71,8 +80,10 @@ class StyleBar(QualityBar):
             a for a in artifacts if a.type == "style_guide"
         ]
         for artifact in style_artifacts:
+            logger.debug("Validating style guide artifact: %s", artifact.data.get("id", "unknown"))
             issues.extend(self._validate_style_guide(artifact))
 
+        logger.debug("Style validation complete: %d issues found", len(issues))
         return self._create_result(
             issues,
             sections_checked=len(sections),

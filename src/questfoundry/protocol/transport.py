@@ -1,9 +1,12 @@
 """Abstract transport interface for QuestFoundry protocol messages"""
 
+import logging
 from abc import ABC, abstractmethod
 from typing import Iterator
 
 from .envelope import Envelope
+
+logger = logging.getLogger(__name__)
 
 
 class Transport(ABC):

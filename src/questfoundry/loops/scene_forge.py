@@ -1,11 +1,14 @@
 """Scene Forge loop implementation."""
 
+import logging
 from typing import Any
 
 from ..models.artifact import Artifact
 from ..roles.base import Role, RoleContext
 from .base import Loop, LoopContext, LoopResult, LoopStep, StepStatus
 from .registry import LoopMetadata
+
+logger = logging.getLogger(__name__)
 
 
 class SceneForgeLoop(Loop):
@@ -102,10 +105,12 @@ class SceneForgeLoop(Loop):
         Args:
             context: Loop execution context
         """
+        logger.debug("Initializing SceneForgeLoop")
         super().__init__(context)
         self.selected_scenes: list[dict[str, Any]] = []
         self.scene_drafts: list[dict[str, Any]] = []
         self.scene_count = context.config.get("scene_count", 3)
+        logger.trace("Scene count configured: %d", self.scene_count)
 
     def execute(self) -> LoopResult:
         """
@@ -114,6 +119,9 @@ class SceneForgeLoop(Loop):
         Returns:
             Result of loop execution
         """
+        logger.info("Starting Scene Forge loop execution")
+        logger.debug("Total steps to execute: %d", len(self.steps))
+
         artifacts_created: list[Artifact] = []
         artifacts_modified: list[Artifact] = []
         steps_completed = 0
@@ -122,18 +130,22 @@ class SceneForgeLoop(Loop):
         # Execute each step in sequence
         for step in self.steps:
             try:
+                logger.debug("Processing step: %s", step.step_id)
                 self.execute_step(step)
 
                 if step.status == StepStatus.COMPLETED:
                     steps_completed += 1
+                    logger.info("Step completed: %s", step.step_id)
 
                     # Collect artifacts created in this step
                     if step.result and isinstance(step.result, dict):
                         if "artifacts" in step.result:
                             artifacts_created.extend(step.result["artifacts"])
+                            logger.trace("Collected %d artifacts from step", len(step.result["artifacts"]))
 
                 elif step.status == StepStatus.FAILED:
                     steps_failed += 1
+                    logger.error("Step failed: %s - %s", step.step_id, step.error)
 
                     # Abort on failure
                     return LoopResult(
@@ -147,6 +159,7 @@ class SceneForgeLoop(Loop):
                     )
 
             except Exception as e:
+                logger.error("Exception in step %s: %s", step.step_id, e, exc_info=True)
                 return LoopResult(
                     success=False,
                     loop_id=self.metadata.loop_id,
@@ -158,6 +171,8 @@ class SceneForgeLoop(Loop):
                 )
 
         # All steps completed successfully
+        logger.info("Scene Forge loop completed successfully: %d/%d steps, %d artifacts created",
+                   steps_completed, len(self.steps), len(artifacts_created))
         return LoopResult(
             success=True,
             loop_id=self.metadata.loop_id,

@@ -8,10 +8,13 @@ Validates that:
 - Formatting is clean and readable
 """
 
+import logging
 import re
 
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class PresentationBar(QualityBar):
@@ -59,12 +62,14 @@ class PresentationBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating presentation in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Compile internal pattern regex
         internal_regex = re.compile(
             "|".join(self.INTERNAL_PATTERNS), re.IGNORECASE
         )
+        logger.trace("Presentation validation patterns compiled")
 
         # Check player-facing artifacts
         player_facing_types = [
@@ -76,6 +81,8 @@ class PresentationBar(QualityBar):
         player_facing = [
             a for a in artifacts if a.type in player_facing_types
         ]
+
+        logger.trace("Found %d player-facing artifacts to validate", len(player_facing))
 
         for artifact in player_facing:
             artifact_id = artifact.data.get("id", "unknown")
@@ -134,6 +141,7 @@ class PresentationBar(QualityBar):
 
                     choice_text = choice.get("text", "")
                     if choice_text and internal_regex.search(choice_text):
+                        logger.warning("Choice text contains internal/technical content at %s choice %d", artifact_id, i)
                         issues.append(
                             QualityIssue(
                                 severity="blocker",
@@ -146,6 +154,7 @@ class PresentationBar(QualityBar):
                             )
                         )
 
+        logger.debug("Presentation validation complete: %d issues found", len(issues))
         return self._create_result(
             issues, player_facing_checked=len(player_facing)
         )

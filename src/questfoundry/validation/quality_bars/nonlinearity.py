@@ -8,10 +8,13 @@ Validates that:
 - First-choice integrity maintained
 """
 
+import logging
 from collections import defaultdict
 
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class NonlinearityBar(QualityBar):
@@ -45,6 +48,7 @@ class NonlinearityBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating nonlinearity in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         sections = [
@@ -52,7 +56,10 @@ class NonlinearityBar(QualityBar):
         ]
 
         if not sections:
+            logger.trace("No manuscript sections found to validate")
             return self._create_result([], sections_checked=0)
+
+        logger.trace("Found %d manuscript sections for nonlinearity validation", len(sections))
 
         # Build graph for topology analysis
         graph: dict[str, list[str]] = defaultdict(list)
@@ -81,6 +88,8 @@ class NonlinearityBar(QualityBar):
         # Check for loops (sections that can reach themselves)
         loops = self._find_loops(graph, sections)
 
+        logger.debug("Topology analysis: %d hubs, %d loops found", len(hubs), len(loops))
+
         # Check for meaningful choices
         issues.extend(self._check_meaningful_choices(sections, graph))
 
@@ -89,6 +98,7 @@ class NonlinearityBar(QualityBar):
             self._check_convergence_integrity(sections, hubs)
         )
 
+        logger.debug("Nonlinearity validation complete: %d issues found", len(issues))
         return self._create_result(
             issues,
             sections_checked=len(sections),

@@ -1,6 +1,7 @@
 """SQLite-based state store implementation"""
 
 import json
+import logging
 import sqlite3
 from datetime import datetime
 from pathlib import Path
@@ -9,6 +10,8 @@ from typing import Any
 from ..models.artifact import Artifact
 from .store import StateStore
 from .types import ProjectInfo, SnapshotInfo, TUState
+
+logger = logging.getLogger(__name__)
 
 
 class SQLiteStore(StateStore):
@@ -45,6 +48,8 @@ class SQLiteStore(StateStore):
         """
         self.db_path = Path(db_path)
         self._conn: sqlite3.Connection | None = None
+
+        logger.debug("Initializing SQLiteStore at %s", self.db_path)
 
     def _get_connection(self) -> sqlite3.Connection:
         """
@@ -95,12 +100,15 @@ class SQLiteStore(StateStore):
         Raises:
             IOError: If schema initialization fails
         """
+        logger.info("Initializing database at %s", self.db_path)
         schema_path = Path(__file__).parent / "schema.sql"
         schema_sql = schema_path.read_text()
 
         conn = self._get_connection()
+        logger.trace("Executing schema initialization script")
         conn.executescript(schema_sql)
         conn.commit()
+        logger.info("Database initialized successfully")
 
     def get_schema_version(self) -> int:
         """Get current database schema version"""
@@ -165,11 +173,16 @@ class SQLiteStore(StateStore):
         # Ensure artifact has an ID
         artifact_id = artifact.metadata.get("id")
         if not artifact_id:
+            logger.error("Attempted to save artifact without 'id' in metadata")
             raise ValueError("Artifact must have an 'id' in metadata")
 
         # Check if artifact already exists to determine create vs update
         existing = self.get_artifact(artifact_id)
         is_create = existing is None
+
+        action = "create" if is_create else "update"
+        logger.debug("Saving artifact '%s' to cold storage (action=%s, type=%s)",
+                     artifact_id, action, artifact.type)
 
         now = datetime.now().isoformat()
 
@@ -178,6 +191,7 @@ class SQLiteStore(StateStore):
             created = now
             # Update metadata with created timestamp
             artifact.metadata["created"] = created
+            logger.trace("New artifact - setting created timestamp")
         else:
             # Preserve existing created timestamp
             cursor = conn.execute(
@@ -186,6 +200,7 @@ class SQLiteStore(StateStore):
             )
             row = cursor.fetchone()
             created = row["created"] if row else now
+            logger.trace("Updating existing artifact - preserving created timestamp")
 
         conn.execute(
             """
@@ -204,7 +219,6 @@ class SQLiteStore(StateStore):
         )
 
         # Log to history with actual changes
-        action = "create" if is_create else "update"
         changes = {
             "type": artifact.type,
             "data": artifact.data,
@@ -213,9 +227,12 @@ class SQLiteStore(StateStore):
         self._log_history("artifact", artifact_id, action, changes)
 
         conn.commit()
+        logger.info("Successfully saved artifact '%s' to cold storage", artifact_id)
 
     def get_artifact(self, artifact_id: str) -> Artifact | None:
         """Retrieve an artifact by ID"""
+        logger.trace("Retrieving artifact '%s' from cold storage", artifact_id)
+
         conn = self._get_connection()
         cursor = conn.execute(
             """
@@ -228,8 +245,10 @@ class SQLiteStore(StateStore):
         row = cursor.fetchone()
 
         if not row:
+            logger.debug("Artifact '%s' not found in cold storage", artifact_id)
             return None
 
+        logger.debug("Found artifact '%s' in cold storage", artifact_id)
         return Artifact(
             type=row["artifact_type"],
             data=json.loads(row["data"]),
@@ -287,6 +306,8 @@ class SQLiteStore(StateStore):
 
     def delete_artifact(self, artifact_id: str) -> bool:
         """Delete an artifact"""
+        logger.debug("Deleting artifact '%s' from cold storage", artifact_id)
+
         conn = self._get_connection()
 
         cursor = conn.execute(
@@ -295,7 +316,11 @@ class SQLiteStore(StateStore):
 
         deleted = cursor.rowcount > 0
         if deleted:
+            logger.trace("Logging artifact '%s' deletion to history", artifact_id)
             self._log_history("artifact", artifact_id, "delete", {})
+            logger.info("Successfully deleted artifact '%s' from cold storage", artifact_id)
+        else:
+            logger.warning("Artifact '%s' not found for deletion", artifact_id)
 
         conn.commit()
         return deleted

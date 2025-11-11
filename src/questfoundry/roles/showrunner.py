@@ -1,5 +1,6 @@
 """Showrunner role implementation."""
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 from .base import Role, RoleContext, RoleResult
@@ -7,6 +8,8 @@ from .base import Role, RoleContext, RoleResult
 if TYPE_CHECKING:
     from questfoundry.providers.base import ImageProvider, TextProvider
     from questfoundry.providers.registry import ProviderRegistry
+
+logger = logging.getLogger(__name__)
 
 
 class Showrunner(Role):

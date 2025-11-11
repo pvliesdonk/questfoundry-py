@@ -1,6 +1,7 @@
 """Base classes for QuestFoundry loops."""
 
 import copy
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -10,6 +11,8 @@ from ..models.artifact import Artifact
 from ..roles.base import Role
 from ..state.workspace import WorkspaceManager
 from .registry import LoopMetadata
+
+logger = logging.getLogger(__name__)
 
 
 class StepStatus(Enum):
@@ -243,10 +246,16 @@ class Loop(ABC):
         Args:
             context: Loop execution context
         """
+        logger.info("Initializing %s loop", self.__class__.__name__)
+        logger.trace("Loop ID: %s, Project ID: %s, Initial step: %d",
+                     context.loop_id, context.project_id, context.current_step)
+
         self.context = context
         self.current_step_index = context.current_step
         # Create instance-specific copy of steps to avoid shared state
         self.steps = copy.deepcopy(self.__class__.steps)
+
+        logger.debug("Loop %s initialized with %d steps", self.__class__.__name__, len(self.steps))
 
     @abstractmethod
     def execute(self) -> LoopResult:
@@ -285,6 +294,10 @@ class Loop(ABC):
         Raises:
             ValueError: If required roles not available
         """
+        logger.info("Executing step: %s", step.step_id)
+        logger.debug("Step description: %s", step.description)
+        logger.trace("Assigned roles: %s", ', '.join(step.assigned_roles))
+
         step.status = StepStatus.IN_PROGRESS
 
         # Get assigned roles
@@ -292,28 +305,38 @@ class Loop(ABC):
         roles = {}
         for role_name in roles_needed:
             if role_name not in self.context.role_instances:
+                logger.error("Required role not available: %s", role_name)
                 step.status = StepStatus.FAILED
                 step.error = f"Required role '{role_name}' not available"
                 raise ValueError(step.error)
             roles[role_name] = self.context.role_instances[role_name]
 
+        logger.debug("All required roles available for step: %s", step.step_id)
+
         # Execute (subclass implements specific logic)
         try:
+            logger.trace("Calling step logic for: %s", step.step_id)
             result = self._execute_step_logic(step, roles)
             step.result = result
+            logger.debug("Step logic completed for: %s", step.step_id)
 
             # Validate if required
             if step.validation_required:
+                logger.trace("Validating step: %s", step.step_id)
                 is_valid = self.validate_step(step, result)
                 if not is_valid:
+                    logger.warning("Step validation failed: %s", step.step_id)
                     step.status = StepStatus.FAILED
                     step.error = "Validation failed"
                 else:
+                    logger.info("Step completed successfully: %s", step.step_id)
                     step.status = StepStatus.COMPLETED
             else:
+                logger.info("Step completed (no validation required): %s", step.step_id)
                 step.status = StepStatus.COMPLETED
 
         except Exception as e:
+            logger.error("Error executing step %s: %s", step.step_id, e, exc_info=True)
             step.status = StepStatus.FAILED
             step.error = str(e)
             raise
@@ -360,16 +383,22 @@ class Loop(ABC):
         Returns:
             True if can continue, False otherwise
         """
+        logger.trace("Checking if loop can continue")
+
         # Check if there are more steps
         if self.current_step_index >= len(self.steps):
+            logger.debug("No more steps available (current: %d, total: %d)",
+                        self.current_step_index, len(self.steps))
             return False
 
         # Check if previous step succeeded
         if self.current_step_index > 0:
             prev_step = self.steps[self.current_step_index - 1]
             if prev_step.status == StepStatus.FAILED:
+                logger.warning("Previous step failed, cannot continue")
                 return False
 
+        logger.trace("Loop can continue to next step")
         return True
 
     def rollback_step(self) -> None:
@@ -379,13 +408,19 @@ class Loop(ABC):
         Default implementation just decrements step index.
         Subclasses can override for cleanup logic.
         """
+        logger.warning("Rolling back loop to previous step")
+
         if self.current_step_index > 0:
             self.current_step_index -= 1
             self.context.current_step = self.current_step_index
 
             # Mark current step as pending
             if self.current_step_index < len(self.steps):
+                step_name = self.steps[self.current_step_index].step_id
                 self.steps[self.current_step_index].status = StepStatus.PENDING
+                logger.info("Rolled back to step: %s", step_name)
+        else:
+            logger.debug("Cannot rollback - already at first step")
 
     def skip_step(self, step: LoopStep) -> None:
         """
@@ -394,9 +429,14 @@ class Loop(ABC):
         Args:
             step: Step to skip
         """
+        logger.info("Skipping step: %s", step.step_id)
+        logger.debug("Step description: %s", step.description)
+
         step.status = StepStatus.SKIPPED
         self.current_step_index += 1
         self.context.current_step = self.current_step_index
+
+        logger.trace("Advanced to next step index: %d", self.current_step_index)
 
     def build_loop_context_summary(self) -> str:
         """
