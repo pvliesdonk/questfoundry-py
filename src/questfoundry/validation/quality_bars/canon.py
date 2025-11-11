@@ -209,7 +209,7 @@ class TimelineChronologyBar(QualityBar):
             timeline = TimelineManager()
             try:
                 for anchor_data in timeline_data["anchors"]:
-                    timeline.add_anchor(
+                    anchor = TimelineAnchor(
                         anchor_id=anchor_data.get("anchor_id", ""),
                         event=anchor_data.get("event", ""),
                         year=anchor_data.get("year"),
@@ -218,6 +218,7 @@ class TimelineChronologyBar(QualityBar):
                         source=anchor_data.get("source", ""),
                         immutable=anchor_data.get("immutable", False),
                     )
+                    timeline.add_anchor(anchor)
             except ValueError as e:
                 issues.append(
                     QualityIssue(

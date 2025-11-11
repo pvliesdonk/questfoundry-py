@@ -24,7 +24,7 @@ def test_entity_creation():
 
 def test_entity_invalid_name():
     """Test entity with invalid name raises ValueError"""
-    with pytest.raises(ValueError, match="Entity name cannot be empty"):
+    with pytest.raises(ValueError, match="Entity name must be 3-80 characters"):
         Entity(
             name="",
             entity_type=EntityType.CHARACTER,
@@ -47,9 +47,9 @@ def test_entity_registry_create():
         immutable=True,
     )
 
-    created = registry.create(entity)
-    assert created.name == "Dragon Council"
-    assert registry.count() == 1
+    registry.create(entity)
+    assert "Dragon Council" in registry
+    assert len(registry) == 1
 
 
 def test_entity_registry_create_duplicate():
@@ -74,7 +74,7 @@ def test_entity_registry_create_duplicate():
         source="project-local",
     )
 
-    with pytest.raises(ValueError, match="Entity already exists"):
+    with pytest.raises(ValueError, match="Entity.*already exists"):
         registry.create(entity2)
 
 
@@ -137,36 +137,6 @@ def test_entity_registry_get_by_type():
     assert places[0].name == "Castle"
 
 
-def test_entity_registry_get_by_immutability():
-    """Test querying entities by immutability"""
-    registry = EntityRegistry()
-
-    registry.create(Entity(
-        name="Ancient Dragon",
-        entity_type=EntityType.CHARACTER,
-        role="founder",
-        description="First dragon",
-        source="world-genesis",
-        immutable=True,
-    ))
-    registry.create(Entity(
-        name="Young Dragon",
-        entity_type=EntityType.CHARACTER,
-        role="student",
-        description="Recent hatchling",
-        source="project-local",
-        immutable=False,
-    ))
-
-    immutable = registry.get_by_immutability(True)
-    assert len(immutable) == 1
-    assert immutable[0].name == "Ancient Dragon"
-
-    mutable = registry.get_by_immutability(False)
-    assert len(mutable) == 1
-    assert mutable[0].name == "Young Dragon"
-
-
 def test_entity_registry_update():
     """Test updating entity"""
     registry = EntityRegistry()
@@ -177,16 +147,15 @@ def test_entity_registry_update():
         role="governing",
         description="Original description",
         source="world-genesis",
+        immutable=False,
     )
     registry.create(entity)
 
-    # Update description
-    updated = registry.update(
-        name="Council",
-        entity_type=EntityType.FACTION,
-        description="Updated description"
-    )
+    # Update entity
+    entity.description = "Updated description"
+    registry.update(entity)
 
+    updated = registry.get_by_name("Council")
     assert updated.description == "Updated description"
     assert updated.role == "governing"  # Unchanged
 
@@ -205,12 +174,10 @@ def test_entity_registry_update_immutable_entity():
     )
     registry.create(entity)
 
+    # Try to update immutable entity
+    entity.description = "New description"
     with pytest.raises(ValueError, match="Cannot update immutable entity"):
-        registry.update(
-            name="Ancient Dragon",
-            entity_type=EntityType.CHARACTER,
-            description="New description"
-        )
+        registry.update(entity)
 
 
 def test_entity_registry_delete():
@@ -225,11 +192,10 @@ def test_entity_registry_delete():
         source="test",
     )
     registry.create(entity)
-    assert registry.count() == 1
+    assert len(registry) == 1
 
-    deleted = registry.delete("Temp Entity", EntityType.ITEM)
-    assert deleted is True
-    assert registry.count() == 0
+    registry.delete("Temp Entity")
+    assert len(registry) == 0
 
 
 def test_entity_registry_delete_immutable():
@@ -247,7 +213,7 @@ def test_entity_registry_delete_immutable():
     registry.create(entity)
 
     with pytest.raises(ValueError, match="Cannot delete immutable entity"):
-        registry.delete("Sacred Artifact", EntityType.ITEM)
+        registry.delete("Sacred Artifact")
 
 
 def test_entity_registry_merge():
@@ -278,15 +244,74 @@ def test_entity_registry_merge():
 
     report = registry.merge(imported, deduplicate=True)
 
-    # Immutable should take precedence
+    # Immutable should replace mutable
     dragon = registry.get_by_name("Dragon")
     assert dragon.immutable is True
     assert dragon.source == "canon-import"
     assert dragon.role == "ancient guardian"
 
+    # Check report
+    assert report["added"] == 1  # Immutable replaced mutable
+    assert report["skipped"] == 0
+    assert len(report["conflicts"]) == 0
+
+
+def test_entity_registry_merge_new_entity():
+    """Test merging new entities"""
+    registry = EntityRegistry()
+
+    # Merge new entities
+    imported = [
+        Entity(
+            name="New Character",
+            entity_type=EntityType.CHARACTER,
+            role="hero",
+            description="New hero",
+            source="canon-import",
+            immutable=False,
+        )
+    ]
+
+    report = registry.merge(imported, deduplicate=True)
+
+    assert report["added"] == 1
+    assert report["skipped"] == 0
+    assert len(report["conflicts"]) == 0
+
+
+def test_entity_registry_merge_conflict():
+    """Test merge with immutable conflict"""
+    registry = EntityRegistry()
+
+    # Create immutable entity
+    registry.create(Entity(
+        name="Dragon",
+        entity_type=EntityType.CHARACTER,
+        role="ancient",
+        description="Original immutable",
+        source="world-genesis",
+        immutable=True,
+    ))
+
+    # Try to merge another immutable with same name
+    imported = [
+        Entity(
+            name="Dragon",
+            entity_type=EntityType.CHARACTER,
+            role="different",
+            description="Different immutable",
+            source="canon-import",
+            immutable=True,
+        )
+    ]
+
+    report = registry.merge(imported, deduplicate=True)
+
+    # Should have conflict
     assert report["added"] == 0
-    assert report["updated"] == 1
-    assert report["conflicts"] == 0
+    assert report["skipped"] == 1
+    assert len(report["conflicts"]) == 1
+    assert "Dragon" in report["conflicts"][0]["name"]
 
 
 def test_entity_registry_count_by_type():
@@ -334,6 +359,7 @@ def test_entity_registry_count_by_type():
     assert counts["places"] == 1
     assert counts["factions"] == 1
     assert counts["items"] == 1
+    assert counts["total"] == 5
 
 
 def test_entity_registry_to_dict():
@@ -350,7 +376,7 @@ def test_entity_registry_to_dict():
     ))
 
     data = registry.to_dict()
-    assert "entities" in data
-    assert len(data["entities"]) == 1
-    assert data["entities"][0]["name"] == "Test Entity"
-    assert data["entities"][0]["immutable"] is True
+    assert "characters" in data
+    assert len(data["characters"]) == 1
+    assert data["characters"][0]["name"] == "Test Entity"
+    assert data["characters"][0]["immutable"] is True

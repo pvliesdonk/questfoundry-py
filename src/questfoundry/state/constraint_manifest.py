@@ -9,7 +9,7 @@ and other creative loops while maintaining canon integrity.
 from dataclasses import dataclass, field
 from typing import Any
 
-from .entity_registry import EntityRegistry
+from .entity_registry import EntityRegistry, EntityType
 from .timeline import TimelineManager
 
 
@@ -274,9 +274,9 @@ class ConstraintManifestGenerator:
         """Extract entity constraints from registry."""
         constraints = []
 
-        # Immutable entities
+        # Immutable characters
         immutable_chars = [
-            e for e in registry.get_by_type(registry._type_index.__class__().__init__.__annotations__["return"].__args__[0].CHARACTER)
+            e for e in registry.get_by_type(EntityType.CHARACTER)
             if e.immutable
         ]
         if immutable_chars:
@@ -288,8 +288,6 @@ class ConstraintManifestGenerator:
             constraints.append(constraint)
 
         # Immutable places
-        from .entity_registry import EntityType
-
         immutable_places = [
             e for e in registry.get_by_type(EntityType.PLACE)
             if e.immutable
