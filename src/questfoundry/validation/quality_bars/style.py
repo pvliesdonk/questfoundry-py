@@ -28,10 +28,12 @@ class StyleBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "style"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "Voice, register, motifs, and visual guardrails hold"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:

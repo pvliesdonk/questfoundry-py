@@ -37,10 +37,12 @@ class GatewaysBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "gateways"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "Conditions consistent, enforceable, and spoiler-safe"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:

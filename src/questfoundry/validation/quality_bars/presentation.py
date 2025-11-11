@@ -41,10 +41,12 @@ class PresentationBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "presentation"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "Player-facing surfaces reveal no spoilers or internals"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:

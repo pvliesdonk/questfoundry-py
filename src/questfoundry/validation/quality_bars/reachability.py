@@ -27,10 +27,12 @@ class ReachabilityBar(QualityBar):
 
     @property
     def name(self) -> str:
+        """Return the unique identifier for this quality bar."""
         return "reachability"
 
     @property
     def description(self) -> str:
+        """Return a human-readable description of what this bar validates."""
         return "Keystone beats reachable via at least one viable path"
 
     def validate(self, artifacts: list[Artifact]) -> QualityBarResult:

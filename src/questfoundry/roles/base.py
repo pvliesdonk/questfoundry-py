@@ -75,12 +75,89 @@ class Role(ABC):
     """
     Base class for all QuestFoundry roles.
 
-    Roles are specialized agents that execute domain-specific tasks
-    using LLM providers. Each role:
-    - Loads prompts from spec/01-roles/briefs/
-    - Formats context from artifacts and project state
-    - Executes tasks via configured LLM provider
-    - Produces structured outputs (text, artifacts, metadata)
+    Roles are specialized AI agents that execute domain-specific tasks within
+    QuestFoundry's creative workflow. Each role has a specific responsibility
+    and communicates via the Layer 4 protocol envelope system.
+
+    Core QuestFoundry roles:
+        - Showrunner (SR): Loop coordinator, TU manager, role orchestration
+        - Writer (WR): Manuscript content creation, scene writing
+        - Archivist (AR): Canon management, worldbuilding consistency
+        - Illustrator (IL): Visual asset planning and direction
+        - AudioProducer (AP): Audio cue planning and direction
+        - Gatekeeper (GK): Quality validation via quality bars
+        - Researcher (RS): External research and reference gathering
+        - Stylist (ST): Style guide maintenance and voice consistency
+        - Editor (ED): Editorial review and refinement
+
+    Role responsibilities:
+        1. Load and interpret specialized prompts from spec/01-roles/briefs/
+        2. Format execution context from artifacts and project state
+        3. Execute tasks via configured LLM provider
+        4. Produce structured outputs (artifacts, metadata)
+        5. Handle errors gracefully with fallback strategies
+        6. Support interactive mode via human callbacks
+
+    Role lifecycle:
+        1. Initialization with provider and configuration
+        2. Woken by Showrunner or loop with specific task
+        3. Loads relevant context (artifacts, canon, project metadata)
+        4. Formats prompt with context and task instructions
+        5. Executes via LLM provider (with caching/rate limiting)
+        6. Parses response into structured artifacts
+        7. Returns RoleResult with outputs and metadata
+
+    Key features:
+        - Context-aware: Loads relevant artifacts and project state
+        - Provider-agnostic: Works with any TextProvider implementation
+        - Session tracking: Optional conversation history
+        - Human-in-the-loop: Interactive callbacks for clarification
+        - Multi-modal: Optional image/audio provider support
+        - Configurable: Task-specific and role-level configuration
+        - Traceable: Full logging and metadata tracking
+
+    Implementing a custom role:
+        >>> from questfoundry.roles.base import Role, RoleContext, RoleResult
+        >>> class CustomRole(Role):
+        ...     @property
+        ...     def role_name(self) -> str:
+        ...         return "custom"
+        ...
+        ...     @property
+        ...     def role_description(self) -> str:
+        ...         return "Custom role for specific task"
+        ...
+        ...     def execute_task(self, context: RoleContext) -> RoleResult:
+        ...         # Build prompts using base class helpers
+        ...         system_prompt = self.build_system_prompt(context)
+        ...         user_prompt = self.build_user_prompt(context)
+        ...
+        ...         # Execute via provider
+        ...         response = self.provider.generate_text(
+        ...             system_prompt + "\n\n" + user_prompt
+        ...         )
+        ...
+        ...         # Return results (parse artifacts as needed)
+        ...         return RoleResult(
+        ...             success=True,
+        ...             output=response,
+        ...             artifacts=[]  # Parse from response if needed
+        ...         )
+
+    Example role usage:
+        >>> from questfoundry.roles.writer import Writer
+        >>> from questfoundry.providers.text.openai import OpenAIProvider
+        >>> provider = OpenAIProvider({"api_key": "sk-..."})
+        >>> writer = Writer(provider=provider)
+        >>> context = RoleContext(
+        ...     task="write_scene",
+        ...     artifacts=[hook, canon],
+        ...     project_metadata={"style": "fantasy"}
+        ... )
+        >>> result = writer.execute_task(context)
+        >>> print(result.output)
+        >>> for artifact in result.artifacts:
+        ...     print(artifact.type, artifact.artifact_id)
     """
 
     def __init__(

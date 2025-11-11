@@ -74,7 +74,83 @@ class Payload(BaseModel):
 
 
 class Envelope(BaseModel):
-    """Protocol envelope wrapping all messages"""
+    """
+    Protocol envelope wrapping all QuestFoundry role-to-role messages.
+
+    The Envelope is the Layer 4 protocol wrapper for all communication between
+    QuestFoundry roles. It provides structured metadata, traceability, safety
+    policies, and payload transport in a standardized format.
+
+    Design principles:
+        - Self-contained: All context needed to process the message
+        - Traceable: Unique IDs, correlation IDs, and timestamps
+        - Safe: Explicit player_safe and spoiler policies
+        - Typed: Intent verbs and payload types enable routing
+        - Versioned: Protocol version enables evolution
+
+    Key envelope components:
+        - protocol: Version information for compatibility
+        - id: Unique message identifier (typically UUID)
+        - time: Message creation timestamp
+        - sender/receiver: Role-based addressing (SR, SS, WR, etc.)
+        - intent: Verb describing the message purpose (e.g., "scene.write")
+        - context: Workspace (hot/cold), TU, snapshot, loop
+        - safety: Player-safe flag and spoiler policy
+        - payload: Artifact type and data being transmitted
+        - refs: Referenced artifact IDs for dependency tracking
+
+    Intent naming convention:
+        Intents use hierarchical dot notation: category.action
+        Examples:
+            - "hook.classify" - Showrunner classifying a hook
+            - "scene.write" - Writer creating a scene
+            - "canon.update" - Archivist updating canon
+            - "quality.check" - Gatekeeper running validation
+
+    Use cases:
+        - Role-to-role task delegation (Showrunner → Writer)
+        - Work result delivery (Writer → Showrunner)
+        - Quality validation (Any role → Gatekeeper)
+        - Artifact querying (Any role → Workspace)
+        - Loop orchestration messages
+
+    Example envelope structure:
+        {
+            "protocol": {"name": "qf-protocol", "version": "1.0.0"},
+            "id": "urn:uuid:550e8400-e29b-41d4-a716-446655440000",
+            "time": "2024-01-15T10:30:00Z",
+            "sender": {"role": "SR", "agent": "claude"},
+            "receiver": {"role": "WR"},
+            "intent": "scene.write",
+            "context": {
+                "hot_cold": "hot",
+                "tu": "TU-2024-01-15-TEST01",
+                "loop": "manuscript_loop"
+            },
+            "safety": {"player_safe": False, "spoilers": "allowed"},
+            "payload": {
+                "type": "tu_brief",
+                "data": {...}
+            },
+            "refs": ["CANON-001", "HOOK-042"]
+        }
+
+    Creating envelopes:
+        Use EnvelopeBuilder for fluent envelope construction:
+            >>> from datetime import datetime
+            >>> envelope = (
+            ...     EnvelopeBuilder()
+            ...     .with_id("msg-001")
+            ...     .with_time(datetime.now())
+            ...     .with_sender("SR")
+            ...     .with_receiver("WR")
+            ...     .with_intent("scene.write")
+            ...     .with_context("hot", tu="TU-2024-01-15-TEST01")
+            ...     .with_safety(player_safe=False, spoilers="allowed")
+            ...     .with_payload("tu_brief", {"scope": "Write tavern scene"})
+            ...     .build()
+            ... )
+    """
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -117,7 +193,62 @@ class Envelope(BaseModel):
 
 
 class EnvelopeBuilder:
-    """Fluent builder for constructing Envelopes"""
+    """
+    Fluent builder for constructing protocol Envelopes.
+
+    EnvelopeBuilder provides a chainable API for constructing valid Envelope
+    instances with compile-time safety and runtime validation. Use this instead
+    of constructing Envelope directly to avoid missing required fields.
+
+    The builder pattern ensures:
+        - All required fields are set before building
+        - Type-safe construction with IDE autocomplete
+        - Clear, readable envelope construction code
+        - Validation at build() time
+
+    Usage:
+        >>> from datetime import datetime
+        >>> builder = EnvelopeBuilder()
+        >>> envelope = (
+        ...     builder
+        ...     .with_id("msg-123")
+        ...     .with_time(datetime.now())
+        ...     .with_sender("SR", agent="claude")
+        ...     .with_receiver("WR")
+        ...     .with_intent("scene.write")
+        ...     .with_context("hot", tu="TU-2024-01-15-TEST01")
+        ...     .with_safety(player_safe=False, spoilers="allowed")
+        ...     .with_payload("tu_brief", {"scope": "Write scene"})
+        ...     .with_refs(["CANON-001"])
+        ...     .build()
+        ... )
+
+    Common patterns:
+        Request/response with correlation:
+            >>> request = (
+            ...     EnvelopeBuilder()
+            ...     .with_id("req-001")
+            ...     .with_correlation_id("conv-abc")
+            ...     # ... other fields ...
+            ...     .build()
+            ... )
+            >>> response = (
+            ...     EnvelopeBuilder()
+            ...     .with_id("resp-001")
+            ...     .with_reply_to("req-001")
+            ...     .with_correlation_id("conv-abc")
+            ...     # ... other fields ...
+            ...     .build()
+            ... )
+
+        Player-safe message:
+            >>> envelope = (
+            ...     EnvelopeBuilder()
+            ...     # ... basic fields ...
+            ...     .with_safety(player_safe=True, spoilers="strip")
+            ...     .build()
+            ... )
+    """
 
     def __init__(self) -> None:
         self._protocol = Protocol(name="qf-protocol", version="1.0.0")
