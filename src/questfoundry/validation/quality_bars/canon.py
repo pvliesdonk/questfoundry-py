@@ -8,9 +8,8 @@ for canon transfer and world genesis workflows.
 from typing import Any
 
 from ...models.artifact import Artifact
-from ...state.conflict_detection import ConflictDetector
-from ...state.entity_registry import EntityRegistry, EntityType
-from ...state.timeline import TimelineManager
+from ...state.entity_registry import EntityType
+from ...state.timeline import TimelineAnchor, TimelineManager
 from .base import QualityBar, QualityBarResult, QualityIssue
 
 
@@ -36,7 +35,8 @@ class CanonConflictBar(QualityBar):
         Validate canon artifacts for conflicts.
 
         Args:
-            artifacts: List of artifacts to validate (should include canon_transfer_package)
+            artifacts: List of artifacts to validate (should include
+                canon_transfer_package)
 
         Returns:
             QualityBarResult with conflict issues
@@ -51,8 +51,6 @@ class CanonConflictBar(QualityBar):
         if not canon_packages:
             # No canon packages to validate - pass
             return self._create_result(issues, validated_packages=0)
-
-        detector = ConflictDetector()
 
         for pkg in canon_packages:
             pkg_id = pkg.artifact_id or "unknown"
@@ -81,9 +79,15 @@ class CanonConflictBar(QualityBar):
                             issues.append(
                                 QualityIssue(
                                     severity="blocker",
-                                    message=f"Internal canon conflict detected: '{fact1}' contradicts '{fact2}'",
+                                    message=(
+                                        f"Internal canon conflict: '{fact1}' "
+                                        f"contradicts '{fact2}'"
+                                    ),
                                     location=f"{pkg_id}/invariant_canon",
-                                    fix="Review and resolve contradictory canon statements",
+                                    fix=(
+                                        "Review and resolve contradictory "
+                                        "canon statements"
+                                    ),
                                 )
                             )
 
@@ -144,7 +148,10 @@ class CanonConflictBar(QualityBar):
                     issues.append(
                         QualityIssue(
                             severity="blocker",
-                            message=f"Duplicate immutable entity: {name} ({entity_type})",
+                            message=(
+                                f"Duplicate immutable entity: {name} "
+                                f"({entity_type})"
+                            ),
                             location=f"{pkg_id}/entity_registry",
                             fix="Remove duplicate or mark one as mutable",
                         )
@@ -337,7 +344,10 @@ class EntityReferenceBar(QualityBar):
                     issues.append(
                         QualityIssue(
                             severity="warning",
-                            message=f"Immutable entity missing source: {entity.get('name', 'unknown')}",
+                            message=(
+                                f"Immutable entity missing source: "
+                                f"{entity.get('name', 'unknown')}"
+                            ),
                             location=location,
                             fix="Add 'source' field to track canon provenance",
                         )

@@ -500,6 +500,140 @@ class TestSpoilerHygieneBar:
         assert len(result.info) >= 1
 
 
+class TestCanonConflictBar:
+    """Test canon conflict quality bar (Layer 6/7)."""
+
+    def test_canon_conflict_pass_no_packages(self):
+        """Test canon conflict bar passes with no canon packages"""
+        from questfoundry.validation.quality_bars.canon import CanonConflictBar
+
+        bar = CanonConflictBar()
+        artifacts = [
+            Artifact(type="manuscript_section", data={"id": "section-1"}),
+        ]
+
+        result = bar.validate(artifacts)
+        assert result.passed is True
+        assert len(result.blockers) == 0
+
+    def test_canon_conflict_with_canon_package(self):
+        """Test canon conflict bar with canon package"""
+        from questfoundry.validation.quality_bars.canon import CanonConflictBar
+
+        bar = CanonConflictBar()
+        artifacts = [
+            Artifact(
+                type="canon_transfer_package",
+                artifact_id="CANON-001",
+                data={
+                    "invariant_canon": [
+                        {"facts": ["Dragons sleep for decades"]}
+                    ],
+                    "entity_registry": [],
+                },
+            )
+        ]
+
+        result = bar.validate(artifacts)
+        # Should process package without error
+        assert result is not None
+        assert result.bar_name == "canon_conflict"
+
+
+class TestTimelineChronologyBar:
+    """Test timeline chronology quality bar (Layer 6/7)."""
+
+    def test_timeline_chronology_pass_no_packages(self):
+        """Test timeline bar passes with no canon packages"""
+        from questfoundry.validation.quality_bars.canon import (
+            TimelineChronologyBar,
+        )
+
+        bar = TimelineChronologyBar()
+        artifacts = [
+            Artifact(type="manuscript_section", data={"id": "section-1"}),
+        ]
+
+        result = bar.validate(artifacts)
+        assert result.passed is True
+
+    def test_timeline_chronology_valid(self):
+        """Test timeline bar with valid chronology"""
+        from questfoundry.validation.quality_bars.canon import (
+            TimelineChronologyBar,
+        )
+
+        bar = TimelineChronologyBar()
+        artifacts = [
+            Artifact(
+                type="canon_transfer_package",
+                artifact_id="CANON-001",
+                data={
+                    "timeline": {
+                        "anchors": [
+                            {
+                                "anchor_id": "T0",
+                                "event": "Foundation",
+                                "year": 0,
+                                "source": "world-genesis",
+                            }
+                        ]
+                    }
+                },
+            )
+        ]
+
+        result = bar.validate(artifacts)
+        assert result.passed is True
+
+
+class TestEntityReferenceBar:
+    """Test entity reference quality bar (Layer 6/7)."""
+
+    def test_entity_reference_pass_no_packages(self):
+        """Test entity bar passes with no canon packages"""
+        from questfoundry.validation.quality_bars.canon import (
+            EntityReferenceBar,
+        )
+
+        bar = EntityReferenceBar()
+        artifacts = [
+            Artifact(type="manuscript_section", data={"id": "section-1"}),
+        ]
+
+        result = bar.validate(artifacts)
+        assert result.passed is True
+
+    def test_entity_reference_valid(self):
+        """Test entity bar with valid entities"""
+        from questfoundry.validation.quality_bars.canon import (
+            EntityReferenceBar,
+        )
+
+        bar = EntityReferenceBar()
+        artifacts = [
+            Artifact(
+                type="canon_transfer_package",
+                artifact_id="CANON-001",
+                data={
+                    "entity_registry": [
+                        {
+                            "name": "Dragon Council",
+                            "entity_type": "faction",
+                            "role": "governing body",
+                            "description": "Council of dragons",
+                            "source": "world-genesis",
+                            "immutable": True,
+                        }
+                    ]
+                },
+            )
+        ]
+
+        result = bar.validate(artifacts)
+        assert result.passed is True
+
+
 class TestQualityBarRegistry:
     """Test quality bar registry functionality."""
 

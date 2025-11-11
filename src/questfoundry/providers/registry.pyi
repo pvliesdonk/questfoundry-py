@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from .base import ImageProvider, Provider, TextProvider
+from .base import ImageProvider, TextProvider
 
 class ProviderRegistry:
     """Registry for managing provider instances."""

@@ -32,9 +32,11 @@ class Entity:
     Attributes:
         name: Entity name (3-80 characters)
         entity_type: Type of entity (character, place, faction, item)
-        role: Role or function (e.g., "protagonist", "capital city", "antagonist faction")
+        role: Role or function (e.g., "protagonist", "capital city",
+            "antagonist faction")
         description: Brief description of the entity
-        source: Source project or package (e.g., "dragon-quest-1", "world-genesis")
+        source: Source project or package (e.g., "dragon-quest-1",
+            "world-genesis")
         immutable: Whether this entity can be modified (from invariant canon)
         metadata: Additional entity-specific data
     """
@@ -50,7 +52,9 @@ class Entity:
     def __post_init__(self) -> None:
         """Validate entity fields."""
         if not 3 <= len(self.name) <= 80:
-            raise ValueError(f"Entity name must be 3-80 characters, got {len(self.name)}")
+            raise ValueError(
+                f"Entity name must be 3-80 characters, got {len(self.name)}"
+            )
         if not self.description:
             raise ValueError("Entity description cannot be empty")
 

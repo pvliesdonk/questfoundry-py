@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Iterator
 
 from .cache import CacheConfig, ResponseCache
-from .rate_limiter import CostTracker, RateLimitConfig, RateLimiter
+from .rate_limiter import CostTracker, RateLimiter
 
 class Provider(ABC):
     """Base class for all QuestFoundry providers."""

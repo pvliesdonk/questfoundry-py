@@ -92,7 +92,8 @@ class WorkspaceManager:
             ...     immutable=True,
             ...     source="canon-import"
             ... )
-            >>> # Artifact metadata now includes {"immutable": True, "source": "canon-import"}
+            >>> # Artifact metadata now includes
+            >>> # {"immutable": True, "source": "canon-import"}
 
         Query cold storage:
             >>> cold_hooks = ws.list_cold_artifacts(artifact_type="hook_card")
