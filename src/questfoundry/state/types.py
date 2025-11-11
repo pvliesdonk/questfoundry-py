@@ -39,12 +39,8 @@ class TUState(BaseModel):
     modified: datetime = Field(
         default_factory=datetime.now, description="Last modification timestamp"
     )
-    snapshot_id: str | None = Field(
-        default=None, description="Associated snapshot ID"
-    )
-    data: dict[str, Any] = Field(
-        default_factory=dict, description="TU brief data"
-    )
+    snapshot_id: str | None = Field(default=None, description="Associated snapshot ID")
+    data: dict[str, Any] = Field(default_factory=dict, description="TU brief data")
     metadata: dict[str, Any] = Field(
         default_factory=dict, description="Additional metadata"
     )

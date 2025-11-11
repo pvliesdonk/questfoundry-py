@@ -1,6 +1,10 @@
 """Scene Smith role implementation."""
 
+import logging
+
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class SceneSmith(Role):
@@ -48,18 +52,26 @@ class SceneSmith(Role):
             Result with scene content
         """
         task = context.task.lower()
+        logger.info("SceneSmith executing task: %s", task)
+        logger.trace("Number of artifacts provided: %d", len(context.artifacts))
 
         if task == "draft_scene":
+            logger.debug("Drafting scene from brief")
             return self._draft_scene(context)
         elif task == "draft_choices":
+            logger.debug("Drafting choice options")
             return self._draft_choices(context)
         elif task == "rewrite_scene":
+            logger.debug("Rewriting scene with feedback")
             return self._rewrite_scene(context)
         elif task == "write_gate_scene":
+            logger.debug("Writing gateway/check scene")
             return self._write_gate_scene(context)
         elif task == "polish_prose":
+            logger.debug("Polishing scene prose")
             return self._polish_prose(context)
         else:
+            logger.warning("Unknown SceneSmith task: %s", task)
             return RoleResult(
                 success=False,
                 output="",
@@ -68,6 +80,7 @@ class SceneSmith(Role):
 
     def _draft_scene(self, context: RoleContext) -> RoleResult:
         """Draft a scene from Plotwright brief."""
+        logger.debug("Drafting scene from brief")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Draft Scene
@@ -96,8 +109,10 @@ Write in engaging, player-facing prose. Keep it tight and focused.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            logger.trace("Calling LLM to draft scene")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully drafted scene, size: %d characters", len(response)
             )
 
             return RoleResult(
@@ -107,6 +122,7 @@ Write in engaging, player-facing prose. Keep it tight and focused.
             )
 
         except Exception as e:
+            logger.error("Error drafting scene: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -115,6 +131,7 @@ Write in engaging, player-facing prose. Keep it tight and focused.
 
     def _draft_choices(self, context: RoleContext) -> RoleResult:
         """Draft choice options for an existing scene."""
+        logger.debug("Drafting choice options")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Draft Choices
@@ -138,8 +155,10 @@ Focus on quality over quantity - 2 strong choices beat 4 weak ones.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
+            logger.trace("Calling LLM to draft choices")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
+            logger.info(
+                "Successfully drafted choices, size: %d characters", len(response)
             )
 
             return RoleResult(
@@ -149,6 +168,7 @@ Focus on quality over quantity - 2 strong choices beat 4 weak ones.
             )
 
         except Exception as e:
+            logger.error("Error drafting choices: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -157,7 +177,10 @@ Focus on quality over quantity - 2 strong choices beat 4 weak ones.
 
     def _rewrite_scene(self, context: RoleContext) -> RoleResult:
         """Rewrite a scene based on feedback."""
+        logger.debug("Rewriting scene based on feedback")
         feedback = context.additional_context.get("feedback", "")
+        feedback_length = len(feedback) if feedback else 0
+        logger.trace("Feedback provided: %d characters", feedback_length)
 
         system_prompt = self.build_system_prompt(context)
 
@@ -179,8 +202,10 @@ Focus on the specific issues raised in the feedback.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            logger.trace("Calling LLM to rewrite scene")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully rewrote scene, size: %d characters", len(response)
             )
 
             return RoleResult(
@@ -190,6 +215,7 @@ Focus on the specific issues raised in the feedback.
             )
 
         except Exception as e:
+            logger.error("Error rewriting scene: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -198,7 +224,9 @@ Focus on the specific issues raised in the feedback.
 
     def _write_gate_scene(self, context: RoleContext) -> RoleResult:
         """Write a scene that implements a gateway/check."""
+        logger.debug("Writing gateway/check scene")
         gate_type = context.additional_context.get("gate_type", "unknown")
+        logger.trace("Gate type: %s", gate_type)
 
         system_prompt = self.build_system_prompt(context)
 
@@ -225,8 +253,12 @@ player meets the requirement, and provide a diegetic reason if they don't.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
+            logger.trace("Calling LLM to write gate scene")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
+            logger.info(
+                "Successfully wrote gate scene for %s gate, size: %d characters",
+                gate_type,
+                len(response),
             )
 
             return RoleResult(
@@ -236,6 +268,9 @@ player meets the requirement, and provide a diegetic reason if they don't.
             )
 
         except Exception as e:
+            logger.error(
+                "Error writing gate scene (%s): %s", gate_type, e, exc_info=True
+            )
             return RoleResult(
                 success=False,
                 output="",
@@ -244,6 +279,7 @@ player meets the requirement, and provide a diegetic reason if they don't.
 
     def _polish_prose(self, context: RoleContext) -> RoleResult:
         """Final polish pass on scene prose."""
+        logger.debug("Polishing scene prose")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Polish Prose
@@ -264,8 +300,10 @@ and choices while improving the prose quality.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            logger.trace("Calling LLM to polish prose")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully polished prose, size: %d characters", len(response)
             )
 
             return RoleResult(
@@ -275,6 +313,7 @@ and choices while improving the prose quality.
             )
 
         except Exception as e:
+            logger.error("Error polishing prose: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",

@@ -8,10 +8,13 @@ Validates that:
 - No contradictory requirements
 """
 
+import logging
 import re
 
 from ...models.artifact import Artifact
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class GatewaysBar(QualityBar):
@@ -55,17 +58,17 @@ class GatewaysBar(QualityBar):
         Returns:
             QualityBarResult
         """
+        logger.debug("Validating gateways in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Compile non-diegetic pattern regex
-        non_diegetic = re.compile(
-            "|".join(self.NON_DIEGETIC_PATTERNS), re.IGNORECASE
-        )
+        non_diegetic = re.compile("|".join(self.NON_DIEGETIC_PATTERNS), re.IGNORECASE)
+        logger.trace("Gateway validation patterns compiled")
 
         # Check manuscript sections
-        sections = [
-            a for a in artifacts if a.type == "manuscript_section"
-        ]
+        sections = [a for a in artifacts if a.type == "manuscript_section"]
+
+        logger.trace("Found %d manuscript sections to validate", len(sections))
 
         for section in sections:
             section_id = section.data.get("id", "unknown")
@@ -85,8 +88,7 @@ class GatewaysBar(QualityBar):
                             QualityIssue(
                                 severity="warning",
                                 message=(
-                                    f"Choice condition not diegetic: "
-                                    f"'{condition[:50]}'"
+                                    f"Choice condition not diegetic: '{condition[:50]}'"
                                 ),
                                 location=f"section:{section_id}.choices[{i}]",
                                 fix=(
@@ -99,12 +101,18 @@ class GatewaysBar(QualityBar):
                 # Check surface text for gates
                 text = choice.get("text", "")
                 if text and non_diegetic.search(text):
+                    logger.warning(
+                        (
+                            "Choice text contains non-diegetic language at "
+                            "section %s choice %d"
+                        ),
+                        section_id,
+                        i,
+                    )
                     issues.append(
                         QualityIssue(
                             severity="blocker",
-                            message=(
-                                "Choice text contains non-diegetic language"
-                            ),
+                            message=("Choice text contains non-diegetic language"),
                             location=f"section:{section_id}.choices[{i}]",
                             fix=(
                                 "Remove technical/meta terms from "
@@ -113,6 +121,5 @@ class GatewaysBar(QualityBar):
                         )
                     )
 
-        return self._create_result(
-            issues, sections_checked=len(sections)
-        )
+        logger.debug("Gateway validation complete: %d issues found", len(issues))
+        return self._create_result(issues, sections_checked=len(sections))

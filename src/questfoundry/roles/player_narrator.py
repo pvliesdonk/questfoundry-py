@@ -1,8 +1,11 @@
 """Player Narrator role implementation."""
 
+import logging
 from typing import Any
 
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class PlayerNarrator(Role):
@@ -159,9 +162,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
 
             data = self._parse_json_from_response(response)
 
@@ -238,9 +239,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -315,9 +314,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -386,9 +383,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -452,9 +447,7 @@ Respond in JSON format with complete report.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
 
             data = self._parse_json_from_response(response)
 

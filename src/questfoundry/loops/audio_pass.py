@@ -1,11 +1,14 @@
 """Audio Pass loop implementation."""
 
+import logging
 from typing import Any
 
 from ..models.artifact import Artifact
 from ..roles.base import Role, RoleContext
 from .base import Loop, LoopContext, LoopResult, LoopStep, StepStatus
 from .registry import LoopMetadata
+
+logger = logging.getLogger(__name__)
 
 
 class AudioPassLoop(Loop):
@@ -131,10 +134,7 @@ class AudioPassLoop(Loop):
         for step in self.steps:
             try:
                 # Skip audio generation if producer is dormant
-                if (
-                    step.step_id == "generate_audio"
-                    and not self.audio_producer_active
-                ):
+                if step.step_id == "generate_audio" and not self.audio_producer_active:
                     step.status = StepStatus.SKIPPED
                     continue
 

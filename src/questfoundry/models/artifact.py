@@ -60,9 +60,7 @@ class Artifact(BaseModel):
     """
 
     model_config = ConfigDict(
-        json_schema_extra={
-            "example": {"type": "hook_card", "data": {}, "metadata": {}}
-        }
+        json_schema_extra={"example": {"type": "hook_card", "data": {}, "metadata": {}}}
     )
 
     type: str = Field(..., description="Artifact type (e.g., 'hook_card')")

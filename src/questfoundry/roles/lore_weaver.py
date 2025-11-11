@@ -1,8 +1,11 @@
 """Lore Weaver role implementation."""
 
+import logging
 from typing import Any
 
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class LoreWeaver(Role):
@@ -51,18 +54,26 @@ class LoreWeaver(Role):
             Result with canon entries or validation results
         """
         task = context.task.lower()
+        logger.info("LoreWeaver executing task: %s", task)
+        logger.trace("Number of artifacts provided: %d", len(context.artifacts))
 
         if task == "expand_canon":
+            logger.debug("Expanding canon from hooks")
             return self._expand_canon(context)
         elif task == "resolve_contradiction":
+            logger.debug("Resolving canon contradiction")
             return self._resolve_contradiction(context)
         elif task == "create_timeline":
+            logger.debug("Creating temporal timeline")
             return self._create_timeline(context)
         elif task == "generate_player_summary":
+            logger.debug("Generating player-safe summary")
             return self._generate_player_summary(context)
         elif task == "check_canon_consistency":
+            logger.debug("Checking canon consistency")
             return self._check_canon_consistency(context)
         else:
+            logger.warning("Unknown LoreWeaver task: %s", task)
             return RoleResult(
                 success=False,
                 output="",
@@ -119,9 +130,7 @@ Provide responses in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=3000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=3000)
 
             # Parse JSON response
             data = self._parse_json_from_response(response)
@@ -153,11 +162,11 @@ Provide responses in JSON format:
 {self.format_artifacts(context.artifacts)}
 
 ## Conflicting Statements
-Statement A: {contradiction.get('statement_a', '')}
-Source A: {contradiction.get('source_a', '')}
+Statement A: {contradiction.get("statement_a", "")}
+Source A: {contradiction.get("source_a", "")}
 
-Statement B: {contradiction.get('statement_b', '')}
-Source B: {contradiction.get('source_b', '')}
+Statement B: {contradiction.get("statement_b", "")}
+Source B: {contradiction.get("source_b", "")}
 
 Resolve this contradiction by:
 1. **Analysis**: What's the core conflict?
@@ -169,9 +178,7 @@ Respond in JSON format with resolution decision.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 
@@ -214,9 +221,7 @@ Respond in JSON format with timeline structure.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -244,8 +249,8 @@ Respond in JSON format with timeline structure.
 {self.format_artifacts(context.artifacts)}
 
 ## Canon Entry (Spoiler-Heavy)
-Title: {canon_entry.get('title', '')}
-Answer: {canon_entry.get('answer', '')}
+Title: {canon_entry.get("title", "")}
+Answer: {canon_entry.get("answer", "")}
 
 Create a player-safe summary that:
 1. Provides useful context without revealing twists
@@ -257,9 +262,7 @@ Keep it 2-4 sentences, bland and informative.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=500)
 
             return RoleResult(
                 success=True,
@@ -310,9 +313,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             data = self._parse_json_from_response(response)
 

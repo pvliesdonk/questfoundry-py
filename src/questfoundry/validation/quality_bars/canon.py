@@ -5,12 +5,15 @@ Validates canon integrity, timeline chronology, and entity consistency
 for canon transfer and world genesis workflows.
 """
 
+import logging
 from typing import Any
 
 from ...models.artifact import Artifact
 from ...state.entity_registry import EntityType
 from ...state.timeline import TimelineAnchor, TimelineManager
 from .base import QualityBar, QualityBarResult, QualityIssue
+
+logger = logging.getLogger(__name__)
 
 
 class CanonConflictBar(QualityBar):
@@ -41,15 +44,15 @@ class CanonConflictBar(QualityBar):
         Returns:
             QualityBarResult with conflict issues
         """
+        logger.debug("Validating canon conflicts in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Extract canon transfer packages
-        canon_packages = [
-            a for a in artifacts if a.type == "canon_transfer_package"
-        ]
+        canon_packages = [a for a in artifacts if a.type == "canon_transfer_package"]
 
         if not canon_packages:
             # No canon packages to validate - pass
+            logger.trace("No canon packages found to validate")
             return self._create_result(issues, validated_packages=0)
 
         for pkg in canon_packages:
@@ -93,14 +96,14 @@ class CanonConflictBar(QualityBar):
 
             # Validate entity registry conflicts
             if "entity_registry" in pkg.data:
+                logger.trace("Validating entity registry for package %s", pkg_id)
                 entity_issues = self._validate_entity_registry(
                     pkg.data["entity_registry"], pkg_id
                 )
                 issues.extend(entity_issues)
 
-        return self._create_result(
-            issues, validated_packages=len(canon_packages)
-        )
+        logger.debug("Canon conflict validation complete: %d issues found", len(issues))
+        return self._create_result(issues, validated_packages=len(canon_packages))
 
     def _detect_contradiction(self, fact1: str, fact2: str) -> bool:
         """Simple contradiction detection using keyword pairs."""
@@ -149,8 +152,7 @@ class CanonConflictBar(QualityBar):
                         QualityIssue(
                             severity="blocker",
                             message=(
-                                f"Duplicate immutable entity: {name} "
-                                f"({entity_type})"
+                                f"Duplicate immutable entity: {name} ({entity_type})"
                             ),
                             location=f"{pkg_id}/entity_registry",
                             fix="Remove duplicate or mark one as mutable",
@@ -191,6 +193,7 @@ class TimelineChronologyBar(QualityBar):
         Returns:
             QualityBarResult with chronology issues
         """
+        logger.debug("Validating timeline chronology in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Extract canon packages and world genesis manifests with timelines
@@ -202,6 +205,7 @@ class TimelineChronologyBar(QualityBar):
 
         if not timeline_artifacts:
             # No timeline artifacts to validate - pass
+            logger.trace("No timeline artifacts found to validate")
             return self._create_result(issues, validated_artifacts=0)
 
         for artifact in timeline_artifacts:
@@ -239,19 +243,31 @@ class TimelineChronologyBar(QualityBar):
 
             # Run chronology validation
             validation_errors = timeline.validate_chronology()
-            for error in validation_errors:
-                issues.append(
-                    QualityIssue(
-                        severity="blocker",
-                        message=error,
-                        location=f"{artifact_id}/timeline",
-                        fix="Reorder anchors to maintain chronological consistency",
-                    )
+            if validation_errors:
+                logger.warning(
+                    (
+                        "Timeline chronology validation errors for artifact %s: "
+                        "%d error(s)"
+                    ),
+                    artifact_id,
+                    len(validation_errors),
                 )
+                for error in validation_errors:
+                    issues.append(
+                        QualityIssue(
+                            severity="blocker",
+                            message=error,
+                            location=f"{artifact_id}/timeline",
+                            fix="Reorder anchors to maintain chronological consistency",
+                        )
+                    )
+            else:
+                logger.debug("Timeline chronology valid for artifact %s", artifact_id)
 
-        return self._create_result(
-            issues, validated_artifacts=len(timeline_artifacts)
+        logger.debug(
+            "Timeline chronology validation complete: %d issues found", len(issues)
         )
+        return self._create_result(issues, validated_artifacts=len(timeline_artifacts))
 
 
 class EntityReferenceBar(QualityBar):
@@ -283,6 +299,7 @@ class EntityReferenceBar(QualityBar):
         Returns:
             QualityBarResult with entity issues
         """
+        logger.debug("Validating entity references in %d artifacts", len(artifacts))
         issues: list[QualityIssue] = []
 
         # Extract artifacts with entity registries
@@ -294,6 +311,7 @@ class EntityReferenceBar(QualityBar):
 
         if not entity_artifacts:
             # No entity artifacts to validate - pass
+            logger.trace("No entity artifacts found to validate")
             return self._create_result(issues, validated_artifacts=0)
 
         valid_entity_types = {t.value for t in EntityType}
@@ -341,6 +359,10 @@ class EntityReferenceBar(QualityBar):
                 immutable = entity.get("immutable", False)
                 source = entity.get("source", "")
                 if immutable and not source:
+                    logger.warning(
+                        "Immutable entity missing source: %s",
+                        entity.get("name", "unknown"),
+                    )
                     issues.append(
                         QualityIssue(
                             severity="warning",
@@ -353,6 +375,7 @@ class EntityReferenceBar(QualityBar):
                         )
                     )
 
-        return self._create_result(
-            issues, validated_artifacts=len(entity_artifacts)
+        logger.debug(
+            "Entity reference validation complete: %d issues found", len(issues)
         )
+        return self._create_result(issues, validated_artifacts=len(entity_artifacts))

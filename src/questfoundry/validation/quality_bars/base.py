@@ -6,11 +6,14 @@ merged from Hot to Cold (Cold = ship-ready content). Each bar focuses on
 a specific quality aspect (integrity, reachability, style, etc.).
 """
 
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
 from ...models.artifact import Artifact
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -111,9 +114,24 @@ class QualityBar(ABC):
             QualityBarResult
         """
         blockers = [i for i in issues if i.severity == "blocker"]
+        warnings = [i for i in issues if i.severity == "warning"]
+        passed = len(blockers) == 0
+
+        logger.trace(
+            (
+                "Quality bar %s result: passed=%s, blockers=%d, "
+                "warnings=%d, total_issues=%d"
+            ),
+            self.name,
+            passed,
+            len(blockers),
+            len(warnings),
+            len(issues),
+        )
+
         return QualityBarResult(
             bar_name=self.name,
-            passed=len(blockers) == 0,
+            passed=passed,
             issues=issues,
             metadata=metadata,
         )

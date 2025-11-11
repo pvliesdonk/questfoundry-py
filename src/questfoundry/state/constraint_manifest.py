@@ -195,16 +195,12 @@ class ConstraintManifestGenerator:
         # Process invariant canon
         if invariant_canon:
             for canon in invariant_canon:
-                manifest.invariants.extend(
-                    self._extract_invariants(canon)
-                )
+                manifest.invariants.extend(self._extract_invariants(canon))
 
         # Process mutable canon
         if mutable_canon:
             for canon in mutable_canon:
-                manifest.mutables.extend(
-                    self._extract_mutables(canon)
-                )
+                manifest.mutables.extend(self._extract_mutables(canon))
 
         # Process entity constraints
         if entity_registry:
@@ -268,16 +264,13 @@ class ConstraintManifestGenerator:
 
         return mutables
 
-    def _extract_entity_constraints(
-        self, registry: EntityRegistry
-    ) -> list[str]:
+    def _extract_entity_constraints(self, registry: EntityRegistry) -> list[str]:
         """Extract entity constraints from registry."""
         constraints = []
 
         # Immutable characters
         immutable_chars = [
-            e for e in registry.get_by_type(EntityType.CHARACTER)
-            if e.immutable
+            e for e in registry.get_by_type(EntityType.CHARACTER) if e.immutable
         ]
         if immutable_chars:
             names = [e.name for e in immutable_chars[:5]]  # First 5
@@ -289,8 +282,7 @@ class ConstraintManifestGenerator:
 
         # Immutable places
         immutable_places = [
-            e for e in registry.get_by_type(EntityType.PLACE)
-            if e.immutable
+            e for e in registry.get_by_type(EntityType.PLACE) if e.immutable
         ]
         if immutable_places:
             names = [e.name for e in immutable_places[:5]]
@@ -302,9 +294,7 @@ class ConstraintManifestGenerator:
 
         return constraints
 
-    def _extract_timeline_constraints(
-        self, timeline: TimelineManager
-    ) -> list[str]:
+    def _extract_timeline_constraints(self, timeline: TimelineManager) -> list[str]:
         """Extract timeline constraints."""
         constraints = []
 
@@ -337,9 +327,7 @@ class ConstraintManifestGenerator:
         boundaries = []
 
         if invariant_count > 0:
-            boundaries.append(
-                f"Respect {invariant_count} immutable canon rule(s)"
-            )
+            boundaries.append(f"Respect {invariant_count} immutable canon rule(s)")
 
         if entity_count > 0:
             boundaries.append(
@@ -348,9 +336,7 @@ class ConstraintManifestGenerator:
             )
 
         if timeline_count > 0:
-            boundaries.append(
-                f"Adhere to {timeline_count} timeline constraint(s)"
-            )
+            boundaries.append(f"Adhere to {timeline_count} timeline constraint(s)")
 
         if not boundaries:
             boundaries.append("No strict constraints - full creative freedom")

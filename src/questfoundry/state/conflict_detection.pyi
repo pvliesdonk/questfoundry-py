@@ -6,12 +6,14 @@ from typing import Any
 
 class ConflictResolution(Enum):
     """Conflict resolution strategies."""
+
     REJECT: str
     REVISE: str
     DOWNGRADE: str
 
 class ConflictSeverity(Enum):
     """Conflict severity levels."""
+
     CRITICAL: str
     MAJOR: str
     MINOR: str
@@ -20,6 +22,7 @@ class ConflictSeverity(Enum):
 @dataclass
 class CanonConflict:
     """A detected conflict between canon and seed ideas."""
+
     canon_statement: str
     seed_idea: str
     severity: ConflictSeverity
@@ -30,6 +33,7 @@ class CanonConflict:
 @dataclass
 class ConflictReport:
     """Report of all detected conflicts."""
+
     conflicts: list[CanonConflict]
     canon_source: str
     metadata: dict[str, Any]
@@ -43,7 +47,6 @@ class ConflictDetector:
     CONTRADICTION_KEYWORDS: dict[str, list[str]]
 
     def __init__(self) -> None: ...
-
     def detect_conflicts(
         self,
         invariant_canon: list[str],

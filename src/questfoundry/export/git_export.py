@@ -4,6 +4,7 @@ Exports cold snapshots as YAML files in a human-readable directory structure
 suitable for version control and diffing.
 """
 
+import logging
 from datetime import datetime
 from pathlib import Path
 
@@ -12,6 +13,8 @@ import yaml
 from ..models.artifact import Artifact
 from ..state.sqlite_store import SQLiteStore
 from ..state.types import SnapshotInfo
+
+logger = logging.getLogger(__name__)
 
 
 class GitExporter:
@@ -72,7 +75,9 @@ class GitExporter:
         Args:
             cold_store: SQLite store for cold storage access
         """
+        logger.debug("Initializing GitExporter")
         self.cold_store = cold_store
+        logger.trace("GitExporter initialized with SQLiteStore")
 
     def export_snapshot(
         self,
@@ -98,18 +103,29 @@ class GitExporter:
             ValueError: If snapshot not found
             IOError: If export fails
         """
+        logger.info(
+            "Exporting snapshot %s to %s (include_hot=%s)",
+            snapshot_id,
+            export_dir,
+            include_hot,
+        )
         export_path = Path(export_dir)
         export_path.mkdir(parents=True, exist_ok=True)
 
         # Get snapshot metadata
         snapshot = self._get_snapshot(snapshot_id)
+        logger.debug("Snapshot loaded: %s (%s)", snapshot_id, snapshot.description)
 
         # Get artifacts
         artifacts = self._get_snapshot_artifacts(snapshot_id, include_hot=include_hot)
+        logger.debug("Found %d artifacts to export", len(artifacts))
 
         # Export artifacts by type
         artifact_index: dict[str, list[str]] = {}
         for artifact in artifacts:
+            logger.trace(
+                "Exporting artifact: %s (%s)", artifact.artifact_id, artifact.type
+            )
             self._export_artifact(artifact, export_path)
 
             # Track in index
@@ -118,8 +134,15 @@ class GitExporter:
                 artifact_index[artifact_type] = []
             artifact_index[artifact_type].append(artifact.artifact_id or "unknown")
 
+        logger.debug(
+            "Exported %d artifact types: %s",
+            len(artifact_index),
+            list(artifact_index.keys()),
+        )
+
         # Create manifest
         self._create_manifest(snapshot, artifact_index, export_path)
+        logger.info("Snapshot export complete: %s", export_path)
 
         return export_path
 
@@ -144,11 +167,13 @@ class GitExporter:
             ValueError: If manifest not found or invalid
             IOError: If import fails
         """
+        logger.info("Importing snapshot from %s", export_dir)
         export_path = Path(export_dir)
 
         # Read manifest
         manifest_path = export_path / "manifest.yml"
         if not manifest_path.exists():
+            logger.error("Manifest not found: %s", manifest_path)
             raise ValueError(f"Manifest not found: {manifest_path}")
 
         with open(manifest_path, "r") as f:
@@ -156,6 +181,11 @@ class GitExporter:
 
         # Use provided snapshot ID or from manifest
         snapshot_id = target_snapshot_id or manifest["snapshot"]["snapshot_id"]
+        logger.debug(
+            "Importing snapshot: %s (original: %s)",
+            snapshot_id,
+            manifest["snapshot"]["snapshot_id"],
+        )
 
         # Create snapshot in database
         snapshot = SnapshotInfo(
@@ -169,18 +199,25 @@ class GitExporter:
         self.cold_store.save_or_replace_snapshot(snapshot)
 
         # Import artifacts
+        total_artifacts = 0
         for artifact_type, artifact_ids in manifest["artifacts"].items():
             type_dir = self._get_type_directory(artifact_type)
             artifact_dir = export_path / type_dir
 
             if not artifact_dir.exists():
+                logger.trace("No directory found for artifact type: %s", artifact_type)
                 continue
 
+            logger.debug(
+                "Importing %d artifacts of type %s", len(artifact_ids), artifact_type
+            )
             for artifact_id in artifact_ids:
                 artifact_file = artifact_dir / f"{artifact_id}.yml"
                 if artifact_file.exists():
                     self._import_artifact(artifact_file)
+                    total_artifacts += 1
 
+        logger.info("Snapshot import complete: %d artifacts imported", total_artifacts)
         return snapshot
 
     def _export_artifact(self, artifact: Artifact, export_dir: Path) -> None:
@@ -199,6 +236,8 @@ class GitExporter:
         # Determine filename
         artifact_id = artifact.artifact_id or "unknown"
         artifact_file = artifact_dir / f"{artifact_id}.yml"
+
+        logger.trace("Exporting artifact to YAML: %s -> %s", artifact_id, artifact_file)
 
         # Prepare artifact data for export
         export_data = {
@@ -225,6 +264,8 @@ class GitExporter:
         Args:
             artifact_file: Path to YAML file
         """
+        logger.trace("Importing artifact from YAML: %s", artifact_file)
+
         with open(artifact_file, "r") as f:
             data = yaml.safe_load(f)
 
@@ -252,6 +293,12 @@ class GitExporter:
             artifact_index: Index of artifacts by type
             export_dir: Export directory
         """
+        logger.debug(
+            "Creating manifest for snapshot %s with %d artifact types",
+            snapshot.snapshot_id,
+            len(artifact_index),
+        )
+
         manifest = {
             "snapshot": {
                 "snapshot_id": snapshot.snapshot_id,
@@ -272,6 +319,8 @@ class GitExporter:
         }
 
         manifest_path = export_dir / "manifest.yml"
+        logger.trace("Writing manifest to %s", manifest_path)
+
         with open(manifest_path, "w") as f:
             yaml.dump(
                 manifest,
@@ -280,6 +329,8 @@ class GitExporter:
                 sort_keys=False,
                 allow_unicode=True,
             )
+
+        logger.debug("Manifest created successfully")
 
     def _get_type_directory(self, artifact_type: str) -> str:
         """
@@ -334,9 +385,7 @@ class GitExporter:
         # If not including hot, filter to only cold artifacts
         if not include_hot:
             artifacts = [
-                a
-                for a in artifacts
-                if a.metadata.get("temperature") == "cold"
+                a for a in artifacts if a.metadata.get("temperature") == "cold"
             ]
 
         return artifacts

@@ -1,11 +1,14 @@
 """Rate limiting and cost tracking for QuestFoundry providers."""
 
+import logging
 import time
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from threading import Lock
 from typing import Any, Optional
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -67,6 +70,14 @@ class RateLimiter:
         Args:
             config: Rate limiting configuration
         """
+        logger.debug(
+            (
+                "Initializing RateLimiter with config: "
+                "requests_per_minute=%d, tokens_per_hour=%d"
+            ),
+            config.requests_per_minute,
+            config.tokens_per_hour,
+        )
         self.config = config
 
         # Token buckets (start full)
@@ -89,6 +100,12 @@ class RateLimiter:
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.total_cost = 0.0
+
+        if config.cost_per_day:
+            logger.trace("Cost limit configured: $%s per day", config.cost_per_day)
+        else:
+            logger.trace("No cost limit configured")
+        logger.trace("RateLimiter initialized successfully")
 
     def _refill_buckets(self) -> None:
         """Refill token buckets based on elapsed time.
@@ -145,6 +162,12 @@ class RateLimiter:
         Returns:
             True if request allowed, False if rate limited
         """
+        logger.trace(
+            "Attempting to acquire rate limit tokens: requests=%d, tokens=%d",
+            num_requests,
+            input_tokens + output_tokens,
+        )
+
         with self._lock:
             self._refill_buckets()
 
@@ -152,27 +175,41 @@ class RateLimiter:
 
             # Check request limit
             if self.request_tokens < num_requests:
+                logger.warning(
+                    "Request rate limit exceeded: available=%.1f, required=%d",
+                    self.request_tokens,
+                    num_requests,
+                )
                 return False
 
             # Check token limit
             if self.token_tokens < total_tokens:
+                logger.warning(
+                    "Token rate limit exceeded: available=%.1f, required=%d",
+                    self.token_tokens,
+                    total_tokens,
+                )
                 return False
 
             # Check cost limit (approximate, in cents)
             estimated_cost_cents = (
                 self._estimate_cost(input_tokens, output_tokens) * 100
             )
-            if (
-                self.cost_tokens is not None
-                and self.cost_tokens < estimated_cost_cents
-            ):
+            if self.cost_tokens is not None and self.cost_tokens < estimated_cost_cents:
+                logger.warning(
+                    "Cost limit exceeded: available=%.2f, required=%.2f cents",
+                    self.cost_tokens,
+                    estimated_cost_cents,
+                )
                 return False
 
             # All checks passed, consume tokens
+            logger.trace("Rate limit check passed, consuming tokens")
             self.request_tokens -= num_requests
             self.token_tokens -= total_tokens
             if self.cost_tokens is not None:
                 self.cost_tokens -= estimated_cost_cents
+            logger.trace("Tokens consumed successfully")
 
             return True
 
@@ -209,10 +246,7 @@ class RateLimiter:
             estimated_cost_cents = (
                 self._estimate_cost(input_tokens, output_tokens) * 100
             )
-            if (
-                self.cost_tokens is not None
-                and self.cost_tokens < estimated_cost_cents
-            ):
+            if self.cost_tokens is not None and self.cost_tokens < estimated_cost_cents:
                 return False
 
             return True
@@ -290,18 +324,36 @@ class RateLimiter:
         Returns:
             True if tokens acquired, False if max wait exceeded
         """
+        logger.debug(
+            "Waiting for rate limit tokens available (max_wait=%d seconds)",
+            max_wait_seconds,
+        )
         start_time = time.time()
+        wait_count = 0
 
         while True:
             if self.acquire(input_tokens, output_tokens, num_requests):
+                elapsed = time.time() - start_time
+                logger.info(
+                    "Rate limit tokens acquired after %.2f seconds (waited %d times)",
+                    elapsed,
+                    wait_count,
+                )
                 return True
 
             elapsed = time.time() - start_time
             if elapsed > max_wait_seconds:
+                logger.warning("Max wait time exceeded for rate limit tokens")
                 return False
 
             # Exponential backoff: 1s, 2s, 4s, max 10s
             wait_time = min(2 ** int(elapsed // 60), 10)
+            wait_count += 1
+            logger.trace(
+                "Rate limited, waiting %.1f seconds before retry (attempt %d)",
+                wait_time,
+                wait_count,
+            )
             time.sleep(wait_time)
 
 
@@ -335,11 +387,13 @@ class CostTracker:
         Args:
             history_days: How many days of history to keep
         """
+        logger.debug("Initializing CostTracker with history_days=%d", history_days)
         self.history_days = history_days
         self.costs_by_provider: dict[str, float] = defaultdict(float)
         self.costs_by_date: dict[str, float] = defaultdict(float)
         self.costs_by_model: dict[str, float] = defaultdict(float)
         self._lock = Lock()
+        logger.trace("CostTracker initialized successfully")
 
     def record_request(
         self,
@@ -360,17 +414,33 @@ class CostTracker:
             cost_per_input_1k: Cost per 1000 input tokens (USD)
             cost_per_output_1k: Cost per 1000 output tokens (USD)
         """
-        cost = (
-            (input_tokens / 1000.0) * cost_per_input_1k +
-            (output_tokens / 1000.0) * cost_per_output_1k
-        )
+        cost = (input_tokens / 1000.0) * cost_per_input_1k + (
+            output_tokens / 1000.0
+        ) * cost_per_output_1k
 
         date_key = datetime.now().strftime("%Y-%m-%d")
+
+        logger.trace(
+            "Recording cost for %s/%s: tokens=%d+%d, cost=$%.4f",
+            provider,
+            model,
+            input_tokens,
+            output_tokens,
+            cost,
+        )
 
         with self._lock:
             self.costs_by_provider[provider] += cost
             self.costs_by_date[date_key] += cost
             self.costs_by_model[f"{provider}/{model}"] += cost
+
+        logger.debug(
+            "Cost recorded for %s/%s: $%.4f (total so far: $%.4f)",
+            provider,
+            model,
+            cost,
+            self.costs_by_provider[provider],
+        )
 
     def get_total_cost(self) -> float:
         """Get total cost across all time.
@@ -420,25 +490,37 @@ class CostTracker:
         Returns:
             Dictionary with total, daily, monthly costs and breakdown
         """
+        logger.trace("Generating cost summary")
+
         with self._lock:
             total = sum(self.costs_by_provider.values())
             today = datetime.now().strftime("%Y-%m-%d")
             current_month = datetime.now().strftime("%Y-%m")
 
             month_cost = sum(
-                v for k, v in self.costs_by_date.items()
-                if k.startswith(current_month)
+                v for k, v in self.costs_by_date.items() if k.startswith(current_month)
             )
 
             providers_summary = {
                 k: round(v, 4) for k, v in self.costs_by_provider.items()
             }
-            return {
+
+            summary = {
                 "total_cost": round(total, 4),
                 "cost_today": round(self.costs_by_date.get(today, 0.0), 4),
                 "cost_this_month": round(month_cost, 4),
                 "by_provider": providers_summary,
             }
+
+        logger.debug(
+            "Cost summary: total=$%.4f, today=$%.4f, this_month=$%.4f",
+            summary["total_cost"],
+            summary["cost_today"],
+            summary["cost_this_month"],
+        )
+        logger.trace("Cost breakdown by provider: %s", providers_summary)
+
+        return summary
 
 
 class RateLimitError(Exception):

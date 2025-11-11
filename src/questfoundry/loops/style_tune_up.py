@@ -1,11 +1,14 @@
 """Style Tune-Up loop implementation."""
 
+import logging
 from typing import Any
 
 from ..models.artifact import Artifact
 from ..roles.base import Role, RoleContext
 from .base import Loop, LoopContext, LoopResult, LoopStep, StepStatus
 from .registry import LoopMetadata
+
+logger = logging.getLogger(__name__)
 
 
 class StyleTuneUpLoop(Loop):
@@ -214,9 +217,7 @@ class StyleTuneUpLoop(Loop):
 
         # Find manuscript sections to analyze
         manuscript_sections = [
-            a
-            for a in self.context.artifacts
-            if a.type == "manuscript_section"
+            a for a in self.context.artifacts if a.type == "manuscript_section"
         ]
 
         context = RoleContext(

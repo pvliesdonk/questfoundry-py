@@ -49,6 +49,7 @@ class FileTransport(Transport):
         Args:
             workspace_dir: Path to workspace directory
         """
+        logger.debug("Initializing FileTransport with workspace: %s", workspace_dir)
         self.workspace_dir = Path(workspace_dir)
         self.messages_dir = self.workspace_dir / "messages"
         self.inbox_dir = self.messages_dir / "inbox"
@@ -56,9 +57,14 @@ class FileTransport(Transport):
         self.processed_dir = self.messages_dir / "processed"
 
         # Create directories if they don't exist
+        logger.trace("Creating message directories")
         self.inbox_dir.mkdir(parents=True, exist_ok=True)
         self.outbox_dir.mkdir(parents=True, exist_ok=True)
         self.processed_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(
+            "FileTransport initialized successfully for workspace: %s",
+            self.workspace_dir,
+        )
 
     def send(self, envelope: Envelope) -> None:
         """
@@ -73,27 +79,42 @@ class FileTransport(Transport):
         Raises:
             IOError: If writing fails
         """
-        # Generate unique filename
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        message_id = str(uuid.uuid4())[:8]
-        filename = f"{timestamp}-{message_id}.json"
-        file_path = self.outbox_dir / filename
+        logger.debug("Writing envelope %s to outbox", envelope.id)
 
-        # Serialize envelope to JSON
-        envelope_json = envelope.model_dump_json(indent=2)
+        try:
+            # Generate unique filename
+            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            message_id = str(uuid.uuid4())[:8]
+            filename = f"{timestamp}-{message_id}.json"
+            file_path = self.outbox_dir / filename
 
-        # Atomic write: write to temp file, then rename
-        with tempfile.NamedTemporaryFile(
-            mode="w",
-            dir=self.outbox_dir,
-            delete=False,
-            suffix=".tmp",
-        ) as tmp_file:
-            tmp_file.write(envelope_json)
-            tmp_path = Path(tmp_file.name)
+            # Serialize envelope to JSON
+            logger.trace("Serializing envelope %s to JSON", envelope.id)
+            envelope_json = envelope.model_dump_json(indent=2)
 
-        # Atomic rename
-        tmp_path.replace(file_path)
+            # Atomic write: write to temp file, then rename
+            logger.trace("Writing envelope to temporary file, then moving to outbox")
+            with tempfile.NamedTemporaryFile(
+                mode="w",
+                dir=self.outbox_dir,
+                delete=False,
+                suffix=".tmp",
+            ) as tmp_file:
+                tmp_file.write(envelope_json)
+                tmp_path = Path(tmp_file.name)
+
+            # Atomic rename
+            tmp_path.replace(file_path)
+            logger.info("Envelope %s written to outbox: %s", envelope.id, filename)
+        except Exception as e:
+            logger.error(
+                "Failed to write envelope %s to outbox: %s",
+                envelope.id,
+                str(e),
+                exc_info=True,
+            )
+            # Wrap in IOError to match documented interface while preserving cause
+            raise IOError(f"Failed to send envelope: {e}") from e
 
     def _move_to_error_dir(self, message_file: Path, error_suffix: str) -> None:
         """

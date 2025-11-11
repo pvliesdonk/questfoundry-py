@@ -41,9 +41,9 @@ class BedrockProvider(TextProvider):
         self.aws_access_key_id = config.get("aws_access_key_id") or os.getenv(
             "AWS_ACCESS_KEY_ID"
         )
-        self.aws_secret_access_key = config.get(
-            "aws_secret_access_key"
-        ) or os.getenv("AWS_SECRET_ACCESS_KEY")
+        self.aws_secret_access_key = config.get("aws_secret_access_key") or os.getenv(
+            "AWS_SECRET_ACCESS_KEY"
+        )
         self.aws_region = config.get("aws_region", "us-east-1")
 
         if not self.aws_access_key_id or not self.aws_secret_access_key:
@@ -54,9 +54,7 @@ class BedrockProvider(TextProvider):
             )
 
         # Model settings
-        self.model = config.get(
-            "model", "anthropic.claude-3-5-sonnet-20241022-v2:0"
-        )
+        self.model = config.get("model", "anthropic.claude-3-5-sonnet-20241022-v2:0")
         self.temperature = config.get("temperature", 0.7)
         self.max_tokens = config.get("max_tokens", 4096)
         self.top_p = config.get("top_p", 0.9)
@@ -177,9 +175,7 @@ class BedrockProvider(TextProvider):
         Raises:
             NotImplementedError: Streaming not yet implemented
         """
-        raise NotImplementedError(
-            "Streaming not yet implemented for Bedrock provider"
-        )
+        raise NotImplementedError("Streaming not yet implemented for Bedrock provider")
 
     def validate_config(self) -> None:
         """

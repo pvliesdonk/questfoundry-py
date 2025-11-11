@@ -73,9 +73,7 @@ class ValidationResult:
         return "\n".join(f"  - {warning}" for warning in self.warnings)
 
 
-def validate_artifact(
-    instance: dict[str, Any], schema_name: str
-) -> ValidationResult:
+def validate_artifact(instance: dict[str, Any], schema_name: str) -> ValidationResult:
     """
     Validate an artifact instance against its schema with detailed error reporting.
 

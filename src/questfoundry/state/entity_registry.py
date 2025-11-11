@@ -317,9 +317,7 @@ class EntityRegistry:
             Dictionary with entities organized by type
         """
         return {
-            "characters": [
-                e.to_dict() for e in self.get_by_type(EntityType.CHARACTER)
-            ],
+            "characters": [e.to_dict() for e in self.get_by_type(EntityType.CHARACTER)],
             "places": [e.to_dict() for e in self.get_by_type(EntityType.PLACE)],
             "factions": [e.to_dict() for e in self.get_by_type(EntityType.FACTION)],
             "items": [e.to_dict() for e in self.get_by_type(EntityType.ITEM)],

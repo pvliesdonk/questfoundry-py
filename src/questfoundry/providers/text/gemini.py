@@ -108,9 +108,9 @@ class GeminiProvider(TextProvider):
             )
 
             # Extract text from response
-            if hasattr(response, 'text'):
+            if hasattr(response, "text"):
                 return response.text
-            elif hasattr(response, 'parts') and len(response.parts) > 0:
+            elif hasattr(response, "parts") and len(response.parts) > 0:
                 return response.parts[0].text
             else:
                 raise RuntimeError("Unexpected response format from Gemini API")
@@ -141,9 +141,7 @@ class GeminiProvider(TextProvider):
         Raises:
             NotImplementedError: Streaming not yet implemented
         """
-        raise NotImplementedError(
-            "Streaming not yet implemented for Gemini provider"
-        )
+        raise NotImplementedError("Streaming not yet implemented for Gemini provider")
 
     def validate_config(self) -> None:
         """

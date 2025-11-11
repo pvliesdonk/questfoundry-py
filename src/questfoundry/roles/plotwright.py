@@ -1,8 +1,11 @@
 """Plotwright role implementation."""
 
 import json
+import logging
 
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class Plotwright(Role):
@@ -49,18 +52,26 @@ class Plotwright(Role):
             Result with generated content and artifacts
         """
         task = context.task.lower()
+        logger.info("Plotwright executing task: %s", task)
+        logger.trace("Number of artifacts provided: %d", len(context.artifacts))
 
         if task == "generate_hooks":
+            logger.debug("Generating quest hooks")
             return self._generate_hooks(context)
         elif task == "create_tu_brief":
+            logger.debug("Creating TU brief")
             return self._create_tu_brief(context)
         elif task == "create_topology":
+            logger.debug("Creating narrative topology")
             return self._create_topology(context)
         elif task == "create_section_briefs":
+            logger.debug("Creating section briefs")
             return self._create_section_briefs(context)
         elif task == "review_structure":
+            logger.debug("Reviewing narrative structure")
             return self._review_structure(context)
         else:
+            logger.warning("Unknown Plotwright task: %s", task)
             return RoleResult(
                 success=False,
                 output="",
@@ -69,6 +80,7 @@ class Plotwright(Role):
 
     def _generate_hooks(self, context: RoleContext) -> RoleResult:
         """Generate quest hooks based on project metadata."""
+        logger.debug("Generating quest hooks")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Generate Quest Hooks
@@ -93,10 +105,13 @@ Format your response as JSON:
 
         response = ""
         try:
+            logger.trace("Calling LLM to generate hooks")
             response = self._call_llm(system_prompt, user_prompt)
 
             # Parse JSON from response (handles markdown code blocks)
             data = self._parse_json_from_response(response)
+            num_hooks = len(data.get("hooks", []))
+            logger.info("Successfully generated %d quest hooks", num_hooks)
 
             return RoleResult(
                 success=True,
@@ -105,12 +120,14 @@ Format your response as JSON:
             )
 
         except json.JSONDecodeError as e:
+            logger.error("Failed to parse JSON response when generating hooks: %s", e)
             return RoleResult(
                 success=False,
                 output=response,
                 error=f"Failed to parse JSON response: {e}",
             )
         except Exception as e:
+            logger.error("Error generating hooks: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -119,6 +136,7 @@ Format your response as JSON:
 
     def _create_tu_brief(self, context: RoleContext) -> RoleResult:
         """Create a TU (Transmedia Unit) brief."""
+        logger.debug("Creating TU brief")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Create TU Brief
@@ -138,8 +156,10 @@ Format as structured text (not necessarily JSON). Be specific but concise.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=3000
+            logger.trace("Calling LLM to create TU brief")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=3000)
+            logger.info(
+                "Successfully created TU brief, size: %d characters", len(response)
             )
 
             return RoleResult(
@@ -149,6 +169,7 @@ Format as structured text (not necessarily JSON). Be specific but concise.
             )
 
         except Exception as e:
+            logger.error("Error creating TU brief: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -157,6 +178,7 @@ Format as structured text (not necessarily JSON). Be specific but concise.
 
     def _create_topology(self, context: RoleContext) -> RoleResult:
         """Design narrative topology."""
+        logger.debug("Creating narrative topology")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Design Narrative Topology
@@ -175,8 +197,11 @@ Provide a clear structure showing how these elements connect.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            logger.trace("Calling LLM to design topology")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully created topology design, size: %d characters",
+                len(response),
             )
 
             return RoleResult(
@@ -186,6 +211,7 @@ Provide a clear structure showing how these elements connect.
             )
 
         except Exception as e:
+            logger.error("Error creating topology: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -194,6 +220,10 @@ Provide a clear structure showing how these elements connect.
 
     def _create_section_briefs(self, context: RoleContext) -> RoleResult:
         """Create section briefs for scene development."""
+        logger.debug("Creating section briefs")
+        section_count = context.additional_context.get("section_count", 4)
+        logger.trace("Creating %d section briefs", section_count)
+
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Create Section Briefs
@@ -209,12 +239,16 @@ For each major section, provide:
 4. **Expected Outcomes**: Where choices lead
 5. **Open Questions**: What the Scene Smith should decide
 
-Number of sections: {context.additional_context.get('section_count', 4)}
+Number of sections: {section_count}
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=3000
+            logger.trace("Calling LLM to create section briefs")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=3000)
+            logger.info(
+                "Successfully created %d section briefs, size: %d characters",
+                section_count,
+                len(response),
             )
 
             return RoleResult(
@@ -224,6 +258,7 @@ Number of sections: {context.additional_context.get('section_count', 4)}
             )
 
         except Exception as e:
+            logger.error("Error creating section briefs: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",
@@ -232,6 +267,7 @@ Number of sections: {context.additional_context.get('section_count', 4)}
 
     def _review_structure(self, context: RoleContext) -> RoleResult:
         """Review narrative structure for issues."""
+        logger.debug("Reviewing narrative structure")
         system_prompt = self.build_system_prompt(context)
 
         user_prompt = f"""# Task: Review Narrative Structure
@@ -251,8 +287,11 @@ Provide specific feedback with line/section references where possible.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2500
+            logger.trace("Calling LLM to review narrative structure")
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2500)
+            logger.info(
+                "Successfully completed structure review, size: %d characters",
+                len(response),
             )
 
             return RoleResult(
@@ -262,6 +301,7 @@ Provide specific feedback with line/section references where possible.
             )
 
         except Exception as e:
+            logger.error("Error reviewing structure: %s", e, exc_info=True)
             return RoleResult(
                 success=False,
                 output="",

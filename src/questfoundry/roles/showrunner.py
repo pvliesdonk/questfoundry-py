@@ -1,5 +1,6 @@
 """Showrunner role implementation."""
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 from .base import Role, RoleContext, RoleResult
@@ -7,6 +8,8 @@ from .base import Role, RoleContext, RoleResult
 if TYPE_CHECKING:
     from questfoundry.providers.base import ImageProvider, TextProvider
     from questfoundry.providers.registry import ProviderRegistry
+
+logger = logging.getLogger(__name__)
 
 
 class Showrunner(Role):
@@ -119,9 +122,7 @@ Respond with:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             return RoleResult(
                 success=True,
@@ -155,7 +156,7 @@ Respond with:
 {loop_id}
 
 ## Roles Awake
-{', '.join(roles_awake)}
+{", ".join(roles_awake)}
 
 Create a TU brief that defines the scope, deliverables, and risks for this work unit.
 
@@ -173,9 +174,7 @@ Keep it concise - one paragraph or bulleted list.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             return RoleResult(
                 success=True,
@@ -223,9 +222,7 @@ codex_curator, gatekeeper, art_director, audio_engineer, translator
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             return RoleResult(
                 success=True,
@@ -270,9 +267,7 @@ Keep it brief and actionable.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1000)
 
             return RoleResult(
                 success=True,
@@ -319,9 +314,7 @@ Be concise and action-oriented.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1500)
 
             return RoleResult(
                 success=True,
@@ -387,9 +380,7 @@ Be concise and action-oriented.
             provider = showrunner.get_provider_for_role(registry, "text")
         """
         # Get the provider name for this role
-        provider_name = registry.config.get_role_provider(
-            self.role_name, provider_type
-        )
+        provider_name = registry.config.get_role_provider(self.role_name, provider_type)
 
         # Use registry to get/create the provider instance
         if provider_type == "text":

@@ -4,11 +4,14 @@ Transforms view artifacts into player-facing formats (HTML, Markdown, etc.)
 """
 
 import html
+import logging
 from pathlib import Path
 from typing import Any
 
 from ..models.artifact import Artifact
 from .view import ViewArtifact
+
+logger = logging.getLogger(__name__)
 
 
 class BookBinder:
@@ -102,8 +105,12 @@ class BookBinder:
             html_template: Custom HTML template (uses default if None)
             sort_artifacts: Whether to sort artifacts by type and ID
         """
+        logger.debug("Initializing BookBinder with sort_artifacts=%s", sort_artifacts)
         self.html_template = html_template or self.HTML_TEMPLATE
         self.sort_artifacts = sort_artifacts
+        logger.trace(
+            "BookBinder initialized with custom template=%s", html_template is not None
+        )
 
     def render_html(self, view: ViewArtifact, title: str | None = None) -> str:
         """
@@ -116,10 +123,16 @@ class BookBinder:
         Returns:
             HTML string
         """
+        logger.info(
+            "Rendering HTML view: %s with %d artifacts",
+            view.view_id,
+            len(view.artifacts),
+        )
         page_title = title or f"View: {view.view_id}"
 
         # Prepare artifacts
         artifacts = self._prepare_artifacts(view.artifacts)
+        logger.trace("Prepared %d artifacts for HTML rendering", len(artifacts))
 
         # Render content
         content_parts = [f"<h1>{page_title}</h1>"]
@@ -135,12 +148,19 @@ class BookBinder:
 
         # Render each artifact
         for artifact in artifacts:
+            logger.trace(
+                "Rendering artifact to HTML: %s (%s)",
+                artifact.artifact_id,
+                artifact.type,
+            )
             content_parts.append(self._render_artifact_html(artifact))
 
         content = "\n".join(content_parts)
 
         # Apply template
-        return self.html_template.format(title=page_title, content=content)
+        html_output = self.html_template.format(title=page_title, content=content)
+        logger.debug("HTML rendering complete: %d bytes", len(html_output))
+        return html_output
 
     def render_markdown(
         self,
@@ -159,10 +179,20 @@ class BookBinder:
         Returns:
             Markdown string
         """
+        logger.info(
+            "Rendering Markdown view: %s with %d artifacts",
+            view.view_id,
+            len(view.artifacts),
+        )
         page_title = title or f"View: {view.view_id}"
 
         # Prepare artifacts
         artifacts = self._prepare_artifacts(view.artifacts)
+        logger.trace(
+            "Prepared %d artifacts for Markdown rendering, include_metadata=%s",
+            len(artifacts),
+            include_metadata,
+        )
 
         # Render content
         content_parts = [f"# {page_title}\n"]
@@ -195,12 +225,14 @@ class BookBinder:
         Returns:
             Path to saved file
         """
+        logger.info("Saving HTML to %s", output_path)
         output = Path(output_path)
         output.parent.mkdir(parents=True, exist_ok=True)
 
         with open(output, "w", encoding="utf-8") as f:
             f.write(html)
 
+        logger.debug("HTML saved successfully: %d bytes to %s", len(html), output)
         return output
 
     def save_markdown(self, markdown: str, output_path: str | Path) -> Path:
@@ -214,12 +246,16 @@ class BookBinder:
         Returns:
             Path to saved file
         """
+        logger.info("Saving Markdown to %s", output_path)
         output = Path(output_path)
         output.parent.mkdir(parents=True, exist_ok=True)
 
         with open(output, "w", encoding="utf-8") as f:
             f.write(markdown)
 
+        logger.debug(
+            "Markdown saved successfully: %d bytes to %s", len(markdown), output
+        )
         return output
 
     def _prepare_artifacts(self, artifacts: list[Artifact]) -> list[Artifact]:

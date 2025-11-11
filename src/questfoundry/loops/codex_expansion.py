@@ -1,11 +1,14 @@
 """Codex Expansion loop implementation."""
 
+import logging
 from typing import Any
 
 from ..models.artifact import Artifact
 from ..roles.base import Role, RoleContext
 from .base import Loop, LoopContext, LoopResult, LoopStep, StepStatus
 from .registry import LoopMetadata
+
+logger = logging.getLogger(__name__)
 
 
 class CodexExpansionLoop(Loop):
@@ -213,9 +216,7 @@ class CodexExpansionLoop(Loop):
         codex_curator = roles["codex_curator"]
 
         # Get canon packs with player-safe summaries
-        canon_packs = [
-            a for a in self.context.artifacts if a.type == "canon_pack"
-        ]
+        canon_packs = [a for a in self.context.artifacts if a.type == "canon_pack"]
 
         # Extract topics from canon
         topics = []
@@ -270,9 +271,7 @@ class CodexExpansionLoop(Loop):
 
         # Get player-safe summaries from canon packs
         summaries = {}
-        for pack in [
-            a for a in self.context.artifacts if a.type == "canon_pack"
-        ]:
+        for pack in [a for a in self.context.artifacts if a.type == "canon_pack"]:
             if isinstance(pack.data, dict) and "entries" in pack.data:
                 for entry in pack.data["entries"]:
                     if isinstance(entry, dict):

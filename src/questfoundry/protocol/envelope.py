@@ -1,11 +1,14 @@
 """Protocol envelope Pydantic models"""
 
+import logging
 from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from .types import HotCold, RoleName, SpoilerPolicy
+
+logger = logging.getLogger(__name__)
 
 
 class Protocol(BaseModel):
@@ -25,9 +28,7 @@ class Sender(BaseModel):
     """Message sender information"""
 
     role: RoleName = Field(..., description="Sending role")
-    agent: str | None = Field(
-        None, description="Optional human/agent identifier"
-    )
+    agent: str | None = Field(None, description="Optional human/agent identifier")
 
 
 class Receiver(BaseModel):
@@ -50,9 +51,7 @@ class Context(BaseModel):
         pattern=r"^Cold @ \d{4}-\d{2}-\d{2}$",
         description="Cold snapshot reference",
     )
-    loop: str | None = Field(
-        None, description="Loop/playbook context"
-    )
+    loop: str | None = Field(None, description="Loop/playbook context")
 
 
 class Safety(BaseModel):
@@ -61,9 +60,7 @@ class Safety(BaseModel):
     player_safe: bool = Field(
         ..., description="Whether content is safe for Player Narrator"
     )
-    spoilers: SpoilerPolicy = Field(
-        ..., description="Spoiler content policy"
-    )
+    spoilers: SpoilerPolicy = Field(..., description="Spoiler content policy")
 
 
 class Payload(BaseModel):
@@ -181,15 +178,11 @@ class Envelope(BaseModel):
     correlation_id: str | None = Field(
         None, description="Correlation identifier for request/response"
     )
-    reply_to: str | None = Field(
-        None, description="Message ID this is replying to"
-    )
+    reply_to: str | None = Field(None, description="Message ID this is replying to")
     context: Context = Field(..., description="Message context")
     safety: Safety = Field(..., description="Safety policies")
     payload: Payload = Field(..., description="Message payload")
-    refs: list[str] = Field(
-        default_factory=list, description="Referenced artifact IDs"
-    )
+    refs: list[str] = Field(default_factory=list, description="Referenced artifact IDs")
 
 
 class EnvelopeBuilder:
@@ -314,9 +307,7 @@ class EnvelopeBuilder:
         loop: str | None = None,
     ) -> "EnvelopeBuilder":
         """Set context"""
-        self._context = Context(
-            hot_cold=hot_cold, tu=tu, snapshot=snapshot, loop=loop
-        )
+        self._context = Context(hot_cold=hot_cold, tu=tu, snapshot=snapshot, loop=loop)
         return self
 
     def with_safety(
@@ -340,6 +331,8 @@ class EnvelopeBuilder:
 
     def build(self) -> Envelope:
         """Build the envelope (validates all required fields are set)"""
+        logger.trace("Building envelope with EnvelopeBuilder")
+
         if not all(
             [
                 self._id,
@@ -352,6 +345,7 @@ class EnvelopeBuilder:
                 self._payload,
             ]
         ):
+            logger.error("Cannot build envelope: missing required fields")
             raise ValueError(
                 "Missing required fields. Set all required fields before building."
             )
@@ -366,7 +360,8 @@ class EnvelopeBuilder:
         assert self._safety is not None
         assert self._payload is not None
 
-        return Envelope(
+        logger.trace("All required fields validated, constructing Envelope instance")
+        envelope = Envelope(
             protocol=self._protocol,
             id=self._id,
             time=self._time,
@@ -380,3 +375,5 @@ class EnvelopeBuilder:
             payload=self._payload,
             refs=self._refs,
         )
+        logger.trace("Envelope built successfully: id=%s", self._id)
+        return envelope

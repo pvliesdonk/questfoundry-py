@@ -113,12 +113,14 @@ class Lifecycle:
             )
 
         # Record history
-        self.history.append({
-            "from_state": self.current_state,
-            "to_state": new_state,
-            "timestamp": datetime.now().isoformat(),
-            "reason": reason,
-        })
+        self.history.append(
+            {
+                "from_state": self.current_state,
+                "to_state": new_state,
+                "timestamp": datetime.now().isoformat(),
+                "reason": reason,
+            }
+        )
 
         self.current_state = new_state
 

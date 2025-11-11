@@ -1,8 +1,11 @@
 """Audio Director role implementation."""
 
+import logging
 from typing import Any
 
 from .base import Role, RoleContext, RoleResult
+
+logger = logging.getLogger(__name__)
 
 
 class AudioDirector(Role):
@@ -123,9 +126,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -193,9 +194,7 @@ Respond in JSON format with complete audio plan.
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=2000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=2000)
 
             data = self._parse_json_from_response(response)
 
@@ -248,9 +247,7 @@ Respond with:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=500)
 
             data = self._parse_json_from_response(response)
 
@@ -311,9 +308,7 @@ Respond in JSON format:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=1000
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=1000)
 
             data = self._parse_json_from_response(response)
 
@@ -368,9 +363,7 @@ Respond with:
 """
 
         try:
-            response = self._call_llm(
-                system_prompt, user_prompt, max_tokens=500
-            )
+            response = self._call_llm(system_prompt, user_prompt, max_tokens=500)
 
             data = self._parse_json_from_response(response)
 

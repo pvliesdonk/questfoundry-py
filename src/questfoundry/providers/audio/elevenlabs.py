@@ -144,14 +144,16 @@ class ElevenLabsProvider(AudioProvider):
             # Transform to standard format
             voices = []
             for voice_data in data.get("voices", []):
-                voices.append({
-                    "voice_id": voice_data.get("voice_id"),
-                    "name": voice_data.get("name"),
-                    "description": voice_data.get("description", ""),
-                    "language": voice_data.get("labels", {}).get("language", "en"),
-                    "gender": voice_data.get("labels", {}).get("gender", "neutral"),
-                    "category": voice_data.get("category", "general"),
-                })
+                voices.append(
+                    {
+                        "voice_id": voice_data.get("voice_id"),
+                        "name": voice_data.get("name"),
+                        "description": voice_data.get("description", ""),
+                        "language": voice_data.get("labels", {}).get("language", "en"),
+                        "gender": voice_data.get("labels", {}).get("gender", "neutral"),
+                        "category": voice_data.get("category", "general"),
+                    }
+                )
 
             return voices
 

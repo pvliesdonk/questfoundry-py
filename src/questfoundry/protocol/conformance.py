@@ -1,10 +1,13 @@
 """Protocol conformance validation"""
 
+import logging
 from dataclasses import dataclass, field
 
 from ..validators import validate_artifact
 from .envelope import Envelope
 from .types import HotCold, RoleName, SpoilerPolicy
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -70,21 +73,34 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
     Returns:
         ConformanceResult with violations and warnings
     """
+    logger.trace("Starting conformance validation for envelope %s", envelope.id)
     violations: list[ConformanceViolation] = []
     warnings: list[ConformanceViolation] = []
 
     # Check PN Safety Invariant
     if envelope.receiver.role == RoleName.PLAYER_NARRATOR:
+        logger.debug("Checking PN safety invariant for envelope %s to PN", envelope.id)
         pn_violations = _check_pn_safety_invariant(envelope)
         violations.extend(pn_violations)
+        if pn_violations:
+            logger.warning(
+                "PN safety invariant violations found: %d", len(pn_violations)
+            )
 
     # Check context requirements
+    logger.trace("Checking context requirements for envelope %s", envelope.id)
     context_warnings = _check_context_requirements(envelope)
     warnings.extend(context_warnings)
 
     # Check payload schema validation
+    logger.trace("Validating payload schema for type %s", envelope.payload.type)
     payload_result = validate_artifact(envelope.payload.data, envelope.payload.type)
     if not payload_result.valid:
+        logger.warning(
+            "Payload schema validation failed for type %s: %d errors",
+            envelope.payload.type,
+            len(payload_result.errors),
+        )
         violations.append(
             ConformanceViolation(
                 rule="PAYLOAD_SCHEMA_VALIDATION",
@@ -97,12 +113,26 @@ def validate_envelope_conformance(envelope: Envelope) -> ConformanceResult:
         )
 
     # Check protocol version compatibility
+    logger.trace(
+        "Checking protocol version %s compatibility", envelope.protocol.version
+    )
     version_warnings = _check_protocol_version(envelope)
     warnings.extend(version_warnings)
 
-    return ConformanceResult(
+    result = ConformanceResult(
         conformant=len(violations) == 0, violations=violations, warnings=warnings
     )
+
+    if result.conformant:
+        logger.debug("Envelope %s passed conformance validation", envelope.id)
+    else:
+        logger.warning(
+            "Envelope %s failed conformance validation with %d violations",
+            envelope.id,
+            len(violations),
+        )
+
+    return result
 
 
 def _check_pn_safety_invariant(envelope: Envelope) -> list[ConformanceViolation]:
