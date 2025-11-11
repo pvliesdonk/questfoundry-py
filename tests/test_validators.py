@@ -1,8 +1,8 @@
 """Tests for schema validation utilities."""
 
 import json
-import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -13,68 +13,53 @@ from questfoundry.validators.schema import (
 )
 
 
-def test_validate_instance_valid():
+@patch("questfoundry.validators.schema.get_schema")
+def test_validate_instance_valid(mock_get_schema):
     """Test validation of a valid instance."""
-    # Valid simple instance - just checking schema validation works
+    mock_get_schema.return_value = {
+        "type": "object",
+        "properties": {"data": {"type": "object"}},
+    }
     instance = {
         "type": "object",
         "data": {"foo": "bar"},
     }
-    # Use a schema that exists in the resources
-    # We'll use a minimal test that the function works
-    with pytest.raises(FileNotFoundError):
-        # Test with a non-existent schema to ensure error handling
-        validate_instance(instance, "nonexistent_schema")
+    assert validate_instance(instance, "any_schema") is True
 
 
-def test_validate_instance_invalid():
+@patch("questfoundry.validators.schema.get_schema")
+def test_validate_instance_invalid(mock_get_schema):
     """Test validation returns False for invalid instance."""
-    # Create an instance that would be invalid against any schema
+    mock_get_schema.return_value = {"type": "object", "required": ["foo"]}
     instance = {}
-    # Test with a real schema that exists
-    try:
-        result = validate_instance(instance, "hook_card")
-        # Result should be False since empty object won't match hook_card schema
-        assert isinstance(result, bool)
-    except FileNotFoundError:
-        # If schema doesn't exist in test env, that's ok - we're testing the path
-        pass
+    assert validate_instance(instance, "any_schema") is False
 
 
-def test_validate_instance_detailed_valid():
+@patch("questfoundry.validators.schema.get_schema")
+def test_validate_instance_detailed_valid(mock_get_schema):
     """Test detailed validation of valid instance."""
+    mock_get_schema.return_value = {
+        "type": "object",
+        "properties": {"test": {"type": "string"}},
+    }
     instance = {"test": "value"}
-    # Test the detailed validation path
-    try:
-        result = validate_instance_detailed(instance, "hook_card")
-        assert isinstance(result, dict)
-        assert "valid" in result
-        assert "errors" in result
-    except FileNotFoundError:
-        # Schema might not be available in test environment
-        pass
+    result = validate_instance_detailed(instance, "any_schema")
+    assert result["valid"] is True
+    assert not result["errors"]
 
 
-def test_validate_instance_detailed_invalid():
+@patch("questfoundry.validators.schema.get_schema")
+def test_validate_instance_detailed_invalid(mock_get_schema):
     """Test detailed validation returns error info for invalid instance."""
-    # Empty instance will fail validation against hook_card schema
+    mock_get_schema.return_value = {"type": "object", "required": ["foo"]}
     instance = {}
-    try:
-        result = validate_instance_detailed(instance, "hook_card")
-        assert isinstance(result, dict)
-        assert "valid" in result
-        assert "errors" in result
-        # For an empty object against hook_card schema, valid should be False
-        if not result["valid"]:
-            assert isinstance(result["errors"], list)
-            assert "message" in result
-            assert "path" in result
-    except FileNotFoundError:
-        # Schema might not be available in test environment
-        pass
+    result = validate_instance_detailed(instance, "any_schema")
+    assert result["valid"] is False
+    assert len(result["errors"]) > 0
+    assert "is a required property" in result["message"]
 
 
-def test_validate_schema_valid():
+def test_validate_schema_valid(tmp_path: Path):
     """Test validation of a valid schema file."""
     # Create a valid JSON Schema Draft 2020-12 schema
     valid_schema = {
@@ -88,20 +73,14 @@ def test_validate_schema_valid():
         },
     }
 
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False
-    ) as f:
-        json.dump(valid_schema, f)
-        temp_path = Path(f.name)
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text(json.dumps(valid_schema))
 
-    try:
-        result = validate_schema(temp_path)
-        assert result is True
-    finally:
-        temp_path.unlink()
+    result = validate_schema(schema_path)
+    assert result is True
 
 
-def test_validate_schema_missing_required_fields():
+def test_validate_schema_missing_required_fields(tmp_path: Path):
     """Test schema validation fails for missing required fields."""
     # Schema missing $schema and $id
     invalid_schema = {
@@ -109,17 +88,11 @@ def test_validate_schema_missing_required_fields():
         "type": "object",
     }
 
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False
-    ) as f:
-        json.dump(invalid_schema, f)
-        temp_path = Path(f.name)
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text(json.dumps(invalid_schema))
 
-    try:
-        result = validate_schema(temp_path)
-        assert result is False
-    finally:
-        temp_path.unlink()
+    result = validate_schema(schema_path)
+    assert result is False
 
 
 def test_validate_schema_file_not_found():
@@ -128,22 +101,16 @@ def test_validate_schema_file_not_found():
         validate_schema("/nonexistent/path/to/schema.json")
 
 
-def test_validate_schema_invalid_json():
+def test_validate_schema_invalid_json(tmp_path: Path):
     """Test schema validation raises error for invalid JSON."""
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False
-    ) as f:
-        f.write("{ invalid json }")
-        temp_path = Path(f.name)
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text("{ invalid json }")
 
-    try:
-        with pytest.raises(ValueError, match="Invalid JSON in schema file"):
-            validate_schema(temp_path)
-    finally:
-        temp_path.unlink()
+    with pytest.raises(ValueError, match="Invalid JSON in schema file"):
+        validate_schema(schema_path)
 
 
-def test_validate_schema_invalid_structure():
+def test_validate_schema_invalid_structure(tmp_path: Path):
     """Test schema validation fails for invalid schema structure."""
     # Schema with required fields but invalid structure
     invalid_schema = {
@@ -152,20 +119,14 @@ def test_validate_schema_invalid_structure():
         "type": "invalid_type",  # Invalid type
     }
 
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False
-    ) as f:
-        json.dump(invalid_schema, f)
-        temp_path = Path(f.name)
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text(json.dumps(invalid_schema))
 
-    try:
-        result = validate_schema(temp_path)
-        assert result is False
-    finally:
-        temp_path.unlink()
+    result = validate_schema(schema_path)
+    assert result is False
 
 
-def test_validate_schema_string_path():
+def test_validate_schema_string_path(tmp_path: Path):
     """Test schema validation works with string path."""
     valid_schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -173,14 +134,8 @@ def test_validate_schema_string_path():
         "type": "object",
     }
 
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False
-    ) as f:
-        json.dump(valid_schema, f)
-        temp_path = f.name
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text(json.dumps(valid_schema))
 
-    try:
-        result = validate_schema(temp_path)  # Pass string, not Path
-        assert result is True
-    finally:
-        Path(temp_path).unlink()
+    result = validate_schema(str(schema_path))  # Pass string, not Path
+    assert result is True

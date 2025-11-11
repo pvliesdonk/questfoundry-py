@@ -1,5 +1,6 @@
 """Tests for SQLite state store"""
 
+import json
 import tempfile
 from pathlib import Path
 
@@ -458,8 +459,6 @@ def test_export_project_state(store):
         assert result == export_path
 
         # Verify export content
-        import json
-
         with open(export_path) as f:
             data = json.load(f)
 
@@ -482,8 +481,6 @@ def test_export_with_history(store):
         export_path = Path(tmpdir) / "export.json"
         store.export(export_path, include_history=True)
 
-        import json
-
         with open(export_path) as f:
             data = json.load(f)
 
@@ -498,8 +495,6 @@ def test_import_project_state(store, temp_db):
     store.save_project_info(initial_info)
 
     # Create export data
-    import json
-
     export_data = {
         "project": {
             "name": "Imported Project",
@@ -561,8 +556,6 @@ def test_import_merge_mode(store):
     store.save_artifact(artifact1)
 
     # Create import with new artifact
-    import json
-
     export_data = {
         "project": {
             "name": "Test",
@@ -595,23 +588,17 @@ def test_import_file_not_found(store):
         store.import_state("/nonexistent/file.json")
 
 
-def test_import_invalid_json(store):
+def test_import_invalid_json(store, tmp_path: Path):
     """Test import raises error for invalid JSON."""
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
-        f.write("{ invalid json }")
-        temp_path = Path(f.name)
+    import_path = tmp_path / "import.json"
+    import_path.write_text("{ invalid json }")
 
-    try:
-        with pytest.raises(ValueError, match="Corrupted import file"):
-            store.import_state(temp_path)
-    finally:
-        temp_path.unlink()
+    with pytest.raises(ValueError, match="Corrupted import file"):
+        store.import_state(import_path)
 
 
 def test_import_missing_project_data(store):
     """Test import raises error when project data is missing."""
-    import json
-
     export_data = {"artifacts": [], "tus": [], "snapshots": []}
 
     with tempfile.TemporaryDirectory() as tmpdir:

@@ -27,7 +27,5 @@ def test_version_format():
     """Test version follows semantic versioning format."""
     # Should be in format X.Y.Z or X.Y.Z-suffix
     parts = __version__.split("-")[0].split(".")
-    assert len(parts) >= 2
-    # First parts should be numeric
-    assert parts[0].isdigit()
-    assert parts[1].isdigit()
+    assert len(parts) == 3, "Version must be in MAJOR.MINOR.PATCH format"
+    assert all(p.isdigit() for p in parts), "All version parts must be integers"

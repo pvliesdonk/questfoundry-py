@@ -73,18 +73,23 @@ def test_setup_logging_trace():
     assert logger.level == TRACE
 
 
-def test_setup_logging_custom_format():
+def test_setup_logging_custom_format(capsys):
     """Test setup_logging with custom format."""
-    setup_logging(format_string="%(levelname)s - %(message)s")
-    # Should not raise error
-    assert True
+    setup_logging(level="INFO", format_string="%(levelname)s - %(message)s")
+    logger = get_logger("questfoundry.test")
+    logger.info("test message")
+    captured = capsys.readouterr()
+    assert "INFO - test message" in captured.err
 
 
-def test_setup_logging_without_module():
+def test_setup_logging_without_module(capsys):
     """Test setup_logging without module info."""
-    setup_logging(include_module=False)
-    # Should not raise error
-    assert True
+    setup_logging(level="INFO", include_module=False)
+    logger = get_logger("questfoundry.test")
+    logger.info("test message")
+    captured = capsys.readouterr()
+    assert "test_logging_config.py" not in captured.err
+    assert "test message" in captured.err
 
 
 def test_get_logger():
@@ -101,9 +106,11 @@ def test_logger_trace_method_exists():
     assert callable(logger.trace)
 
 
-def test_logger_trace_method_works():
-    """Test that trace method can be called."""
-    logger = get_logger("test")
-    logger.setLevel(TRACE)
-    # Should not raise error
+def test_logger_trace_method_works(capsys):
+    """Test that trace method can be called and logs a message."""
+    setup_logging(level="TRACE")
+    logger = get_logger("questfoundry.test_trace")
     logger.trace("Test trace message")  # type: ignore
+    captured = capsys.readouterr()
+    assert "TRACE" in captured.err
+    assert "Test trace message" in captured.err
