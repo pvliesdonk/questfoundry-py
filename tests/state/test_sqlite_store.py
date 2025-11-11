@@ -415,3 +415,205 @@ def test_artifact_created_timestamp_preserved(store):
     # Created timestamp should be preserved in metadata
     retrieved2 = store.get_artifact("HOOK-001")
     assert retrieved2.metadata.get("created") == original_created
+
+
+def test_export_project_state(store):
+    """Test exporting complete project state."""
+    # Set up project data
+    info = ProjectInfo(
+        name="Export Test",
+        description="Test export",
+        version="1.0.0",
+    )
+    store.save_project_info(info)
+
+    # Add artifacts
+    artifact1 = Artifact(
+        type="hook_card",
+        data={"title": "Hook 1"},
+        metadata={"id": "HOOK-001"},
+    )
+    artifact2 = Artifact(
+        type="manuscript",
+        data={"content": "Test"},
+        metadata={"id": "MS-001"},
+    )
+    store.save_artifact(artifact1)
+    store.save_artifact(artifact2)
+
+    # Add TU
+    tu = TUState(tu_id="TU-001", status="open", data={"test": "value"})
+    store.save_tu(tu)
+
+    # Add snapshot
+    snapshot = SnapshotInfo(snapshot_id="SNAP-001", tu_id="TU-001")
+    store.save_snapshot(snapshot)
+
+    # Export
+    with tempfile.TemporaryDirectory() as tmpdir:
+        export_path = Path(tmpdir) / "export.json"
+        result = store.export(export_path)
+
+        assert result.exists()
+        assert result == export_path
+
+        # Verify export content
+        import json
+
+        with open(export_path) as f:
+            data = json.load(f)
+
+        assert "project" in data
+        assert data["project"]["name"] == "Export Test"
+        assert "artifacts" in data
+        assert len(data["artifacts"]) == 2
+        assert "tus" in data
+        assert len(data["tus"]) == 1
+        assert "snapshots" in data
+        assert len(data["snapshots"]) == 1
+
+
+def test_export_with_history(store):
+    """Test export includes metadata when requested."""
+    info = ProjectInfo(name="Test", description="Test")
+    store.save_project_info(info)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        export_path = Path(tmpdir) / "export.json"
+        store.export(export_path, include_history=True)
+
+        import json
+
+        with open(export_path) as f:
+            data = json.load(f)
+
+        assert "metadata" in data
+        assert data["metadata"]["exported_with_history"] is True
+
+
+def test_import_project_state(store, temp_db):
+    """Test importing project state from file."""
+    # Initialize with default project info
+    initial_info = ProjectInfo(name="Initial", description="Initial")
+    store.save_project_info(initial_info)
+    
+    # Create export data
+    import json
+
+    export_data = {
+        "project": {
+            "name": "Imported Project",
+            "description": "Imported description",
+            "created": "2024-01-01T00:00:00",
+        },
+        "artifacts": [
+            {
+                "id": "HOOK-001",
+                "type": "hook_card",
+                "data": {"title": "Imported Hook"},
+            }
+        ],
+        "tus": [{"id": "TU-001", "status": "open", "data": {}}],
+        "snapshots": [
+            {
+                "id": "SNAP-001",
+                "tu_id": "TU-001",
+                "created": "2024-01-01T00:00:00",
+            }
+        ],
+    }
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        import_path = Path(tmpdir) / "import.json"
+        with open(import_path, "w") as f:
+            json.dump(export_data, f)
+
+        # Import (not merging, so it replaces)
+        store.import_state(import_path, merge=False)
+
+        # Verify imported data
+        info = store.get_project_info()
+        assert info.name == "Imported Project"
+
+        artifact = store.get_artifact("HOOK-001")
+        assert artifact is not None
+        assert artifact.data["title"] == "Imported Hook"
+
+        tu = store.get_tu("TU-001")
+        assert tu is not None
+
+        snapshot = store.get_snapshot("SNAP-001")
+        assert snapshot is not None
+
+
+def test_import_merge_mode(store):
+    """Test importing with merge mode preserves existing data."""
+    # Initialize with default project info
+    initial_info = ProjectInfo(name="Initial", description="Initial")
+    store.save_project_info(initial_info)
+    
+    # Create initial data
+    artifact1 = Artifact(
+        type="hook_card",
+        data={"title": "Existing"},
+        metadata={"id": "HOOK-001"},
+    )
+    store.save_artifact(artifact1)
+
+    # Create import with new artifact
+    import json
+
+    export_data = {
+        "project": {"name": "Test", "description": "Test", "created": "2024-01-01T00:00:00"},
+        "artifacts": [
+            {"id": "HOOK-002", "type": "hook_card", "data": {"title": "New"}}
+        ],
+        "tus": [],
+        "snapshots": [],
+    }
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        import_path = Path(tmpdir) / "import.json"
+        with open(import_path, "w") as f:
+            json.dump(export_data, f)
+
+        # Import with merge
+        store.import_state(import_path, merge=True)
+
+        # Both artifacts should exist
+        assert store.get_artifact("HOOK-001") is not None
+        assert store.get_artifact("HOOK-002") is not None
+
+
+def test_import_file_not_found(store):
+    """Test import raises error for missing file."""
+    with pytest.raises(FileNotFoundError):
+        store.import_state("/nonexistent/file.json")
+
+
+def test_import_invalid_json(store):
+    """Test import raises error for invalid JSON."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+        f.write("{ invalid json }")
+        temp_path = Path(f.name)
+
+    try:
+        with pytest.raises(ValueError, match="Corrupted import file"):
+            store.import_state(temp_path)
+    finally:
+        temp_path.unlink()
+
+
+def test_import_missing_project_data(store):
+    """Test import raises error when project data is missing."""
+    import json
+
+    export_data = {"artifacts": [], "tus": [], "snapshots": []}
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        import_path = Path(tmpdir) / "import.json"
+        with open(import_path, "w") as f:
+            json.dump(export_data, f)
+
+        with pytest.raises(ValueError, match="missing project data"):
+            store.import_state(import_path)
