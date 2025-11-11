@@ -1,13 +1,12 @@
 """Tests for constraint manifest generator (Layer 6/7 canon workflows)"""
 
-import pytest
 
 from questfoundry.state.constraint_manifest import (
     ConstraintManifest,
     ConstraintManifestGenerator,
 )
 from questfoundry.state.entity_registry import Entity, EntityRegistry, EntityType
-from questfoundry.state.timeline import TimelineManager
+from questfoundry.state.timeline import TimelineAnchor, TimelineManager
 
 
 def test_constraint_manifest_creation():
@@ -152,18 +151,22 @@ def test_constraint_generator_with_timeline():
     timeline = TimelineManager()
 
     timeline.add_anchor(
-        anchor_id="T0",
-        event="Kingdom founding",
-        year=0,
-        source="world-genesis",
-        immutable=True,
+        TimelineAnchor(
+            anchor_id="T0",
+            event="Kingdom founding",
+            year=0,
+            source="world-genesis",
+            immutable=True,
+        )
     )
     timeline.add_anchor(
-        anchor_id="T1",
-        event="Peace treaty",
-        year=250,
-        source="world-genesis",
-        immutable=True,
+        TimelineAnchor(
+            anchor_id="T1",
+            event="Peace treaty",
+            year=250,
+            source="world-genesis",
+            immutable=True,
+        )
     )
 
     manifest = generator.generate(
@@ -229,7 +232,7 @@ def test_constraint_generator_complete():
         {"facts": ["Dragons are extinct"], "immutable": True}
     ]
     mutable_canon = [
-        {"facts": ["Regional customs vary"], "immutable": False}
+        {"facts": [{"statement": "Regional customs vary", "immutable": False}]}
     ]
 
     registry = EntityRegistry()
@@ -244,11 +247,13 @@ def test_constraint_generator_complete():
 
     timeline = TimelineManager()
     timeline.add_anchor(
-        anchor_id="T0",
-        event="Dragon extinction",
-        year=0,
-        source="world-genesis",
-        immutable=True,
+        TimelineAnchor(
+            anchor_id="T0",
+            event="Dragon extinction",
+            year=0,
+            source="world-genesis",
+            immutable=True,
+        )
     )
 
     # Generate manifest

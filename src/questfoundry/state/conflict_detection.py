@@ -165,12 +165,17 @@ class ConflictDetector:
     # Keywords indicating contradictory actions
     CONTRADICTION_KEYWORDS = {
         "repair": ["collapsed", "destroyed", "broken", "damaged"],
-        "restore": ["lost", "gone", "destroyed", "extinct"],
+        "restore": ["lost", "gone", "destroyed", "extinct", "collapsed"],
         "revive": ["dead", "extinct", "destroyed"],
+        "resurrect": ["dead", "extinct"],
+        "destroy": ["indestructible", "eternal", "permanent", "unbreakable"],
+        "destroys": ["indestructible", "eternal", "permanent", "unbreakable"],
         "discover": ["known", "established", "exists"],
         "invent": ["exists", "discovered", "established"],
         "create": ["exists", "already", "established"],
         "founding": ["established", "founded", "created"],
+        "travel": ["does not exist", "impossible", "cannot"],
+        "travels": ["does not exist", "impossible", "cannot"],
     }
 
     # Keywords indicating temporal conflicts
@@ -325,9 +330,15 @@ class ConflictDetector:
             for entity in shared_entities:
                 for pos, neg in contradictory_pairs:
                     if pos in seed and neg in canon:
-                        return f"Entity '{entity}' has contradictory state in seed vs canon"
+                        return (
+                            f"Entity '{entity}' has contradictory state "
+                            "in seed vs canon"
+                        )
                     if neg in seed and pos in canon:
-                        return f"Entity '{entity}' has contradictory state in seed vs canon"
+                        return (
+                            f"Entity '{entity}' has contradictory state "
+                            "in seed vs canon"
+                        )
 
         return None
 

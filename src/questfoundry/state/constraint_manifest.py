@@ -343,7 +343,8 @@ class ConstraintManifestGenerator:
 
         if entity_count > 0:
             boundaries.append(
-                f"Maintain consistency with {entity_count} canonical entity constraint(s)"
+                f"Maintain consistency with {entity_count} "
+                "canonical entity constraint(s)"
             )
 
         if timeline_count > 0:
@@ -366,7 +367,8 @@ class ConstraintManifestGenerator:
 
         if mutable_count > 0:
             guidance.append(
-                f"Freely extend and elaborate on {mutable_count} mutable canon element(s)"
+                f"Freely extend and elaborate on {mutable_count} "
+                "mutable canon element(s)"
             )
 
         if entity_registry:
