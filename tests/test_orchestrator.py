@@ -10,6 +10,7 @@ from conftest import MockTextProvider
 from questfoundry.loops.base import LoopResult
 from questfoundry.models.artifact import Artifact
 from questfoundry.orchestrator import Orchestrator
+from questfoundry.roles.base import RoleResult
 from questfoundry.state.workspace import WorkspaceManager
 
 
@@ -259,6 +260,27 @@ def test_execute_loop_with_human_callback(orchestrator, mock_provider):
     assert not orchestrator.role_registry.get_role.called
 
 
+def test_execute_loop_interactive(orchestrator, mock_provider):
+    """Test that interactive mode uses Showrunner to initialize roles."""
+    orchestrator.initialize(provider=mock_provider)
+    mock_callback = MagicMock()
+
+    # Mock the role instantiation methods
+    orchestrator.showrunner.initialize_role_with_config = MagicMock()
+    orchestrator.role_registry.get_role = MagicMock()
+
+    orchestrator.execute_loop(
+        loop_id="story_spark",
+        project_id="test-project",
+        config={"human_callback": mock_callback},
+    )
+
+    # Assert that the showrunner was used to initialize roles
+    assert orchestrator.showrunner.initialize_role_with_config.called
+    # Assert that the role registry was NOT used to get roles
+    assert not orchestrator.role_registry.get_role.called
+
+
 def test_execute_loop_in_batch_mode_uses_cache(orchestrator, mock_provider):
     """Test that batch mode uses the role registry to get roles."""
     orchestrator.initialize(provider=mock_provider)
@@ -309,6 +331,78 @@ def test_execute_loop_unregistered_role(orchestrator, mock_provider):
     finally:
         # Restore the original roles
         orchestrator.role_registry._roles = original_roles
+
+
+# Intent Dispatch Tests
+
+
+def test_dispatch_customer_intent(orchestrator, mock_provider):
+    """Test dispatching a customer's intent."""
+    orchestrator.initialize(provider=mock_provider)
+
+    # Mock the showrunner's execute_task method
+    mock_showrunner = orchestrator.showrunner
+    mock_showrunner.execute_task = MagicMock(
+        return_value=RoleResult(
+            success=True,
+            output={
+                "loop_id": "story_spark",
+                "config": {"customer_intent": "Write a story"},
+            },
+        )
+    )
+
+    # Mock the execute_loop method
+    orchestrator.execute_loop = MagicMock(
+        return_value=LoopResult(
+            success=True,
+            loop_id="story_spark",
+            steps_completed=1,
+            artifacts_created=[],
+        )
+    )
+
+    result = orchestrator.dispatch_customer_intent(
+        message="Write a story",
+        project_id="test-project",
+    )
+
+    # Assert that the showrunner was called with the correct task
+    mock_showrunner.execute_task.assert_called_once()
+    assert (
+        mock_showrunner.execute_task.call_args[0][0].task
+        == "dispatch_intent"
+    )
+
+    # Assert that execute_loop was called with the correct arguments
+    orchestrator.execute_loop.assert_called_once_with(
+        loop_id="story_spark",
+        project_id="test-project",
+        config={"customer_intent": "Write a story"},
+    )
+
+    assert result.success
+
+
+def test_dispatch_customer_intent_failure(orchestrator, mock_provider):
+    """Test that intent dispatch failure raises an error."""
+    orchestrator.initialize(provider=mock_provider)
+
+    # Mock the showrunner's execute_task method to return a failure
+    mock_showrunner = orchestrator.showrunner
+    mock_showrunner.execute_task = MagicMock(
+        return_value=RoleResult(
+            success=False,
+            output="",
+            error="Intent dispatch failed",
+        )
+    )
+
+    with pytest.raises(RuntimeError, match="Intent dispatch failed"):
+        orchestrator.dispatch_customer_intent(
+            message="Write a story",
+            project_id="test-project",
+        )
 
 
 # End-to-End Tests

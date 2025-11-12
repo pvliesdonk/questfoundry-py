@@ -1,86 +1,81 @@
 """Agent-to-human communication for interactive mode."""
 
-from typing import Any, Callable
-
-# Type alias for human callback functions
-HumanCallback = Callable[[str, dict[str, Any]], str]
-"""
-Callback function signature for agent-to-human questions.
-
-This callback enables roles to ask humans questions during interactive mode.
-In batch/guided mode, roles operate autonomously without human interaction.
-
-Args:
-    question: The question text to ask the human
-    context: Additional context including:
-        - question: The original question (repeated for convenience)
-        - context: Domain-specific context dict
-        - suggestions: List of suggested answers
-        - artifacts: Relevant artifacts
-        - role: Name of the role asking
-
-Returns:
-    Human's response text
-
-Example:
-    >>> def my_callback(question: str, context: dict[str, Any]) -> str:
-    ...     suggestions = context.get("suggestions", [])
-    ...     print(f"Question: {question}")
-    ...     if suggestions:
-    ...         print(f"Suggestions: {', '.join(suggestions)}")
-    ...     return input("Your answer: ")
-    ...
-    >>> role = InteractiveRole(provider, human_callback=my_callback)
-    >>> answer = role.ask_human("What's the protagonist's name?")
-"""
+from abc import ABC, abstractmethod
 
 
-def default_human_callback(question: str, context: dict[str, Any]) -> str:
+class AbstractHumanCallback(ABC):
+    """
+    Abstract base class for agent-to-human communication.
+
+    This class defines the interface for roles to ask humans questions
+    during interactive mode.
+    """
+
+    @abstractmethod
+    def ask_question(self, question: str, options: list[dict[str, str]] | None = None) -> str:
+        """
+        Ask a question to the human and get a response.
+
+        Args:
+            question: The question text to ask the human.
+            options: A list of predefined options for the user to choose from.
+                     Each option is a dictionary with 'key' and 'label'.
+
+        Returns:
+            The human's response as a string.
+        """
+        pass
+
+
+class DefaultHumanCallback(AbstractHumanCallback):
     """
     Default human callback that prompts via stdin.
 
     This is a simple reference implementation. Production systems should
     provide their own callback that integrates with their UI (CLI, Web, etc.).
-
-    Args:
-        question: The question to ask
-        context: Additional context
-
-    Returns:
-        Human's response from stdin
     """
-    role = context.get("role", "Agent")
-    suggestions = context.get("suggestions", [])
 
-    print(f"\n[{role}] {question}")
+    def ask_question(self, question: str, options: list[dict[str, str]] | None = None) -> str:
+        """
+        Ask a question via stdin and return the response.
 
-    if suggestions:
-        print("\nSuggestions:")
-        for i, suggestion in enumerate(suggestions, 1):
-            print(f"  {i}. {suggestion}")
-        print()
+        Args:
+            question: The question to ask.
+            options: A list of options to display to the user.
 
-    return input("Your answer: ")
+        Returns:
+            The user's response from stdin.
+        """
+        print(f"\n[Agent] {question}")
+
+        if options:
+            print("\nPlease choose one of the following options:")
+            for option in options:
+                print(f"  [{option['key']}] {option['label']}")
+            print()
+
+        return input("Your answer: ")
 
 
-def batch_mode_callback(question: str, context: dict[str, Any]) -> str:
+class BatchModeHumanCallback(AbstractHumanCallback):
     """
-    Batch mode callback that returns default/empty response.
+    Batch mode callback that returns a default/empty response.
 
     Used when no human interaction is desired (automated workflows).
-
-    Args:
-        question: The question (ignored)
-        context: Additional context
-
-    Returns:
-        Empty string or first suggestion if available
     """
-    suggestions = context.get("suggestions", [])
 
-    # If there are suggestions, use the first one
-    if suggestions:
-        return suggestions[0]
+    def ask_question(self, question: str, options: list[dict[str, str]] | None = None) -> str:
+        """
+        Return a default response without prompting.
 
-    # Otherwise return empty string
-    return ""
+        Args:
+            question: The question (ignored).
+            options: A list of options. If available, the key of the first
+                     option is returned.
+
+        Returns:
+            The key of the first option, or an empty string.
+        """
+        if options:
+            return options[0].get("key", "")
+        return ""

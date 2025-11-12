@@ -13,6 +13,7 @@ from .providers.config import ProviderConfig
 from .providers.registry import ProviderRegistry
 from .roles.base import RoleContext
 from .roles.registry import RoleRegistry
+from .roles.session import RoleSession
 from .roles.showrunner import Showrunner
 from .state.workspace import WorkspaceManager
 
@@ -243,8 +244,8 @@ class Orchestrator:
                         "Instantiating role '%s' via Showrunner (interactive)",
                         role_name,
                     )
-                    if role_name in self.role_registry._roles:
-                        role_class = self.role_registry._roles[role_name]
+                    role_class = self.role_registry.get_role_class(role_name)
+                    if role_class:
                         role_instances[role_name] = (
                             self.showrunner.initialize_role_with_config(
                                 role_class=role_class,
@@ -317,6 +318,67 @@ class Orchestrator:
             logger.warning("Loop '%s' execution failed: %s", loop_id, result.error)
 
         return result
+
+    def dispatch_customer_intent(
+        self,
+        message: str,
+        project_id: str,
+        config: dict[str, Any] | None = None,
+    ) -> LoopResult:
+        """
+        Dispatch a customer's intent to the appropriate loop.
+
+        Args:
+            message: The user's message.
+            project_id: The project identifier.
+            config: The loop configuration.
+
+        Returns:
+            The loop execution result.
+        """
+        if self.showrunner is None:
+            raise RuntimeError("Orchestrator not initialized. Call initialize() first.")
+
+        human_callback = (config or {}).get("human_callback")
+        showrunner = self.showrunner
+        if human_callback:
+            # Create a temporary, interactive Showrunner instance for this dispatch
+            showrunner_class = self.role_registry.get_role_class("showrunner")
+            if not showrunner_class:
+                raise RuntimeError("Showrunner role not registered.")
+            showrunner = self.showrunner.initialize_role_with_config(
+                role_class=showrunner_class,
+                registry=self.provider_registry,
+                spec_path=self.spec_path,
+                human_callback=human_callback,
+                role_name="showrunner",
+            )
+
+        context = RoleContext(
+            task="dispatch_intent",
+            additional_context={"user_message": message},
+        )
+
+        result = showrunner.execute_task(context)
+        if not result.success:
+            raise RuntimeError(f"Intent dispatch failed: {result.error}")
+
+        dispatch_decision = result.output
+        loop_id = dispatch_decision.get("loop_id")
+        loop_config = dispatch_decision.get("config", {})
+
+        # Ensure the human_callback is passed through to the loop execution
+        if human_callback and "human_callback" not in loop_config:
+            loop_config["human_callback"] = human_callback
+
+        if not loop_id:
+            raise RuntimeError("Intent dispatch did not return a loop_id.")
+
+        return self.execute_loop(
+            loop_id=loop_id,
+            project_id=project_id,
+            config=loop_config,
+        )
 
     def execute_goal(
         self,

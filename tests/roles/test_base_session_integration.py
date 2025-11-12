@@ -1,5 +1,5 @@
 """Tests for Role base class integration with sessions and human callbacks."""
-
+import io
 from pathlib import Path
 from typing import Any
 
@@ -7,6 +7,7 @@ import pytest
 
 from questfoundry.providers.base import TextProvider
 from questfoundry.roles.base import Role, RoleContext, RoleResult
+from questfoundry.roles.human_callback import DefaultHumanCallback
 from questfoundry.roles.session import RoleSession
 
 
@@ -92,9 +93,13 @@ def test_role_with_session(mock_provider, tmp_path):
 def test_role_without_human_callback_batch_mode(test_role):
     """Test ask_human in batch mode (no callback)."""
     # Should return first suggestion in batch mode
+    options = [
+        {"key": "red", "label": "Red"},
+        {"key": "blue", "label": "Blue"},
+    ]
     answer = test_role.ask_human(
         "What color?",
-        suggestions=["red", "blue"],
+        options=options,
     )
 
     assert answer == "red"
@@ -108,15 +113,12 @@ def test_role_without_human_callback_no_suggestions(test_role):
     assert answer == ""
 
 
-def test_role_with_human_callback(mock_provider):
+def test_role_with_human_callback(mock_provider, monkeypatch):
     """Test role with custom human callback."""
-
-    def custom_callback(question: str, context: dict[str, Any]) -> str:
-        return "custom answer"
-
+    monkeypatch.setattr("sys.stdin", io.StringIO("custom answer\n"))
     role = SampleRole(
         provider=mock_provider,
-        human_callback=custom_callback,
+        human_callback=DefaultHumanCallback(),
     )
 
     answer = role.ask_human("Test question?")
@@ -131,15 +133,12 @@ def test_ask_yes_no_batch_mode(test_role):
     assert test_role.ask_yes_no("Continue?", default=False) is True
 
 
-def test_ask_yes_no_with_callback(mock_provider):
+def test_ask_yes_no_with_callback(mock_provider, monkeypatch):
     """Test ask_yes_no with callback."""
-
-    def yes_callback(question: str, context: dict[str, Any]) -> str:
-        return "yes"
-
+    monkeypatch.setattr("sys.stdin", io.StringIO("yes\n"))
     role = SampleRole(
         provider=mock_provider,
-        human_callback=yes_callback,
+        human_callback=DefaultHumanCallback(),
     )
 
     assert role.ask_yes_no("Continue?") is True
@@ -155,15 +154,12 @@ def test_ask_choice_batch_mode(test_role):
     assert choice == "red"
 
 
-def test_ask_choice_with_callback(mock_provider):
+def test_ask_choice_with_callback(mock_provider, monkeypatch):
     """Test ask_choice with callback."""
-
-    def choice_callback(question: str, context: dict[str, Any]) -> str:
-        return "blue"
-
+    monkeypatch.setattr("sys.stdin", io.StringIO("blue\n"))
     role = SampleRole(
         provider=mock_provider,
-        human_callback=choice_callback,
+        human_callback=DefaultHumanCallback(),
     )
 
     choice = role.ask_choice(
@@ -204,13 +200,9 @@ def test_role_repr_with_session(mock_provider, tmp_path):
 
 def test_role_repr_with_callback(mock_provider):
     """Test __repr__ with human callback."""
-
-    def callback(q: str, c: dict[str, Any]) -> str:
-        return "test"
-
     role = SampleRole(
         provider=mock_provider,
-        human_callback=callback,
+        human_callback=DefaultHumanCallback(),
     )
 
     repr_str = repr(role)
@@ -232,66 +224,22 @@ def test_role_execute_task_backward_compatible(test_role):
     assert result.output == "Test output"
 
 
-def test_role_with_both_session_and_callback(mock_provider, tmp_path):
+def test_role_with_both_session_and_callback(mock_provider, tmp_path, monkeypatch):
     """Test role with both session and callback."""
     session = RoleSession(
         role="test_role",
         workspace_path=tmp_path,
     )
-
-    def callback(q: str, c: dict[str, Any]) -> str:
-        return "answer"
-
+    monkeypatch.setattr("sys.stdin", io.StringIO("answer\n"))
     role = SampleRole(
         provider=mock_provider,
         session=session,
-        human_callback=callback,
+        human_callback=DefaultHumanCallback(),
     )
 
     assert role.session is session
-    assert role.human_callback is callback
+    assert isinstance(role.human_callback, DefaultHumanCallback)
 
     # Test human interaction works
     answer = role.ask_human("Question?")
     assert answer == "answer"
-
-
-def test_ask_human_passes_role_name_in_context(test_role):
-    """Test ask_human includes role name in context."""
-    captured_context = {}
-
-    def capture_callback(question: str, context: dict[str, Any]) -> str:
-        captured_context.update(context)
-        return "test"
-
-    test_role.human_callback = capture_callback
-
-    test_role.ask_human("Test?")
-
-    assert captured_context["role"] == "test_role"
-
-
-def test_ask_human_with_artifacts(test_role):
-    """Test ask_human can pass artifacts in context."""
-    from questfoundry.models.artifact import Artifact
-
-    artifact = Artifact(
-        type="test_artifact",
-        data={"key": "value"},
-    )
-
-    captured_context = {}
-
-    def capture_callback(question: str, context: dict[str, Any]) -> str:
-        captured_context.update(context)
-        return "test"
-
-    test_role.human_callback = capture_callback
-
-    test_role.ask_human(
-        "Test?",
-        artifacts=[artifact],
-    )
-
-    assert len(captured_context["artifacts"]) == 1
-    assert captured_context["artifacts"][0] is artifact

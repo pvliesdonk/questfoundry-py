@@ -221,6 +221,18 @@ class RoleRegistry:
 
         return instance
 
+    def get_role_class(self, name: str) -> type[Role] | None:
+        """
+        Get the class for a role.
+
+        Args:
+            name: Role identifier
+
+        Returns:
+            Role class or None if not registered
+        """
+        return self._roles.get(name)
+
     def list_roles(self) -> list[str]:
         """
         List all registered role names.
