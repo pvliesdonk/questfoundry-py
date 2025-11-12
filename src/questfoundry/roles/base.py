@@ -10,13 +10,12 @@ from typing import TYPE_CHECKING, Any
 from ..models.artifact import Artifact
 from ..providers.audio import AudioProvider
 from ..providers.base import ImageProvider, TextProvider
-from .human_callback import batch_mode_callback
+from .human_callback import AbstractHumanCallback, BatchModeHumanCallback
 
 logger = logging.getLogger(__name__)
 
 # Avoid circular imports
 if TYPE_CHECKING:
-    from .human_callback import HumanCallback
     from .session import RoleSession
 
 # Maximum length for artifact value strings in formatted output
@@ -169,7 +168,7 @@ class Role(ABC):
         spec_path: Path | None = None,
         config: dict[str, Any] | None = None,
         session: "RoleSession | None" = None,
-        human_callback: "HumanCallback | None" = None,
+        human_callback: "AbstractHumanCallback | None" = None,
         role_config: dict[str, Any] | None = None,
         image_provider: ImageProvider | None = None,
         audio_provider: AudioProvider | None = None,
@@ -578,20 +577,20 @@ class Role(ABC):
     def ask_human(
         self,
         question: str,
+        options: list[dict[str, str]] | None = None,
         context: dict[str, Any] | None = None,
-        suggestions: list[str] | None = None,
         artifacts: list[Artifact] | None = None,
     ) -> str:
         """
         Ask human a question (interactive mode).
 
-        If no human_callback is configured, returns empty string or first
-        suggestion (batch mode).
+        If no human_callback is configured, returns the key of the first
+        option or an empty string (batch mode).
 
         Args:
             question: Question to ask
+            options: Optional list of options (dicts with 'key' and 'label')
             context: Optional domain-specific context
-            suggestions: Optional list of suggested answers
             artifacts: Optional list of relevant artifacts
 
         Returns:
@@ -600,29 +599,23 @@ class Role(ABC):
         Example:
             >>> answer = role.ask_human(
             ...     "What tone should this scene have?",
-            ...     suggestions=["dark", "lighthearted", "neutral"]
+            ...     options=[
+            ...         {"key": "dark", "label": "Dark and gritty"},
+            ...         {"key": "light", "label": "Lighthearted and fun"},
+            ...     ]
             ... )
         """
         logger.info("Asking human: %s", question)
-        logger.trace("Number of suggestions: %d", len(suggestions or []))
+        logger.trace("Number of options: %d", len(options or []))
 
-        callback = self.human_callback or batch_mode_callback
+        callback = self.human_callback or BatchModeHumanCallback()
         is_interactive = self.human_callback is not None
         logger.debug(
             "Using %s mode for human callback",
             "interactive" if is_interactive else "batch",
         )
 
-        # Build callback context
-        callback_context: dict[str, Any] = {
-            "question": question,
-            "context": context or {},
-            "suggestions": suggestions or [],
-            "artifacts": artifacts or [],
-            "role": self.role_name,
-        }
-
-        response = callback(question, callback_context)
+        response = callback.ask_question(question, options)
         logger.debug("Human response received: %s", response)
         return response
 
@@ -648,10 +641,14 @@ class Role(ABC):
             ...     generate_images()
         """
         logger.trace("Asking yes/no question: %s (default: %s)", question, default)
+        options = [
+            {"key": "yes", "label": "Yes"},
+            {"key": "no", "label": "No"},
+        ]
         response = self.ask_human(
             question,
+            options=options,
             context=context,
-            suggestions=["yes", "no"],
         )
 
         # Parse response
@@ -698,10 +695,11 @@ class Role(ABC):
         logger.trace(
             "Asking choice question: %s with %d options", question, len(choices)
         )
+        options = [{"key": c, "label": c} for c in choices]
         response = self.ask_human(
             question,
+            options=options,
             context=context,
-            suggestions=choices,
         )
 
         # If response matches a choice, return it

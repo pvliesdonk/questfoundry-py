@@ -76,11 +76,78 @@ class Showrunner(Role):
             return self._review_progress(context)
         elif task == "create_snapshot":
             return self._coordinate_step(context)
+        elif task == "dispatch_intent":
+            return self.dispatch_intent(context)
         else:
             return RoleResult(
                 success=False,
                 output="",
                 error=f"Unknown task: {task}",
+            )
+
+    def dispatch_intent(self, context: RoleContext) -> RoleResult:
+        """Dispatch a customer's intent to the appropriate loop."""
+        # Load the prompt handler
+        # This is a placeholder until the prompt loading mechanism is implemented
+        prompt_path = self.spec_path / "05-prompts" / "showrunner" / "intent_handlers" / "customer.intent.dispatch.md"
+        if not prompt_path.exists():
+            return RoleResult(
+                success=False,
+                output="",
+                error=f"Prompt not found: {prompt_path}",
+            )
+        prompt_template = prompt_path.read_text(encoding="utf-8")
+
+        # Load playbook documentation
+        playbook_docs = self._load_playbook_docs()
+
+        # Get user message from context
+        user_message = context.additional_context.get("user_message", "")
+
+        # Format the prompt
+        prompt = prompt_template.replace("{{ user_message }}", user_message)
+        prompt = prompt.replace("{{ playbook_docs }}", playbook_docs)
+
+        try:
+            # Execute the prompt
+            response = self._call_llm(prompt, "")
+
+            # Parse the response
+            response_json = self._parse_json_from_response(response)
+
+            if response_json.get("decision") == "dispatch_loop":
+                return RoleResult(
+                    success=True,
+                    output=response_json,
+                    metadata={"content_type": "dispatch_decision"},
+                )
+            elif response_json.get("intent") == "human.question":
+                self.ask_human(
+                    question=response_json["payload"]["question"],
+                    options=response_json["payload"]["options"],
+                )
+                return RoleResult(
+                    success=False,
+                    output="",
+                    error="Human intervention required.",
+                )
+            else:
+                self.ask_human(
+                    question="I'm sorry, I didn't understand that. Could you please rephrase your request?",
+                )
+                return RoleResult(
+                    success=False,
+                    output="",
+                    error="Could not dispatch intent.",
+                )
+        except Exception as e:
+            self.ask_human(
+                question=f"An error occurred: {e}. Could you please rephrase your request?",
+            )
+            return RoleResult(
+                success=False,
+                output="",
+                error=f"Error dispatching intent: {e}",
             )
 
     def _select_loop(self, context: RoleContext) -> RoleResult:
@@ -353,6 +420,22 @@ Be concise and action-oriented.
                 f"({loop.get('typical_duration')})"
             )
         return "\n".join(formatted)
+
+    def _load_playbook_docs(self) -> str:
+        """Load and concatenate all playbook documentation."""
+        playbook_dir = self.spec_path / "04-loops"
+        if not playbook_dir.exists():
+            return "No playbook documentation found."
+
+        docs = []
+        for playbook_file in playbook_dir.glob("*.md"):
+            try:
+                content = playbook_file.read_text(encoding="utf-8")
+                docs.append(f"### Playbook: {playbook_file.stem}\n{content}\n---")
+            except Exception as e:
+                logger.warning(f"Could not read playbook {playbook_file.name}: {e}")
+
+        return "\n".join(docs)
 
     def get_provider_for_role(
         self,
