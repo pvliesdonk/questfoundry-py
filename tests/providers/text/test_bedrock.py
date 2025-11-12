@@ -137,9 +137,7 @@ def test_generate_text_with_max_tokens(provider):
     """Test text generation with max_tokens override."""
     mock_response = {
         "body": MagicMock(
-            read=lambda: json.dumps(
-                {"content": [{"text": "Response"}]}
-            ).encode()
+            read=lambda: json.dumps({"content": [{"text": "Response"}]}).encode()
         )
     }
     provider._client.invoke_model.return_value = mock_response
@@ -156,9 +154,7 @@ def test_generate_text_with_temperature_override(provider):
     """Test text generation with temperature override."""
     mock_response = {
         "body": MagicMock(
-            read=lambda: json.dumps(
-                {"content": [{"text": "Response"}]}
-            ).encode()
+            read=lambda: json.dumps({"content": [{"text": "Response"}]}).encode()
         )
     }
     provider._client.invoke_model.return_value = mock_response
@@ -185,9 +181,7 @@ def test_generate_text_generic_model():
 
     mock_response = {
         "body": MagicMock(
-            read=lambda: json.dumps(
-                {"completion": "Generic model response"}
-            ).encode()
+            read=lambda: json.dumps({"completion": "Generic model response"}).encode()
         )
     }
     mock_client.invoke_model.return_value = mock_response
@@ -202,9 +196,7 @@ def test_generate_text_generic_model():
 def test_generate_text_unexpected_format_claude(provider):
     """Test error handling for unexpected Claude response format."""
     mock_response = {
-        "body": MagicMock(
-            read=lambda: json.dumps({"content": []}).encode()
-        )
+        "body": MagicMock(read=lambda: json.dumps({"content": []}).encode())
     }
     provider._client.invoke_model.return_value = mock_response
 
@@ -225,9 +217,7 @@ def test_generate_text_unexpected_format_generic():
     mock_boto3.client.return_value = mock_client
 
     mock_response = {
-        "body": MagicMock(
-            read=lambda: json.dumps({"unknown": "format"}).encode()
-        )
+        "body": MagicMock(read=lambda: json.dumps({"unknown": "format"}).encode())
     }
     mock_client.invoke_model.return_value = mock_response
 
@@ -252,9 +242,7 @@ def test_generate_text_missing_library(provider):
     # even if sys.modules is later modified. The library check happens at init.
     mock_response = {
         "body": MagicMock(
-            read=lambda: json.dumps(
-                {"content": [{"text": "Response"}]}
-            ).encode()
+            read=lambda: json.dumps({"content": [{"text": "Response"}]}).encode()
         )
     }
     provider._client.invoke_model.return_value = mock_response

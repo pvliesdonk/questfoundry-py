@@ -2,6 +2,7 @@
 
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 from conftest import MockTextProvider
@@ -235,6 +236,79 @@ def test_execute_loop_not_implemented(orchestrator, mock_provider):
             loop_id="hook_harvest",
             project_id="test-project",
         )
+
+
+def test_execute_loop_with_human_callback(orchestrator, mock_provider):
+    """Test that interactive mode uses Showrunner to initialize roles."""
+    orchestrator.initialize(provider=mock_provider)
+    mock_callback = MagicMock()
+
+    # Mock the role instantiation methods
+    orchestrator.showrunner.initialize_role_with_config = MagicMock()
+    orchestrator.role_registry.get_role = MagicMock()
+
+    orchestrator.execute_loop(
+        loop_id="story_spark",
+        project_id="test-project",
+        config={"human_callback": mock_callback},
+    )
+
+    # Assert that the showrunner was used to initialize roles
+    assert orchestrator.showrunner.initialize_role_with_config.called
+    # Assert that the role registry was NOT used to get roles
+    assert not orchestrator.role_registry.get_role.called
+
+
+def test_execute_loop_in_batch_mode_uses_cache(orchestrator, mock_provider):
+    """Test that batch mode uses the role registry to get roles."""
+    orchestrator.initialize(provider=mock_provider)
+
+    # Mock the role instantiation methods
+    orchestrator.showrunner.initialize_role_with_config = MagicMock()
+    orchestrator.role_registry.get_role = MagicMock()
+
+    orchestrator.execute_loop(
+        loop_id="story_spark",
+        project_id="test-project",
+        config={},
+    )
+
+    # Assert that the showrunner was NOT used to initialize roles
+    assert not orchestrator.showrunner.initialize_role_with_config.called
+    # Assert that the role registry was used to get roles
+    assert orchestrator.role_registry.get_role.called
+
+
+def test_execute_loop_interactive_not_initialized(orchestrator):
+    """Test interactive mode without initialization raises error."""
+    mock_callback = MagicMock()
+    with pytest.raises(RuntimeError, match="not initialized"):
+        orchestrator.execute_loop(
+            loop_id="story_spark",
+            project_id="test-project",
+            config={"human_callback": mock_callback},
+        )
+
+
+def test_execute_loop_unregistered_role(orchestrator, mock_provider):
+    """Test that unregistered roles are skipped gracefully."""
+    orchestrator.initialize(provider=mock_provider)
+
+    # Mock the role registry to remove a role
+    original_roles = orchestrator.role_registry._roles
+    orchestrator.role_registry._roles = {
+        k: v for k, v in original_roles.items() if k != "plotwright"
+    }
+
+    try:
+        # This should not raise an exception
+        orchestrator.execute_loop(
+            loop_id="story_spark",
+            project_id="test-project",
+        )
+    finally:
+        # Restore the original roles
+        orchestrator.role_registry._roles = original_roles
 
 
 # End-to-End Tests

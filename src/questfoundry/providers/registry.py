@@ -291,9 +291,7 @@ class ProviderRegistry:
                 text_provider.close()
                 text_count += 1
             except Exception as e:
-                logger.warning(
-                    "Error closing text provider: %s", str(e), exc_info=True
-                )
+                logger.warning("Error closing text provider: %s", str(e), exc_info=True)
 
         image_count = 0
         for image_provider in self._image_instances.values():

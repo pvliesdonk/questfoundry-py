@@ -67,8 +67,7 @@ def test_list_loops_by_role(registry):
     assert len(plotwright_loops) > 0
     for loop in plotwright_loops:
         assert (
-            "plotwright" in loop.primary_roles
-            or "plotwright" in loop.consulted_roles
+            "plotwright" in loop.primary_roles or "plotwright" in loop.consulted_roles
         )
 
 
@@ -87,8 +86,7 @@ def test_get_loops_by_role(registry):
     assert len(gatekeeper_loops) > 0
     for loop in gatekeeper_loops:
         assert (
-            "gatekeeper" in loop.primary_roles
-            or "gatekeeper" in loop.consulted_roles
+            "gatekeeper" in loop.primary_roles or "gatekeeper" in loop.consulted_roles
         )
 
 

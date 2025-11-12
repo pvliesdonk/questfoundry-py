@@ -245,15 +245,9 @@ def test_get_nonexistent_snapshot(store):
 
 def test_list_snapshots_by_tu(store):
     """Test listing snapshots filtered by TU"""
-    snap1 = SnapshotInfo(
-        snapshot_id="SNAP-001", tu_id="TU-001", description="Snap 1"
-    )
-    snap2 = SnapshotInfo(
-        snapshot_id="SNAP-002", tu_id="TU-001", description="Snap 2"
-    )
-    snap3 = SnapshotInfo(
-        snapshot_id="SNAP-003", tu_id="TU-002", description="Snap 3"
-    )
+    snap1 = SnapshotInfo(snapshot_id="SNAP-001", tu_id="TU-001", description="Snap 1")
+    snap2 = SnapshotInfo(snapshot_id="SNAP-002", tu_id="TU-001", description="Snap 2")
+    snap3 = SnapshotInfo(snapshot_id="SNAP-003", tu_id="TU-002", description="Snap 3")
 
     store.save_snapshot(snap1)
     store.save_snapshot(snap2)

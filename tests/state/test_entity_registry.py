@@ -104,29 +104,35 @@ def test_entity_registry_get_by_type():
     registry = EntityRegistry()
 
     # Create characters
-    registry.create(Entity(
-        name="Hero",
-        entity_type=EntityType.CHARACTER,
-        role="protagonist",
-        description="Main character",
-        source="project-local",
-    ))
-    registry.create(Entity(
-        name="Villain",
-        entity_type=EntityType.CHARACTER,
-        role="antagonist",
-        description="Main villain",
-        source="project-local",
-    ))
+    registry.create(
+        Entity(
+            name="Hero",
+            entity_type=EntityType.CHARACTER,
+            role="protagonist",
+            description="Main character",
+            source="project-local",
+        )
+    )
+    registry.create(
+        Entity(
+            name="Villain",
+            entity_type=EntityType.CHARACTER,
+            role="antagonist",
+            description="Main villain",
+            source="project-local",
+        )
+    )
 
     # Create place
-    registry.create(Entity(
-        name="Castle",
-        entity_type=EntityType.PLACE,
-        role="fortress",
-        description="Royal castle",
-        source="project-local",
-    ))
+    registry.create(
+        Entity(
+            name="Castle",
+            entity_type=EntityType.PLACE,
+            role="fortress",
+            description="Royal castle",
+            source="project-local",
+        )
+    )
 
     characters = registry.get_by_type(EntityType.CHARACTER)
     assert len(characters) == 2
@@ -221,14 +227,16 @@ def test_entity_registry_merge():
     registry = EntityRegistry()
 
     # Create base entity (mutable)
-    registry.create(Entity(
-        name="Dragon",
-        entity_type=EntityType.CHARACTER,
-        role="guardian",
-        description="Local dragon",
-        source="project-local",
-        immutable=False,
-    ))
+    registry.create(
+        Entity(
+            name="Dragon",
+            entity_type=EntityType.CHARACTER,
+            role="guardian",
+            description="Local dragon",
+            source="project-local",
+            immutable=False,
+        )
+    )
 
     # Merge with immutable version
     imported = [
@@ -284,14 +292,16 @@ def test_entity_registry_merge_conflict():
     registry = EntityRegistry()
 
     # Create immutable entity
-    registry.create(Entity(
-        name="Dragon",
-        entity_type=EntityType.CHARACTER,
-        role="ancient",
-        description="Original immutable",
-        source="world-genesis",
-        immutable=True,
-    ))
+    registry.create(
+        Entity(
+            name="Dragon",
+            entity_type=EntityType.CHARACTER,
+            role="ancient",
+            description="Original immutable",
+            source="world-genesis",
+            immutable=True,
+        )
+    )
 
     # Try to merge another immutable with same name
     imported = [
@@ -318,41 +328,51 @@ def test_entity_registry_count_by_type():
     """Test counting entities by type"""
     registry = EntityRegistry()
 
-    registry.create(Entity(
-        name="Hero1",
-        entity_type=EntityType.CHARACTER,
-        role="hero",
-        description="Test",
-        source="test",
-    ))
-    registry.create(Entity(
-        name="Hero2",
-        entity_type=EntityType.CHARACTER,
-        role="hero",
-        description="Test",
-        source="test",
-    ))
-    registry.create(Entity(
-        name="City",
-        entity_type=EntityType.PLACE,
-        role="settlement",
-        description="Test",
-        source="test",
-    ))
-    registry.create(Entity(
-        name="Guild",
-        entity_type=EntityType.FACTION,
-        role="organization",
-        description="Test",
-        source="test",
-    ))
-    registry.create(Entity(
-        name="Sword",
-        entity_type=EntityType.ITEM,
-        role="weapon",
-        description="Test",
-        source="test",
-    ))
+    registry.create(
+        Entity(
+            name="Hero1",
+            entity_type=EntityType.CHARACTER,
+            role="hero",
+            description="Test",
+            source="test",
+        )
+    )
+    registry.create(
+        Entity(
+            name="Hero2",
+            entity_type=EntityType.CHARACTER,
+            role="hero",
+            description="Test",
+            source="test",
+        )
+    )
+    registry.create(
+        Entity(
+            name="City",
+            entity_type=EntityType.PLACE,
+            role="settlement",
+            description="Test",
+            source="test",
+        )
+    )
+    registry.create(
+        Entity(
+            name="Guild",
+            entity_type=EntityType.FACTION,
+            role="organization",
+            description="Test",
+            source="test",
+        )
+    )
+    registry.create(
+        Entity(
+            name="Sword",
+            entity_type=EntityType.ITEM,
+            role="weapon",
+            description="Test",
+            source="test",
+        )
+    )
 
     counts = registry.count_by_type()
     assert counts["characters"] == 2
@@ -366,14 +386,16 @@ def test_entity_registry_to_dict():
     """Test serializing registry to dictionary"""
     registry = EntityRegistry()
 
-    registry.create(Entity(
-        name="Test Entity",
-        entity_type=EntityType.CHARACTER,
-        role="test",
-        description="Test entity",
-        source="test",
-        immutable=True,
-    ))
+    registry.create(
+        Entity(
+            name="Test Entity",
+            entity_type=EntityType.CHARACTER,
+            role="test",
+            description="Test entity",
+            source="test",
+            immutable=True,
+        )
+    )
 
     data = registry.to_dict()
     assert "characters" in data

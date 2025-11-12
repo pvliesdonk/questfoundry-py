@@ -185,8 +185,6 @@ def test_dalle_provider_default_parameters():
     assert provider.style == "vivid"
 
     # Test with custom defaults
-    provider2 = DalleProvider(
-        {"api_key": "test", "quality": "hd", "style": "natural"}
-    )
+    provider2 = DalleProvider({"api_key": "test", "quality": "hd", "style": "natural"})
     assert provider2.quality == "hd"
     assert provider2.style == "natural"

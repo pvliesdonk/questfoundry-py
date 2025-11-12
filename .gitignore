@@ -27,6 +27,7 @@ wheels/
 .pytest_cache/
 .coverage
 htmlcov/
+coverage.xml
 
 # Type checking
 .mypy_cache/

@@ -1,6 +1,5 @@
 """Tests for conflict detection (Layer 6/7 canon workflows)"""
 
-
 from questfoundry.state.conflict_detection import (
     CanonConflict,
     ConflictDetector,

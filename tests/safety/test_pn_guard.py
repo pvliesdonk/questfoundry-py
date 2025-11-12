@@ -121,8 +121,7 @@ class TestPNGuard:
         assert result.safe is False
         assert len(result.blockers) >= 1
         assert any(
-            "meta" in v.category or "language" in v.category
-            for v in result.violations
+            "meta" in v.category or "language" in v.category for v in result.violations
         )
 
     def test_validate_artifact_non_diegetic_gateway(self):
@@ -144,9 +143,7 @@ class TestPNGuard:
 
         assert result.safe is True  # Warnings don't block
         assert len(result.warnings) >= 1
-        assert any(
-            "diegetic" in v.message.lower() for v in result.warnings
-        )
+        assert any("diegetic" in v.message.lower() for v in result.warnings)
 
     def test_filter_artifact_removes_spoilers(self):
         """Test that artifact filtering removes spoiler fields."""

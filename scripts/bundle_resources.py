@@ -55,7 +55,7 @@ def main() -> None:
         dest_dir = prompts_dest / role_dir.name
 
         # Copy to a temporary directory first
-        temp_dir = prompts_dest.with_suffix('.tmp')
+        temp_dir = prompts_dest.with_suffix(".tmp")
         if temp_dir.exists():
             shutil.rmtree(temp_dir)
         shutil.copytree(role_dir, temp_dir)

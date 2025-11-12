@@ -63,18 +63,14 @@ class TestIntegrityBar:
                 data={
                     "id": "section-1",
                     "text": "Choose",
-                    "choices": [
-                        {"text": "Go forward", "target": "section-99"}
-                    ],
+                    "choices": [{"text": "Go forward", "target": "section-99"}],
                 },
             )
         ]
 
         result = bar.validate(artifacts)
         assert result.passed is False
-        assert any(
-            "section-99" in issue.message for issue in result.blockers
-        )
+        assert any("section-99" in issue.message for issue in result.blockers)
 
     def test_integrity_warn_unmarked_dead_end(self):
         """Test integrity warns for unmarked dead end."""
@@ -526,9 +522,7 @@ class TestCanonConflictBar:
                 type="canon_transfer_package",
                 artifact_id="CANON-001",
                 data={
-                    "invariant_canon": [
-                        {"facts": ["Dragons sleep for decades"]}
-                    ],
+                    "invariant_canon": [{"facts": ["Dragons sleep for decades"]}],
                     "entity_registry": [],
                 },
             )

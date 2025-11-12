@@ -43,8 +43,7 @@ def mock_provider():
                 '"downstream_impacts": {}}]}'
             ),
             "check canon consistency": (
-                '{"is_consistent": true, "issues": [], '
-                '"recommendations": []}'
+                '{"is_consistent": true, "issues": [], "recommendations": []}'
             ),
             "generate player summary": "Player-safe summary text",
         }

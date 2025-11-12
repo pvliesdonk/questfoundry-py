@@ -1,6 +1,5 @@
 """Tests for constraint manifest generator (Layer 6/7 canon workflows)"""
 
-
 from questfoundry.state.constraint_manifest import (
     ConstraintManifest,
     ConstraintManifestGenerator,
@@ -98,11 +97,7 @@ def test_constraint_generator_mutable_canon():
     generator = ConstraintManifestGenerator()
 
     mutable_canon = [
-        {
-            "facts": [
-                {"statement": "Regional magic traditions", "immutable": False}
-            ]
-        }
+        {"facts": [{"statement": "Regional magic traditions", "immutable": False}]}
     ]
 
     manifest = generator.generate(
@@ -119,22 +114,26 @@ def test_constraint_generator_with_entity_registry():
     registry = EntityRegistry()
 
     # Add immutable entities
-    registry.create(Entity(
-        name="Queen Elara",
-        entity_type=EntityType.CHARACTER,
-        role="ruler",
-        description="First queen",
-        source="world-genesis",
-        immutable=True,
-    ))
-    registry.create(Entity(
-        name="Ancient City",
-        entity_type=EntityType.PLACE,
-        role="capital",
-        description="Capital city",
-        source="world-genesis",
-        immutable=True,
-    ))
+    registry.create(
+        Entity(
+            name="Queen Elara",
+            entity_type=EntityType.CHARACTER,
+            role="ruler",
+            description="First queen",
+            source="world-genesis",
+            immutable=True,
+        )
+    )
+    registry.create(
+        Entity(
+            name="Ancient City",
+            entity_type=EntityType.PLACE,
+            role="capital",
+            description="Capital city",
+            source="world-genesis",
+            immutable=True,
+        )
+    )
 
     manifest = generator.generate(
         entity_registry=registry,
@@ -182,9 +181,7 @@ def test_constraint_generator_boundaries():
     """Test boundary generation"""
     generator = ConstraintManifestGenerator()
 
-    invariant_canon = [
-        {"facts": ["Rule 1", "Rule 2"], "immutable": True}
-    ]
+    invariant_canon = [{"facts": ["Rule 1", "Rule 2"], "immutable": True}]
 
     manifest = generator.generate(
         invariant_canon=invariant_canon,
@@ -200,18 +197,18 @@ def test_constraint_generator_guidance():
     generator = ConstraintManifestGenerator()
     registry = EntityRegistry()
 
-    registry.create(Entity(
-        name="Hero",
-        entity_type=EntityType.CHARACTER,
-        role="protagonist",
-        description="Main character",
-        source="test",
-        immutable=False,
-    ))
+    registry.create(
+        Entity(
+            name="Hero",
+            entity_type=EntityType.CHARACTER,
+            role="protagonist",
+            description="Main character",
+            source="test",
+            immutable=False,
+        )
+    )
 
-    mutable_canon = [
-        {"facts": ["Mutable element 1"], "immutable": False}
-    ]
+    mutable_canon = [{"facts": ["Mutable element 1"], "immutable": False}]
 
     manifest = generator.generate(
         mutable_canon=mutable_canon,
@@ -228,22 +225,22 @@ def test_constraint_generator_complete():
     generator = ConstraintManifestGenerator()
 
     # Prepare all components
-    invariant_canon = [
-        {"facts": ["Dragons are extinct"], "immutable": True}
-    ]
+    invariant_canon = [{"facts": ["Dragons are extinct"], "immutable": True}]
     mutable_canon = [
         {"facts": [{"statement": "Regional customs vary", "immutable": False}]}
     ]
 
     registry = EntityRegistry()
-    registry.create(Entity(
-        name="Ancient Dragon",
-        entity_type=EntityType.CHARACTER,
-        role="legendary",
-        description="Last dragon",
-        source="world-genesis",
-        immutable=True,
-    ))
+    registry.create(
+        Entity(
+            name="Ancient Dragon",
+            entity_type=EntityType.CHARACTER,
+            role="legendary",
+            description="Last dragon",
+            source="world-genesis",
+            immutable=True,
+        )
+    )
 
     timeline = TimelineManager()
     timeline.add_anchor(
