@@ -204,7 +204,9 @@ def test_generate_image_success_with_bytes(provider):
     result = provider.generate_image("A beautiful sunset")
 
     assert result == b"fake-image-data"
-    provider._ImageGenerationModel.from_pretrained.assert_called_once_with("imagen-4.0-preview")
+    provider._ImageGenerationModel.from_pretrained.assert_called_once_with(
+        "imagen-4.0-preview"
+    )
     mock_model.generate_images.assert_called_once()
 
 

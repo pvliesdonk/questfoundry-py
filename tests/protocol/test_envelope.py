@@ -72,9 +72,7 @@ def test_context_model():
 
 def test_context_cold_with_snapshot():
     """Test Context with cold snapshot"""
-    context = Context(
-        hot_cold=HotCold.COLD, snapshot="Cold @ 2025-10-28"
-    )
+    context = Context(hot_cold=HotCold.COLD, snapshot="Cold @ 2025-10-28")
 
     assert context.hot_cold == HotCold.COLD
     assert context.snapshot == "Cold @ 2025-10-28"
@@ -90,9 +88,7 @@ def test_safety_model():
 
 def test_payload_model():
     """Test Payload model"""
-    payload = Payload(
-        type="hook_card", data={"header": {"id": "HK-20251030-01"}}
-    )
+    payload = Payload(type="hook_card", data={"header": {"id": "HK-20251030-01"}})
 
     assert payload.type == "hook_card"
     assert payload.data["header"]["id"] == "HK-20251030-01"

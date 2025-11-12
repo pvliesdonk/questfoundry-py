@@ -47,9 +47,7 @@ def test_save_image_with_custom_format(temp_workspace):
     image_data = b"fake_image_data"
     artifact_id = "IMG-002"
 
-    image_path = workspace.save_image(
-        image_data, artifact_id, format="jpg"
-    )
+    image_path = workspace.save_image(image_data, artifact_id, format="jpg")
 
     assert image_path.exists()
     assert image_path.name == "IMG-002.jpg"
@@ -63,9 +61,7 @@ def test_save_image_with_metadata(temp_workspace):
     artifact_id = "IMG-003"
     metadata = {"prompt": "test prompt", "model": "test-model"}
 
-    image_path = workspace.save_image(
-        image_data, artifact_id, metadata=metadata
-    )
+    image_path = workspace.save_image(image_data, artifact_id, metadata=metadata)
 
     # Check image was saved
     assert image_path.exists()
@@ -96,9 +92,7 @@ def test_save_audio_with_custom_format(temp_workspace):
     audio_data = b"fake_audio_data"
     artifact_id = "AUDIO-002"
 
-    audio_path = workspace.save_audio(
-        audio_data, artifact_id, format="wav"
-    )
+    audio_path = workspace.save_audio(audio_data, artifact_id, format="wav")
 
     assert audio_path.exists()
     assert audio_path.name == "AUDIO-002.wav"
@@ -112,9 +106,7 @@ def test_save_audio_with_metadata(temp_workspace):
     artifact_id = "AUDIO-003"
     metadata = {"voice": "test-voice", "model": "test-model"}
 
-    audio_path = workspace.save_audio(
-        audio_data, artifact_id, metadata=metadata
-    )
+    audio_path = workspace.save_audio(audio_data, artifact_id, metadata=metadata)
 
     # Check audio was saved
     assert audio_path.exists()
@@ -173,9 +165,7 @@ def test_create_artifact_for_image(temp_workspace):
     image_path = workspace.images_dir / f"{artifact_id}.png"
     image_path.write_bytes(b"fake_data")
 
-    artifact = workspace.create_artifact_for_image(
-        artifact_id, image_path
-    )
+    artifact = workspace.create_artifact_for_image(artifact_id, image_path)
 
     assert isinstance(artifact, Artifact)
     assert artifact.type == "render"
@@ -211,9 +201,7 @@ def test_create_artifact_for_audio(temp_workspace):
     audio_path = workspace.audio_dir / f"{artifact_id}.mp3"
     audio_path.write_bytes(b"fake_data")
 
-    artifact = workspace.create_artifact_for_audio(
-        artifact_id, audio_path
-    )
+    artifact = workspace.create_artifact_for_audio(artifact_id, audio_path)
 
     assert isinstance(artifact, Artifact)
     assert artifact.type == "audio_asset"

@@ -35,10 +35,7 @@ def sample_context():
         artifacts=[
             Artifact(
                 type="hook_card",
-                data={
-                    "title": "Test Hook",
-                    "description": "A test hook for testing"
-                },
+                data={"title": "Test Hook", "description": "A test hook for testing"},
                 metadata={"id": "HOOK-001"},
             )
         ],
@@ -72,9 +69,7 @@ def test_role_load_brief(mock_provider, spec_path):
 
 def test_role_load_brief_missing_spec(mock_provider):
     """Test error when spec not found."""
-    plotwright = Plotwright(
-        provider=mock_provider, spec_path=Path("/nonexistent")
-    )
+    plotwright = Plotwright(provider=mock_provider, spec_path=Path("/nonexistent"))
 
     with pytest.raises(FileNotFoundError):
         plotwright.load_brief()
@@ -411,8 +406,7 @@ def test_role_context_complete_workflow(mock_provider, spec_path):
     # 3. Gatekeeper checks
     gatekeeper = Gatekeeper(provider=mock_provider, spec_path=spec_path)
     mock_provider.response = (
-        '{"status": "pass", "blockers": [], '
-        '"quick_wins": [], "review_needed": []}'
+        '{"status": "pass", "blockers": [], "quick_wins": [], "review_needed": []}'
     )
 
     gate_context = RoleContext(

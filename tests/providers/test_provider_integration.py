@@ -50,13 +50,15 @@ class TestProviderCaching:
     def test_provider_with_custom_cache_config(self, tmp_path) -> None:
         """Provider accepts custom cache configuration."""
         cache_dir = str(tmp_path / "cache")
-        provider = MockTextProvider({
-            "cache": {
-                "enabled": True,
-                "cache_dir": cache_dir,
-                "ttl_seconds": 3600,
+        provider = MockTextProvider(
+            {
+                "cache": {
+                    "enabled": True,
+                    "cache_dir": cache_dir,
+                    "ttl_seconds": 3600,
+                }
             }
-        })
+        )
         assert provider.cache is not None
         assert str(provider.cache_config.cache_dir) == cache_dir
         assert provider.cache_config.ttl_seconds == 3600
@@ -130,33 +132,39 @@ class TestProviderRateLimiting:
 
     def test_provider_with_rate_limit_config(self) -> None:
         """Provider initializes rate limiter with config."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 60,
-                "tokens_per_hour": 90000,
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 60,
+                    "tokens_per_hour": 90000,
+                }
             }
-        })
+        )
         assert provider.rate_limiter is not None
         assert provider.cost_tracker is not None
 
     def test_check_rate_limit_allowed(self) -> None:
         """_check_rate_limit returns True when allowed."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                }
             }
-        })
+        )
         assert provider._check_rate_limit(input_tokens=100, output_tokens=100)
 
     def test_check_rate_limit_denied(self) -> None:
         """_check_rate_limit returns False when limit exceeded."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 1,
-                "tokens_per_hour": 10,  # Very low limit
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 1,
+                    "tokens_per_hour": 10,  # Very low limit
+                }
             }
-        })
+        )
         # Exceed token limit
         assert not provider._check_rate_limit(input_tokens=100, output_tokens=100)
 
@@ -167,12 +175,14 @@ class TestProviderRateLimiting:
 
     def test_record_usage(self) -> None:
         """_record_usage records usage statistics."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                }
             }
-        })
+        )
         provider._record_usage(
             model="gpt-4",
             input_tokens=100,
@@ -188,12 +198,14 @@ class TestProviderRateLimiting:
 
     def test_record_usage_cost_tracking(self) -> None:
         """_record_usage tracks costs."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                }
             }
-        })
+        )
         provider._record_usage(
             model="gpt-4",
             input_tokens=100,
@@ -207,12 +219,14 @@ class TestProviderRateLimiting:
 
     def test_get_rate_limit_stats(self) -> None:
         """get_rate_limit_stats returns rate limit statistics."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                }
             }
-        })
+        )
         stats = provider.get_rate_limit_stats()
         assert "total_requests" in stats
         assert "available_request_tokens" in stats
@@ -225,12 +239,14 @@ class TestProviderRateLimiting:
 
     def test_get_cost_summary(self) -> None:
         """get_cost_summary returns cost information."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                }
             }
-        })
+        )
         provider._record_usage(
             model="gpt-4",
             input_tokens=100,
@@ -256,13 +272,15 @@ class TestProviderIntegration:
 
     def test_provider_with_both_cache_and_rate_limiting(self) -> None:
         """Provider can use both caching and rate limiting together."""
-        provider = MockTextProvider({
-            "cache": {"ttl_seconds": 3600},
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "cache": {"ttl_seconds": 3600},
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                },
             }
-        })
+        )
 
         # Should have both
         assert provider.cache is not None
@@ -271,16 +289,18 @@ class TestProviderIntegration:
 
     def test_text_provider_example_pattern(self, tmp_path) -> None:
         """Test the example pattern from TextProvider docstring."""
-        provider = MockTextProvider({
-            "cache": {
-                "ttl_seconds": 3600,
-                "cache_dir": str(tmp_path / "cache_example"),
-            },
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "cache": {
+                    "ttl_seconds": 3600,
+                    "cache_dir": str(tmp_path / "cache_example"),
+                },
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                },
             }
-        })
+        )
 
         prompt = "test prompt"
 
@@ -319,13 +339,15 @@ class TestProviderIntegration:
 
     def test_image_provider_basic(self) -> None:
         """ImageProvider also supports caching and rate limiting."""
-        provider = MockImageProvider({
-            "cache": {"ttl_seconds": 3600},
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockImageProvider(
+            {
+                "cache": {"ttl_seconds": 3600},
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                },
             }
-        })
+        )
 
         assert provider.cache is not None
         assert provider.rate_limiter is not None
@@ -384,12 +406,14 @@ class TestProviderEdgeCases:
 
     def test_rate_limiter_stats_before_usage(self) -> None:
         """Rate limiter stats accessible before any usage."""
-        provider = MockTextProvider({
-            "rate_limit": {
-                "requests_per_minute": 10,
-                "tokens_per_hour": 10000,
+        provider = MockTextProvider(
+            {
+                "rate_limit": {
+                    "requests_per_minute": 10,
+                    "tokens_per_hour": 10000,
+                }
             }
-        })
+        )
         stats = provider.get_rate_limit_stats()
         assert stats["total_requests"] == 0
         assert stats["total_input_tokens"] == 0

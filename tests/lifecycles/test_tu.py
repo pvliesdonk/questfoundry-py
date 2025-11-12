@@ -24,9 +24,7 @@ def test_tu_full_successful_lifecycle():
     assert lifecycle.current_state == "gatecheck"
 
     # gatecheck → cold-merged (with passing data)
-    lifecycle.merge_to_cold(
-        data={"gatecheck_passed": True}, reason="All bars green"
-    )
+    lifecycle.merge_to_cold(data={"gatecheck_passed": True}, reason="All bars green")
     assert lifecycle.current_state == "cold-merged"
 
     # Check history

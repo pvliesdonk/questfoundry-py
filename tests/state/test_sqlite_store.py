@@ -238,15 +238,9 @@ def test_get_nonexistent_snapshot(store):
 
 def test_list_snapshots_by_tu(store):
     """Test listing snapshots filtered by TU"""
-    snap1 = SnapshotInfo(
-        snapshot_id="SNAP-001", tu_id="TU-001", description="Snap 1"
-    )
-    snap2 = SnapshotInfo(
-        snapshot_id="SNAP-002", tu_id="TU-001", description="Snap 2"
-    )
-    snap3 = SnapshotInfo(
-        snapshot_id="SNAP-003", tu_id="TU-002", description="Snap 3"
-    )
+    snap1 = SnapshotInfo(snapshot_id="SNAP-001", tu_id="TU-001", description="Snap 1")
+    snap2 = SnapshotInfo(snapshot_id="SNAP-002", tu_id="TU-001", description="Snap 2")
+    snap3 = SnapshotInfo(snapshot_id="SNAP-003", tu_id="TU-002", description="Snap 3")
 
     store.save_snapshot(snap1)
     store.save_snapshot(snap2)
@@ -265,15 +259,11 @@ def test_list_snapshots_by_tu(store):
 def test_tu_with_snapshot_reference(store):
     """Test TU with snapshot foreign key"""
     # Create snapshot first
-    snapshot = SnapshotInfo(
-        snapshot_id="SNAP-001", tu_id="TU-001", description="Test"
-    )
+    snapshot = SnapshotInfo(snapshot_id="SNAP-001", tu_id="TU-001", description="Test")
     store.save_snapshot(snapshot)
 
     # Create TU referencing snapshot
-    tu = TUState(
-        tu_id="TU-001", status="in_progress", snapshot_id="SNAP-001", data={}
-    )
+    tu = TUState(tu_id="TU-001", status="in_progress", snapshot_id="SNAP-001", data={})
     store.save_tu(tu)
 
     # Retrieve and verify

@@ -42,12 +42,9 @@ def mock_provider():
                 '"context": "Context text", "see_also": [], '
                 '"notes": "", "lineage": "TU-123"}'
             ),
-            "validate accessibility": (
-                '{"is_accessible": true, "issues": []}'
-            ),
+            "validate accessibility": ('{"is_accessible": true, "issues": []}'),
             "create crosslinks": (
-                '{"crosslinks": [], "orphans": [], '
-                '"coverage_notes": "All linked"}'
+                '{"crosslinks": [], "orphans": [], "coverage_notes": "All linked"}'
             ),
         }
     )

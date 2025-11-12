@@ -240,8 +240,7 @@ def test_story_spark_pre_gate_failure_iteration(loop_context):
     provider = MockTextProvider(
         responses={
             "generate_hooks": (
-                '{"hooks": [{"title": "Test", '
-                '"summary": "Test", "tags": []}]}'
+                '{"hooks": [{"title": "Test", "summary": "Test", "tags": []}]}'
             ),
             "create_topology": "Topology",
             "create_tu_brief": "Brief",
@@ -304,14 +303,10 @@ def test_story_spark_validate_step():
     assert not loop.validate_step(loop.steps[0], "not a dict")
 
     # Pre-gate step - passed
-    assert loop.validate_step(
-        loop.steps[5], {"success": True, "passed": True}
-    )
+    assert loop.validate_step(loop.steps[5], {"success": True, "passed": True})
 
     # Pre-gate step - failed
-    assert not loop.validate_step(
-        loop.steps[5], {"success": True, "passed": False}
-    )
+    assert not loop.validate_step(loop.steps[5], {"success": True, "passed": False})
 
 
 def test_loop_repr(loop_context):

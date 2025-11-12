@@ -65,7 +65,9 @@ def test_provider_initialization(mock_gemini_config):
         assert provider.top_k == 40
 
         # Verify genai.configure was called
-        mock_genai.configure.assert_called_once_with(api_key="test-google-ai-api-key-12345")
+        mock_genai.configure.assert_called_once_with(
+            api_key="test-google-ai-api-key-12345"
+        )
 
 
 def test_provider_initialization_with_env_var(monkeypatch):

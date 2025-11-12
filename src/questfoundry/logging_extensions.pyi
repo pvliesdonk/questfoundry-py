@@ -5,6 +5,4 @@ from typing import Any
 
 # Extend the Logger class to include the trace method
 class Logger(logging.Logger):
-    def trace(
-        self, msg: str, *args: Any, **kwargs: Any
-    ) -> None: ...
+    def trace(self, msg: str, *args: Any, **kwargs: Any) -> None: ...

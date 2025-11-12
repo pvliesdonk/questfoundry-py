@@ -253,7 +253,7 @@ class TestResponseCache:
 
     def test_cache_special_characters(self, cache: ResponseCache) -> None:
         """Cache handles special characters."""
-        special_value = "Hello 世界 🌍 \n\t\"quoted\""
+        special_value = 'Hello 世界 🌍 \n\t"quoted"'
         cache.set("special", special_value)
         assert cache.get("special") == special_value
 

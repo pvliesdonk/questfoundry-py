@@ -72,7 +72,7 @@ def test_generate_audio_is_valid_wav(provider):
 
     # Try to parse as WAV
     wav_buffer = BytesIO(audio_data)
-    with wave.open(wav_buffer, 'rb') as wav_file:
+    with wave.open(wav_buffer, "rb") as wav_file:
         # Check WAV parameters
         assert wav_file.getnchannels() == 1  # Mono
         assert wav_file.getsampwidth() == 2  # 16-bit
@@ -89,8 +89,8 @@ def test_generate_audio_duration_scales_with_text(provider):
     long_audio = provider.generate_audio(long_text)
 
     # Parse WAV files to check duration
-    short_wav = wave.open(BytesIO(short_audio), 'rb')
-    long_wav = wave.open(BytesIO(long_audio), 'rb')
+    short_wav = wave.open(BytesIO(short_audio), "rb")
+    long_wav = wave.open(BytesIO(long_audio), "rb")
 
     short_frames = short_wav.getnframes()
     long_frames = long_wav.getnframes()
@@ -171,7 +171,7 @@ def test_minimum_duration(provider):
     text = "a"  # Single character
     audio_data = provider.generate_audio(text)
 
-    wav = wave.open(BytesIO(audio_data), 'rb')
+    wav = wave.open(BytesIO(audio_data), "rb")
     duration = wav.getnframes() / wav.getframerate()
     wav.close()
 

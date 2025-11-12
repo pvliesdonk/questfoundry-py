@@ -28,6 +28,7 @@ def transport(temp_workspace):
 def sample_envelope():
     """Create a sample envelope for testing"""
     from datetime import datetime
+
     return (
         EnvelopeBuilder()
         .with_protocol("1.0.0")
@@ -125,6 +126,7 @@ def test_receive_multiple_messages_in_order(transport, sample_envelope):
     """Test receiving multiple messages"""
     import time
     from datetime import datetime
+
     # Send 3 messages with delays to ensure different timestamps
     intents = ["test.message.first", "test.message.second", "test.message.third"]
     for i, intent in enumerate(intents):

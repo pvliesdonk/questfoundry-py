@@ -81,9 +81,7 @@ class ProviderConfig:
                 raw_config = yaml.safe_load(f)
                 logger.trace("Substituting environment variables in configuration")
                 self._config = self._substitute_env_vars(raw_config or {})
-            logger.info(
-                "Configuration loaded and environment variables substituted"
-            )
+            logger.info("Configuration loaded and environment variables substituted")
         except yaml.YAMLError as e:
             logger.error("Invalid YAML in config file: %s", str(e), exc_info=True)
             raise ValueError(f"Invalid YAML in config file: {e}") from e

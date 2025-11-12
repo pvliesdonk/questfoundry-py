@@ -2,7 +2,7 @@
 
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .logging_config import get_logger
 from .loops.base import Loop, LoopContext, LoopResult
@@ -11,8 +11,9 @@ from .models.artifact import Artifact
 from .providers.base import TextProvider
 from .providers.config import ProviderConfig
 from .providers.registry import ProviderRegistry
-from .roles.base import Role, RoleContext
+from .roles.base import RoleContext
 from .roles.registry import RoleRegistry
+from .roles.showrunner import Showrunner
 from .state.workspace import WorkspaceManager
 
 logger = get_logger(__name__)
@@ -72,7 +73,7 @@ class Orchestrator:
         )
 
         # Initialize showrunner and provider (type annotations for mypy)
-        self.showrunner: Role | None = None
+        self.showrunner: Showrunner | None = None
         self.provider: TextProvider | None = None
         self.provider_name: str | None = None
 
@@ -98,10 +99,13 @@ class Orchestrator:
 
         logger.trace("Getting showrunner role instance")
         # Get showrunner instance
-        self.showrunner = self.role_registry.get_role(
-            "showrunner",
-            provider=provider,
-            provider_name=provider_name,
+        self.showrunner = cast(
+            Showrunner,
+            self.role_registry.get_role(
+                "showrunner",
+                provider=provider,
+                provider_name=provider_name,
+            ),
         )
 
         logger.info("Orchestrator initialized with provider '%s'", provider_name)
@@ -229,17 +233,26 @@ class Orchestrator:
         for role_name in required_roles:
             try:
                 if human_callback:
+                    if self.showrunner is None:
+                        raise RuntimeError(
+                            "Orchestrator not initialized. Call initialize() first."
+                        )
                     # Interactive mode: Use Showrunner to create a new, non-cached
                     # role instance with the callback.
-                    logger.trace("Instantiating role '%s' via Showrunner (interactive)", role_name)
+                    logger.trace(
+                        "Instantiating role '%s' via Showrunner (interactive)",
+                        role_name,
+                    )
                     if role_name in self.role_registry._roles:
                         role_class = self.role_registry._roles[role_name]
-                        role_instances[role_name] = self.showrunner.initialize_role_with_config(
-                            role_class=role_class,
-                            registry=self.provider_registry,
-                            spec_path=self.spec_path,
-                            human_callback=human_callback,
-                            role_name=role_name,
+                        role_instances[role_name] = (
+                            self.showrunner.initialize_role_with_config(
+                                role_class=role_class,
+                                registry=self.provider_registry,
+                                spec_path=self.spec_path,
+                                human_callback=human_callback,
+                                role_name=role_name,
+                            )
                         )
                     else:
                         # This path is taken if a loop requires a role that is not
@@ -250,8 +263,11 @@ class Orchestrator:
                         logger.warning("Role '%s' not registered, skipping", role_name)
 
                 else:
-                    # Batch mode: Use the existing registry logic to get a cached instance.
-                    logger.trace("Getting role instance for '%s' from registry (batch)", role_name)
+                    # Batch mode: Use existing registry logic for cached instances.
+                    logger.trace(
+                        "Getting role instance for '%s' from registry (batch)",
+                        role_name,
+                    )
                     role_instances[role_name] = self.role_registry.get_role(
                         role_name,
                         provider=self.provider,

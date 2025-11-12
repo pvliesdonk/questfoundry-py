@@ -1,6 +1,5 @@
 """Tests for enhanced schema validation"""
 
-
 from questfoundry.validators import (
     ValidationResult,
     validate_artifact,
@@ -76,10 +75,7 @@ def test_multiple_validation_errors():
 
 def test_validate_artifact_type_detection():
     """Test automatic artifact type detection"""
-    artifact_with_type = {
-        "type": "hook_card",
-        "header": {"id": "HK-20240115-01"}
-    }
+    artifact_with_type = {"type": "hook_card", "header": {"id": "HK-20240115-01"}}
 
     result = validate_artifact_type(artifact_with_type)
 
@@ -131,6 +127,5 @@ def test_validation_error_path_information():
     assert not result.valid
     # At least one error should mention header or nested field
     assert any(
-        len(error.path) > 0 and "header" in str(error.path)
-        for error in result.errors
+        len(error.path) > 0 and "header" in str(error.path) for error in result.errors
     )

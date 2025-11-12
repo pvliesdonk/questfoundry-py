@@ -146,9 +146,7 @@ class MockTextProvider(TextProvider):
         **kwargs,
     ):
         """Mock streaming by yielding generate_text result."""
-        yield self.generate_text(
-            prompt, model, max_tokens, temperature, **kwargs
-        )
+        yield self.generate_text(prompt, model, max_tokens, temperature, **kwargs)
 
     def close(self) -> None:
         """No cleanup needed for mock."""

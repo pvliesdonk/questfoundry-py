@@ -299,9 +299,7 @@ def test_snapshot_save_to_hot_only(workspace):
 
 def test_snapshot_invalid_target(workspace):
     """Test invalid snapshot target"""
-    snapshot = SnapshotInfo(
-        snapshot_id="SNAP-001", tu_id="TU-001", description="Test"
-    )
+    snapshot = SnapshotInfo(snapshot_id="SNAP-001", tu_id="TU-001", description="Test")
 
     with pytest.raises(ValueError, match="Invalid target"):
         workspace.save_snapshot(snapshot, target="invalid")
@@ -315,15 +313,9 @@ def test_snapshot_invalid_source(workspace):
 
 def test_list_snapshots_filtering(workspace):
     """Test listing snapshots with filters"""
-    snap1 = SnapshotInfo(
-        snapshot_id="SNAP-001", tu_id="TU-001", description="Snap 1"
-    )
-    snap2 = SnapshotInfo(
-        snapshot_id="SNAP-002", tu_id="TU-001", description="Snap 2"
-    )
-    snap3 = SnapshotInfo(
-        snapshot_id="SNAP-003", tu_id="TU-002", description="Snap 3"
-    )
+    snap1 = SnapshotInfo(snapshot_id="SNAP-001", tu_id="TU-001", description="Snap 1")
+    snap2 = SnapshotInfo(snapshot_id="SNAP-002", tu_id="TU-001", description="Snap 2")
+    snap3 = SnapshotInfo(snapshot_id="SNAP-003", tu_id="TU-002", description="Snap 3")
 
     workspace.save_snapshot(snap1, target="hot")
     workspace.save_snapshot(snap2, target="hot")
